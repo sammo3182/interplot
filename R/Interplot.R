@@ -13,13 +13,17 @@
 #' @export
 #' @examples
 #' # Create continuous, dummy, and group level variables.
-#' y<-rnorm(100, 1, 2)              
-#' x<-log(abs(y))                   
-#' z<-y^2
-#' d<-ifelse(y<1, 0, 1)
-#' m<-ifelse(y<c(-3), 4,
-#'           ifelse(y<0, 3,
-#'                  ifelse(y<3, 2, 1)))
+#' group<-seq(1, 50, 1)
+#' z<-rnorm(50, 1, 1)
+#' u<-rnorm(50, 0, 3)
+#' 
+#' df<-data.frame(group=rep(group, 50), z=rep(z,50), u=rep(u,50))
+#' 
+#' df$x<-rnorm(2500, 3, 1)+0.1*(group-1)
+#' 
+#' df$d<-rbinom(2500, 1, 0.2)
+#' df$e<-rnorm(2500, 0, 2)
+#' df$y<-2-df$x+0.5*df$z+df$u+df$e
 #'                  
 #' # Apply the interplot to different regressions
 #' library(Interplot)
