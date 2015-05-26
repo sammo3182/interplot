@@ -7,7 +7,8 @@ Maintainer: Frederick Solt <frederick-solt@uiowa.edu>, Yue Hu
 Description: "Interplot" can be used to plot the changes of the coefficient of
     one variable in a two-way interaction term of a regression, when the other
     variable changes. The function offered by this package works for OLS,
-    Logit, Ordered Logit, Possion, and Multilevel regressions.
+    Logit, Ordered Logit, Possion, multilevel regressions, and multievel 
+    regressions with muliply imputated data.
 Depends:
     R (>= 3.1.1),arm,
     ggplot2

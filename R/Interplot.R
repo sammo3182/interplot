@@ -6,9 +6,12 @@
 #' @param var2 The changing variable in the interaction term of interest, along with the changes of which the changes of the coefficient of the other variable is shown in the plot.
 #' @param xlab A title for the x axis.
 #' @param ylab A title for the y axis.
+#' @param labels A logical value to deside whether using the variable labels.
 #' @param seed An arbitrary numeric value.
 #' @param sims Number of independent simulation draws to create.
 #' @param steps Desired length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional.
+#' @param xmin a numerical value deciding the minimum value shown of x shown in the graph.
+#' @param xmax a numerical value deciding the maximum value shown of x shown in the graph.
 #' @param plot A logical value to deside the output is a plot or a list of the coefficient, upper and lower bound of var2.
 #' @export
 #' @examples
