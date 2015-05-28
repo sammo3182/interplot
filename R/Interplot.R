@@ -15,33 +15,39 @@
 #' @param plot A logical value to deside the output is a plot or a list of the coefficient, upper and lower bound of var2.
 #' @export
 #' @examples
-#' # Create continuous, dummy, and group level variables.
-#' group<-seq(1, 50, 1)
-#' z<-rnorm(50, 1, 1)
-#' u<-rnorm(50, 0, 3)
-#' 
-#' df<-data.frame(group=rep(group, 50), z=rep(z,50), u=rep(u,50))
-#' 
-#' df$x<-rnorm(2500, 3, 1)+0.1*(group-1)
-#' 
+#' # Create continuous, dummy, missing data, and group level variables.
+#' df$x1<-rnorm(2500, 3, 1)+0.1*(group-1)
 #' df$d<-rbinom(2500, 1, 0.2)
+#' 
+#' df$x2<-c(sample(1:10, 2500, T))
+#' df$x2.miss <- df$x2
+#' df$x2.miss[df$group < 5 & df$x1 < 4] <- NA
 #' df$e<-rnorm(2500, 0, 2)
-#' df$y<-2-df$x+0.5*df$z+df$u+df$e
+#' df$y<-2 - df$x1 + 0.3*df$x2 + 0.5*df$z + df$u + df$e
 #'                  
 #' # Apply the interplot to different regressions
 #' library(Interplot)
 #' 
 #' ## 1. OLS
-#' m1<-lm(y~x+d+z+x:z)
+#' m1<-lm(y~x+d+z+x:z, data = df)
 #' interplot(m1, "x", "z")
 #' 
 #' ## 2. Logit with two interaction terms (the second term is of interest)
-#' m2<-glm(d~y+x+z+x:z+y:z, family=binomial(link="logit"))
+#' m2<-glm(d~y+x+z+x:z+y:z, family=binomial(link="logit"), data = df)
 #' interplot(m2, "y", "z")
 #' 
 #' ## 3. Multilevel
-#' m3<-lmer(y~x+d+z+x:z+(1|m))
+#' m3<-lmer(y~x+d+z+x:z+(1|m) , data = df)
 #' interplot(m3, "x","z")
+#' 
+#' ## 4. Multiple Imputed Data
+#' library(Amelia)
+#' 
+#' m.imp <- amelia(df, idvars = c("y", "x2")) 
+#' missmap(m.imp)
+#' 
+#' m4 <- lapply(m.imp$imputations, function(i) lm(y ~ x1 + x2.miss + d + x2.miss*z, data = i))
+#' interplot(m4, "x2.miss","z")
 
 
 
@@ -66,8 +72,10 @@ interplot <- function(m, var1, var2, xlab=NULL, ylab=NULL, labels = NULL,
         m.sims@ranef[[1]] <- abind(m.sims@ranef[[1]], m.sims.list[[i]]@ranef[[1]], along=1)
       }
     } else {
-      stop(paste("Multiply imputed flat models not implemented yet."))
-    }
+      for(i in 2:length(m.sims.list)) {
+        m.sims@coef <- rbind(m.sims@coef, m.sims.list[[i]]@coef)
+      }
+    } 
   } else {
     m.class <- class(m)
     m.sims <- arm::sim(m, sims)
