@@ -136,30 +136,40 @@ interplot <- function(m, var1, var2, xlab=NULL, ylab=NULL, labels = NULL,
 
 
 ## Create missing data
-group<-seq(1, 50, 1)
- z<-rnorm(50, 1, 1)
+ group<-seq(1, 50, 1)
+ z<-rnorm(50, 1, 1) 
  u<-rnorm(50, 0, 3)
- 
  df<-data.frame(group=rep(group, 50), z=rep(z,50), u=rep(u,50))
- 
+
  df$x1<-rnorm(2500, 3, 1)+0.1*(group-1)
  df$d<-rbinom(2500, 1, 0.2)
  
- df$x2<-c(sample(1:10, 2500, T))
+ df$x2<-sample(1:10, 2500, T)
  df$x2.miss <- df$x2
  df$x2.miss[df$group < 5 & df$x1 < 4] <- NA
- 
  df$e<-rnorm(2500, 0, 2)
  df$y<-2 - df$x1 + 0.3*df$x2 + 0.5*df$z + df$u + df$e
+                  
+ # Apply the interplot to different regressions
+ library(Interplot)
  
- table(df$x2.miss, useNA = "ifany")
-
+ ## 1. OLS
+ m1<-lm(y~x1+x2+d+z+x1:z, data = df)
+ interplot(m1, "x1", "z")
+ 
+ ## 2. Logit with two interaction terms (the second term is of interest)
+ m2<-glm(d~y+x1+x2+z+x1:z+y:z, family=binomial(link="logit"), data = df)
+ interplot(m2, "y", "z")
+ 
+ ## 3. Multilevel
+ m3<-lmer(y~x1+x2+d+z+x1:z+(1|group), data = df)
+ interplot(m3, "x1","z")
+ 
+ ## 4. Multiple Imputed Data
  library(Amelia)
  
  m.imp <- amelia(df, idvars = c("y", "x2")) 
  missmap(m.imp)
  
  m4 <- lapply(m.imp$imputations, function(i) lm(y ~ x1 + x2.miss + d + x2.miss*z, data = i))
- 
  interplot(m4, "x2.miss","z")
- 

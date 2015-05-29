@@ -14,12 +14,19 @@
 #' @param xmax a numerical value deciding the maximum value shown of x shown in the graph.
 #' @param plot A logical value to deside the output is a plot or a list of the coefficient, upper and lower bound of var2.
 #' @export
+#' 
 #' @examples
 #' # Create continuous, dummy, missing data, and group level variables.
+#' 
+#' group<-seq(1, 50, 1)
+#' z<-rnorm(50, 1, 1) 
+#' u<-rnorm(50, 0, 3)
+#' df<-data.frame(group=rep(group, 50), z=rep(z,50), u=rep(u,50))
+
 #' df$x1<-rnorm(2500, 3, 1)+0.1*(group-1)
 #' df$d<-rbinom(2500, 1, 0.2)
 #' 
-#' df$x2<-c(sample(1:10, 2500, T))
+#' df$x2<-sample(1:10, 2500, T)
 #' df$x2.miss <- df$x2
 #' df$x2.miss[df$group < 5 & df$x1 < 4] <- NA
 #' df$e<-rnorm(2500, 0, 2)
@@ -29,22 +36,20 @@
 #' library(Interplot)
 #' 
 #' ## 1. OLS
-#' m1<-lm(y~x+d+z+x:z, data = df)
-#' interplot(m1, "x", "z")
+#' m1<-lm(y~x1+x2+d+z+x1:z, data = df)
+#' interplot(m1, "x1", "z")
 #' 
 #' ## 2. Logit with two interaction terms (the second term is of interest)
-#' m2<-glm(d~y+x+z+x:z+y:z, family=binomial(link="logit"), data = df)
+#' m2<-glm(d~y+x1+x2+z+x1:z+y:z, family=binomial(link="logit"), data = df)
 #' interplot(m2, "y", "z")
 #' 
 #' ## 3. Multilevel
-#' m3<-lmer(y~x+d+z+x:z+(1|m) , data = df)
-#' interplot(m3, "x","z")
+#' m3<-lmer(y~x1+x2+d+z+x1:z+(1|group), data = df)
+#' interplot(m3, "x1","z")
 #' 
 #' ## 4. Multiple Imputed Data
 #' library(Amelia)
-#' 
 #' m.imp <- amelia(df, idvars = c("y", "x2")) 
-#' missmap(m.imp)
 #' 
 #' m4 <- lapply(m.imp$imputations, function(i) lm(y ~ x1 + x2.miss + d + x2.miss*z, data = i))
 #' interplot(m4, "x2.miss","z")
