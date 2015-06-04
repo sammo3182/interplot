@@ -4,9 +4,7 @@
 \alias{interplot}
 \title{INTERPLOT: Plot Interactive Effects}
 \usage{
-interplot(m, var1, var2, xlab = NULL, ylab = NULL, labels = NULL,
-  seed = 313, sims = 1000, steps = 100, xmin = NA, xmax = NA,
-  plot = TRUE)
+interplot(m, ...)
 }
 \arguments{
 \item{m}{A R object storing the result of a regression including at least one interaction term.}

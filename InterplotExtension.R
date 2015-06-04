@@ -1,3 +1,8 @@
+
+library(devtools)
+library(roxygen2)
+
+
 ##Data Example###
 #Simulated Data####
 group<-seq(1, 50, 1)
@@ -173,3 +178,269 @@ interplot <- function(m, var1, var2, xlab=NULL, ylab=NULL, labels = NULL,
  
  m4 <- lapply(m.imp$imputations, function(i) lm(y ~ x1 + x2.miss + d + x2.miss*z, data = i))
  interplot(m4, "x2.miss","z")
+
+ 
+ 
+ # Change to S3 
+interplot <- function(m, ...) UseMethod("interplot")
+
+# Graph function
+interplot.plot <- function(fake, coef1, lb, up, ylab, xlab){
+  if(plot==TRUE) {
+      if(steps>5) {
+        coef.plot <- ggplot(coef, aes(x = fake, y = coef1)) +                       
+          geom_line() + geom_ribbon(aes(ymin=lb, ymax=ub), alpha=.5) + theme_bw()+
+          ylab(ylab) + xlab(xlab)
+      } else {
+        coef.plot <- ggplot(coef, aes(x = fake, y = coef1)) +                       
+          geom_point() + geom_errorbar(aes(ymin=lb, ymax=ub), width=0) + 
+          scale_x_continuous(breaks = 0:steps) + theme_bw()+
+          ylab(ylab) + xlab(xlab)
+      }
+      return(coef.plot)
+  } else {
+      names(coef) <- c(var2, "coef", "ub", "lb")
+      return(coef)
+  }
+}
+
+
+# Default coding function for non-mlm, non-mi objects  
+interplot.default <- function(m, var1, var2, ylab=NULL, xlab=NULL,
+                          seed=324, sims=1000, steps=100, plot=TRUE){
+  m.class <- class(m)
+  m.sims <- arm::sim(m, sims)
+  
+  ifelse(var1==var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2,":",var1))
+  
+  if (!var12 %in% names(m$coef)) var12 <- paste0(var1,":",var2)
+  if (!var12 %in% names(m$coef)) stop(paste("Model does not include the interaction of",var1 ,"and",var2, "."))
+  if (is.na(xmin)) xmin <- min(m$model[var2], na.rm=T)
+  if (is.na(xmax)) xmax <- max(m$model[var2], na.rm=T)
+  coef <- data.frame(fake = seq(xmin, xmax, length.out=steps), coef1 = NA, ub = NA, lb = NA)
+  
+  for(i in 1:steps) {    
+    coef$coef1[i] <- mean(m.sims@coef[,match(var1, names(m$coef))] + 
+                            coef$fake[i]*m.sims@coef[,match(var12, names(m$coef))])
+    coef$ub[i] <- quantile(m.sims@coef[,match(var1, names(m$coef))] + 
+                             coef$fake[i]*m.sims@coef[,match(var12, names(m$coef))], .975)
+    coef$lb[i] <- quantile(m.sims@coef[,match(var1, names(m$coef))] + 
+                             coef$fake[i]*m.sims@coef[,match(var12, names(m$coef))], .025)    
+  }
+  
+  interplot.plot
+}
+
+
+
+# Coding function for non-mi mlm objects
+interplot.mlm <- function(m, var1, var2, ylab=NULL, xlab=NULL,
+                          seed=324, sims=1000, steps=100, plot=TRUE){
+  m.class <- class(m)
+  m.sims <- arm::sim(m, sims)
+  
+  ifelse(var1==var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2,":",var1))
+  
+  if (!var12 %in% unlist(dimnames(m@pp$X)[2])) var12 <- paste0(var1,":",var2)
+  if (!var12 %in% unlist(dimnames(m@pp$X)[2])) stop(paste("Model does not include the interaction of",var1 ,"and",var2, "."))
+  if (is.na(xmin)) xmin <- min(m@frame[var2], na.rm=T)
+  if (is.na(xmax)) xmax <- max(m@frame[var2], na.rm=T)        
+  coef <- data.frame(fake = seq(xmin, xmax, length.out=steps), coef1 = NA, ub = NA, lb = NA)
+  
+  for(i in 1:steps) {   
+    coef$coef1[i] <- mean(m.sims@fixef[,match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+                            coef$fake[i]*m.sims@fixef[,match(var12, unlist(dimnames(m@pp$X)[2]))])
+    coef$ub[i] <- quantile(m.sims@fixef[,match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+                             coef$fake[i]*m.sims@fixef[,match(var12, unlist(dimnames(m@pp$X)[2]))], .975)
+    coef$lb[i] <- quantile(m.sims@fixef[,match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+                             coef$fake[i]*m.sims@fixef[,match(var12, unlist(dimnames(m@pp$X)[2]))], .025) 
+  }  
+  
+  interplot.plot
+}
+
+
+
+#Coding function for non-mlm mi objects
+interplot.regmi <- function(m, var1, var2, ylab=NULL, xlab=NULL,
+                            seed=324, sims=1000, steps=100, plot=TRUE){
+  m.list <- m
+  m <- m.list[[1]]
+  m.class <- class(m)
+  m.sims.list <- lapply(m.list, function(i) arm::sim(i, sims))
+  m.sims <- m.sims.list[[1]]
+  
+  for(i in 2:length(m.sims.list)) {
+    m.sims@coef <- rbind(m.sims@coef, m.sims.list[[i]]@coef)
+  }
+  
+  ifelse(var1==var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2,":",var1))
+  
+  if (!var12 %in% names(m$coef)) var12 <- paste0(var1,":",var2)
+  if (!var12 %in% names(m$coef)) stop(paste("Model does not include the interaction of",var1 ,"and",var2, "."))
+  if (is.na(xmin)) xmin <- min(m$model[var2], na.rm=T)
+  if (is.na(xmax)) xmax <- max(m$model[var2], na.rm=T)
+  coef <- data.frame(fake = seq(xmin, xmax, length.out=steps), coef1 = NA, ub = NA, lb = NA)
+  
+  for(i in 1:steps) {    
+    coef$coef1[i] <- mean(m.sims@coef[,match(var1, names(m$coef))] + 
+                            coef$fake[i]*m.sims@coef[,match(var12, names(m$coef))])
+    coef$ub[i] <- quantile(m.sims@coef[,match(var1, names(m$coef))] + 
+                             coef$fake[i]*m.sims@coef[,match(var12, names(m$coef))], .975)
+    coef$lb[i] <- quantile(m.sims@coef[,match(var1, names(m$coef))] + 
+                             coef$fake[i]*m.sims@coef[,match(var12, names(m$coef))], .025)    
+  }
+  
+  interplot.plot
+}
+
+ 
+
+#Coding function for mlm, mi objects 
+interplot.mlmmi <- function(m, var1, var2, ylab=NULL, xlab=NULL,
+                            seed=324, sims=1000, steps=100, plot=TRUE){
+  m.list <- m
+  m <- m.list[[1]]
+  m.class <- class(m)
+  m.sims.list <- lapply(m.list, function(i) arm::sim(i, sims))
+  m.sims <- m.sims.list[[1]]
+  
+  for(i in 2:length(m.sims.list)) {
+    m.sims@fixef <- rbind(m.sims@fixef, m.sims.list[[i]]@fixef)
+    m.sims@ranef[[1]] <- abind(m.sims@ranef[[1]], m.sims.list[[i]]@ranef[[1]], along=1)
+  }
+  
+  ifelse(var1==var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2,":",var1))
+  
+  if (!var12 %in% unlist(dimnames(m@pp$X)[2])) var12 <- paste0(var1,":",var2)
+  if (!var12 %in% unlist(dimnames(m@pp$X)[2])) stop(paste("Model does not include the interaction of",var1 ,"and",var2, "."))
+  if (is.na(xmin)) xmin <- min(m@frame[var2], na.rm=T)
+  if (is.na(xmax)) xmax <- max(m@frame[var2], na.rm=T)        
+  coef <- data.frame(fake = seq(xmin, xmax, length.out=steps), coef1 = NA, ub = NA, lb = NA)
+  
+  for(i in 1:steps) {   
+    coef$coef1[i] <- mean(m.sims@fixef[,match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+                            coef$fake[i]*m.sims@fixef[,match(var12, unlist(dimnames(m@pp$X)[2]))])
+    coef$ub[i] <- quantile(m.sims@fixef[,match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+                             coef$fake[i]*m.sims@fixef[,match(var12, unlist(dimnames(m@pp$X)[2]))], .975)
+    coef$lb[i] <- quantile(m.sims@fixef[,match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+                             coef$fake[i]*m.sims@fixef[,match(var12, unlist(dimnames(m@pp$X)[2]))], .025)  
+  }   
+  
+  interplot.plot
+}
+
+
+g <- function(x, y) {
+    x <- x * y 
+    UseMethod("g")
+  }
+g.numeric <- function(x,y) x + y
+g(10, 15) 
+  
+
+
+ fake <- sample(1:10, 20, replace = T)
+ coef1 <- fake^2
+ coef <- data.frame(fake, coef1)
+ lb <- 0
+ ub <- 20
+ steps <- 15
+ ylab <- "ylab"
+ xlab <- "xlab"
+ 
+ coef.plot <- ggplot(coef, aes(x = fake, y = coef1)) + 
+   geom_point() + 
+   geom_errorbar(aes(ymin=lb, ymax=ub), width=0) + 
+   scale_x_continuous(breaks = 0:steps) + 
+   theme_bw() +
+   ylab(ylab) + xlab(xlab)
+ coef.plot[step > 5] <- ggplot(coef, aes(x = fake, y = coef1)) + 
+   geom_line() + 
+   geom_ribbon(aes(ymin=lb, ymax=ub), alpha=.5) + 
+   theme_bw() + 
+   ylab(ylab) + 
+   xlab(xlab)
+
+ 
+ 
+ 
+ interplot <- function(m, ...) UseMethod("interplot", m)
+ 
+ 
+ # Default coding function for non-mlm, non-mi objects  
+ interplot.default <- function(m, var1, var2, xlab=NULL, ylab=NULL, 
+                               seed=324, sims=1000, steps=100, xmin=NA,
+                               xmax=NA, labels=NULL, plot=TRUE){
+   m.class <- class(m)
+   m.sims <- arm::sim(m, sims)
+   
+   ifelse(var1==var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2,":",var1))
+   
+   if (!var12 %in% names(m$coef)) var12 <- paste0(var1,":",var2)
+   if (!var12 %in% names(m$coef)) stop(paste("Model does not include the interaction of",var1 ,"and",var2, "."))
+   if (is.na(xmin)) xmin <- min(m$model[var2], na.rm=T)
+   if (is.na(xmax)) xmax <- max(m$model[var2], na.rm=T)
+   coef <- data.frame(fake = seq(xmin, xmax, length.out=steps), coef1 = NA, ub = NA, lb = NA)
+   
+   for(i in 1:steps) {    
+     coef$coef1[i] <- mean(m.sims@coef[,match(var1, names(m$coef))] + 
+                             coef$fake[i]*m.sims@coef[,match(var12, names(m$coef))])
+     coef$ub[i] <- quantile(m.sims@coef[,match(var1, names(m$coef))] + 
+                              coef$fake[i]*m.sims@coef[,match(var12, names(m$coef))], .975)
+     coef$lb[i] <- quantile(m.sims@coef[,match(var1, names(m$coef))] + 
+                              coef$fake[i]*m.sims@coef[,match(var12, names(m$coef))], .025)    
+   }
+   
+   if(plot==TRUE) {
+     xlab = xlab
+     ylab = ylab
+     steps = steps
+     xmin = xmin
+     xmax = xmax
+     labels = labels
+     interplot_plot(coef)
+   } else {
+     names(coef) <- c(var2, "coef", "ub", "lb")
+     return(coef)
+   }
+   
+ }
+ 
+ interplot_plot <- function(coef, steps, labels){
+   if(steps>5) {
+     coef.plot <- ggplot(coef, aes(x = fake, y = coef1)) +                       
+       geom_line() + geom_ribbon(aes(ymin=lb, ymax=ub), alpha=.5) + theme_bw()+
+       ylab(ylab) + xlab(xlab)
+   } else {
+     coef.plot <- ggplot(coef, aes(x = fake, y = coef1)) +                       
+       geom_point() + geom_errorbar(aes(ymin=lb, ymax=ub), width=0) + 
+       scale_x_continuous(breaks = 0:steps) + theme_bw()+
+       ylab(ylab) + xlab(xlab)
+   }
+   return(coef.plot)
+ }
+ 
+ 
+ ## 1. OLS
+ m1<-lm(y~x1+x2+d+z+x1:z, data = df)
+ interplot(m1, "x1", "z")
+ 
+ ## 2. Logit with two interaction terms (the second term is of interest)
+ m2<-glm(d~y+x1+x2+z+x1:z+y:z, family=binomial(link="logit"), data = df)
+ interplot(m2, "y", "z")
+ 
+ ## 3. Multilevel
+ m3<-lmer(y~x1+x2+d+z+x1:z+(1|group), data = df)
+ interplot(m3, "x1","z")
+ 
+ ## 4. Multiple Imputed Data
+ library(Amelia)
+ 
+ m.imp <- amelia(df, idvars = c("y", "x2")) 
+ missmap(m.imp)
+ 
+ m4 <- lapply(m.imp$imputations, function(i) lm(y ~ x1 + x2.miss + d + x2.miss*z, data = i))
+ interplot(m4, "x2.miss","z")
+
+ 
