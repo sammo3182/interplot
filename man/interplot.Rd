@@ -2,37 +2,33 @@
 % Please edit documentation in R/Interplot.R
 \name{interplot}
 \alias{interplot}
-\title{INTERPLOT: Plot Interactive Effects}
+\title{Plot Interactive Effects}
 \usage{
 interplot(m, ...)
 }
 \arguments{
-\item{m}{A R object storing the result of a regression including at least one interaction term.}
+\item{m}{a model object including the interaction of interest.}
 
-\item{var1}{The target variable in the interaction term of interest, whose coefficient changes is intended to plot.}
-
-\item{var2}{The changing variable in the interaction term of interest, along with the changes of which the changes of the coefficient of the other variable is shown in the plot.}
-
-\item{xlab}{A title for the x axis.}
-
-\item{ylab}{A title for the y axis.}
-
-\item{labels}{A logical value to deside whether using the variable labels.}
-
-\item{seed}{An arbitrary numeric value.}
-
-\item{sims}{Number of independent simulation draws to create.}
-
-\item{steps}{Desired length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional.}
-
-\item{xmin}{a numerical value deciding the minimum value shown of x shown in the graph.}
-
-\item{xmax}{a numerical value deciding the maximum value shown of x shown in the graph.}
-
-\item{plot}{A logical value to deside the output is a plot or a list of the coefficient, upper and lower bound of var2.}
+\item{...}{additional arguments affecting the output of the plot.}
+}
+\value{
+The function returns a \code{ggplot} object.
 }
 \description{
-interplot is the basic plotting function in the interplot package. It is a convenient function for creating graphs describing how the coefficient of one variable in a two-way interaction term will change along with the changes of the other variable.
+\code{interplot} is a generic function to produce plot of the conditional graph of one variable in an two-way interaction conditioned on the other variable from the results of various model fitting functions. The function invokes particular \code{methods} which depend on the \code{\link{class}} of the first argument.
+}
+\details{
+\code{interplot} visualizes the changes in the coefficient of one term in a two-way interaction conditioned by the other term. In the current version, the function can work on interactions in four classes of objects:
+\itemize{
+  \item Ordinary linear models (object class: \code{lm});
+  \item Generalized linear models (object class: \code{glm});
+  \item Ordinary linear models with imputed data (object class: \code{list});
+  \item Generalized linear models with imputed data (object class: \code{list}).
+}
+
+The examples below illustrate how methods invoked by this generic deal with different type of objects.
+
+Because the output function is based on \code{\link[ggplot2]{ggplot}}, any additional arguments and layers supported by \code{ggplot2} can be added with the \code{+}.
 }
 \examples{
 # Create continuous, dummy, missing data, and group level variables.
@@ -44,7 +40,7 @@ df<-data.frame(group=rep(group, 50), z=rep(z,50), u=rep(u,50))
 df$x1<-rnorm(2500, 3, 1)+0.1*(group-1)
 df$d<-rbinom(2500, 1, 0.2)
 
-df$x2<-sample(1:10, 2500, T)
+df$x2<-sample(1:10, 2500, TRUE)
 df$x2.miss <- df$x2
 df$x2.miss[df$group < 5 & df$x1 < 4] <- NA
 df$e<-rnorm(2500, 0, 2)
@@ -62,6 +58,7 @@ m2<-glm(d~y+x1+x2+z+x1:z+y:z, family=binomial(link="logit"), data = df)
 interplot(m2, "y", "z")
 
 ## 3. Multilevel
+library(lme4)
 m3<-lmer(y~x1+x2+d+z+x1:z+(1|group), data = df)
 interplot(m3, "x1","z")
 
