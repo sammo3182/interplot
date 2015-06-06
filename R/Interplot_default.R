@@ -28,8 +28,8 @@
 #' 
 #' @return The function returns a \code{ggplot} object.
 #' 
-#' @import  arm
 #' @import  abind
+#' @import  arm
 #' @import  ggplot2
 #' 
 #' @examples

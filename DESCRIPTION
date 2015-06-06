@@ -1,17 +1,17 @@
 Package: Interplot
 Title: A Package For Plotting the Effects of Interaction Terms
-Version: 1.0
+Version: 0.1.0.9000
 Author: Frederick Solt <frederick-solt@uiowa.edu>, Yue Hu <yue-hu-1@uiowa.edu>
 Maintainer: Frederick Solt <frederick-solt@uiowa.edu>, 
-                Yue Hu <yue-hu-1@uiowa.edu>
+  Yue Hu <yue-hu-1@uiowa.edu>
 Description: "Interplot" can be used to plot plot of the conditional graph of one 
-              variable in an two-way interaction conditioned on the other variable 
-              from the results of various model fitting functions.
+    variable in an two-way interaction conditioned on the other variable from the 
+    results of various model fitting functions.
 Depends:
         R (>= 3.1.1),
         ggplot2
 Imports:
-        arm,
-        abind
-License: MIT
+        abind,
+        arm
+License: file LICENSE
 LazyData: true
