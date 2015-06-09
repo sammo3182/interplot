@@ -54,45 +54,51 @@
 #' 
 #' ## 1. OLS
 #' m1<-lm(y~x1+x2+d+z+x1:z, data = df)
-#' interplot(m1, "x1", "z")
+#' interplot(m1, 'x1', 'z')
 #' 
 #' ## 2. Logit with two interaction terms (the second term is of interest)
-#' m2<-glm(d~y+x1+x2+z+x1:z+y:z, family=binomial(link="logit"), data = df)
-#' interplot(m2, "y", "z")
+#' m2<-glm(d~y+x1+x2+z+x1:z+y:z, family=binomial(link='logit'), data = df)
+#' interplot(m2, 'y', 'z')
 #' 
 #' 
 #' @export
 
-# S3 method for class "lm" and "glm" 
-interplot.default <- function(m, var1, var2, xlab=NULL, ylab=NULL, 
-                              seed=324, sims=1000, steps=100, xmin=NA,
-                              xmax=NA, labels=NULL, plot=TRUE){
-  set.seed(seed)
-  
-  m.class <- class(m)
-  m.sims <- arm::sim(m, sims)
-  
-  ifelse(var1==var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2,":",var1))
-  
-  if (!var12 %in% names(m$coef)) var12 <- paste0(var1,":",var2)
-  if (!var12 %in% names(m$coef)) stop(paste("Model does not include the interaction of",var1 ,"and",var2, "."))
-  if (is.na(xmin)) xmin <- min(m$model[var2], na.rm=T)
-  if (is.na(xmax)) xmax <- max(m$model[var2], na.rm=T)
-  coef <- data.frame(fake = seq(xmin, xmax, length.out=steps), coef1 = NA, ub = NA, lb = NA)
-  
-  for(i in 1:steps) {    
-    coef$coef1[i] <- mean(m.sims@coef[,match(var1, names(m$coef))] + 
-                            coef$fake[i]*m.sims@coef[,match(var12, names(m$coef))])
-    coef$ub[i] <- quantile(m.sims@coef[,match(var1, names(m$coef))] + 
-                             coef$fake[i]*m.sims@coef[,match(var12, names(m$coef))], .975)
-    coef$lb[i] <- quantile(m.sims@coef[,match(var1, names(m$coef))] + 
-                             coef$fake[i]*m.sims@coef[,match(var12, names(m$coef))], .025)    
-  }
-  
-  if(plot==TRUE) {
-    interplot.plot(m = coef, ylab = ylab, xlab = xlab)
-  } else {
-    names(coef) <- c(var2, "coef", "ub", "lb")
-    return(coef)
-  }
-}
+# S3 method for class 'lm' and 'glm'
+interplot.default <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324, 
+    sims = 1000, steps = 100, xmin = NA, xmax = NA, labels = NULL, plot = TRUE) {
+    set.seed(seed)
+    
+    m.class <- class(m)
+    m.sims <- arm::sim(m, sims)
+    
+    ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, 
+        ":", var1))
+    
+    if (!var12 %in% names(m$coef)) 
+        var12 <- paste0(var1, ":", var2)
+    if (!var12 %in% names(m$coef)) 
+        stop(paste("Model does not include the interaction of", var1, "and", 
+            var2, "."))
+    if (is.na(xmin)) 
+        xmin <- min(m$model[var2], na.rm = T)
+    if (is.na(xmax)) 
+        xmax <- max(m$model[var2], na.rm = T)
+    coef <- data.frame(fake = seq(xmin, xmax, length.out = steps), coef1 = NA, 
+        ub = NA, lb = NA)
+    
+    for (i in 1:steps) {
+        coef$coef1[i] <- mean(m.sims@coef[, match(var1, names(m$coef))] + 
+            coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))])
+        coef$ub[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
+            coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))], 0.975)
+        coef$lb[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
+            coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))], 0.025)
+    }
+    
+    if (plot == TRUE) {
+        interplot.plot(m = coef, ylab = ylab, xlab = xlab)
+    } else {
+        names(coef) <- c(var2, "coef", "ub", "lb")
+        return(coef)
+    }
+} 

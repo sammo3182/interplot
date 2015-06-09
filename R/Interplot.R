@@ -45,23 +45,23 @@
 #' 
 #' ## 1. OLS
 #' m1<-lm(y~x1+x2+d+z+x1:z, data = df)
-#' interplot(m1, "x1", "z")
+#' interplot(m1, 'x1', 'z')
 #' 
 #' ## 2. Logit with two interaction terms (the second term is of interest)
-#' m2<-glm(d~y+x1+x2+z+x1:z+y:z, family=binomial(link="logit"), data = df)
-#' interplot(m2, "y", "z")
+#' m2<-glm(d~y+x1+x2+z+x1:z+y:z, family=binomial(link='logit'), data = df)
+#' interplot(m2, 'y', 'z')
 #' 
 #' ## 3. Multilevel
 #' library(lme4)
 #' m3<-lmer(y~x1+x2+d+z+x1:z+(1|group), data = df)
-#' interplot(m3, "x1","z")
+#' interplot(m3, 'x1','z')
 #' 
 #' ## 4. Multiple Imputed Data
 #' library(Amelia)
-#' m.imp <- amelia(df, idvars = c("y", "x2")) 
+#' m.imp <- amelia(df, idvars = c('y', 'x2')) 
 #' 
 #' m4 <- lapply(m.imp$imputations, function(i) lm(y ~ x1 + x2.miss + d + x2.miss*z, data = i))
-#' interplot(m4, "x2.miss","z") 
+#' interplot(m4, 'x2.miss','z') 
 #' 
 #' @export
 
@@ -69,16 +69,25 @@
 
 
 interplot <- function(m, ...) {
-
-  
-  if (class(m)=="list"){
-    if(class(m[[1]]) == "lmerMod"){class(m) <- "mlmmi"}
-    if(class(m[[1]]) == "glmerMod"){class(m) <- "gmlmmi"}
-    if(class(m[[1]]) == "lm"){class(m) <- "lmmi"}
-    if(class(m[[1]]) == "glm"){class(m) <- "glmmi"}
-  }
-  if (class(m) == "data.frame") class(m) <- "plot"
-  
-  
-  UseMethod("interplot", m)
-  }
+    
+    
+    if (class(m) == "list") {
+        if (class(m[[1]]) == "lmerMod") {
+            class(m) <- "mlmmi"
+        }
+        if (class(m[[1]]) == "glmerMod") {
+            class(m) <- "gmlmmi"
+        }
+        if (class(m[[1]]) == "lm") {
+            class(m) <- "lmmi"
+        }
+        if (class(m[[1]]) == "glm") {
+            class(m) <- "glmmi"
+        }
+    }
+    if (class(m) == "data.frame") 
+        class(m) <- "plot"
+    
+    
+    UseMethod("interplot", m)
+} 

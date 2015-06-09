@@ -46,75 +46,91 @@
 #' library(Interplot)
 #' 
 #' m1<-lmer(y~x1+x2+d+z+x1:z+(1|group), data = df)
-#' interplot(m1, "x1","z")
+#' interplot(m1, 'x1','z')
 #' 
 #' 
 #' @export
 
 # Coding function for non-mi mlm objects
-interplot.lmerMod <- function(m, var1, var2, xlab=NULL, ylab=NULL, 
-                              seed=324, sims=1000, steps=100, xmin=NA,
-                              xmax=NA, labels=NULL, plot=TRUE){
-  set.seed(seed)
-  
-  m.class <- class(m)
-  m.sims <- arm::sim(m, sims)
-  
-  ifelse(var1==var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2,":",var1))
-  
-  if (!var12 %in% unlist(dimnames(m@pp$X)[2])) var12 <- paste0(var1,":",var2)
-  if (!var12 %in% unlist(dimnames(m@pp$X)[2])) stop(paste("Model does not include the interaction of",var1 ,"and",var2, "."))
-  if (is.na(xmin)) xmin <- min(m@frame[var2], na.rm=T)
-  if (is.na(xmax)) xmax <- max(m@frame[var2], na.rm=T)        
-  coef <- data.frame(fake = seq(xmin, xmax, length.out=steps), coef1 = NA, ub = NA, lb = NA)
-  
-  for(i in 1:steps) {   
-    coef$coef1[i] <- mean(m.sims@fixef[,match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-                            coef$fake[i]*m.sims@fixef[,match(var12, unlist(dimnames(m@pp$X)[2]))])
-    coef$ub[i] <- quantile(m.sims@fixef[,match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-                             coef$fake[i]*m.sims@fixef[,match(var12, unlist(dimnames(m@pp$X)[2]))], .975)
-    coef$lb[i] <- quantile(m.sims@fixef[,match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-                             coef$fake[i]*m.sims@fixef[,match(var12, unlist(dimnames(m@pp$X)[2]))], .025) 
-  }  
-  
-  if(plot==TRUE) {
-    interplot.plot(m = coef, steps = steps, ylab = ylab, xlab = xlab)
-  } else {
-    names(coef) <- c(var2, "coef", "ub", "lb")
-    return(coef)
-  }
+interplot.lmerMod <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324, 
+    sims = 1000, steps = 100, xmin = NA, xmax = NA, labels = NULL, plot = TRUE) {
+    set.seed(seed)
+    
+    m.class <- class(m)
+    m.sims <- arm::sim(m, sims)
+    
+    ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, 
+        ":", var1))
+    
+    if (!var12 %in% unlist(dimnames(m@pp$X)[2])) 
+        var12 <- paste0(var1, ":", var2)
+    if (!var12 %in% unlist(dimnames(m@pp$X)[2])) 
+        stop(paste("Model does not include the interaction of", var1, "and", 
+            var2, "."))
+    if (is.na(xmin)) 
+        xmin <- min(m@frame[var2], na.rm = T)
+    if (is.na(xmax)) 
+        xmax <- max(m@frame[var2], na.rm = T)
+    coef <- data.frame(fake = seq(xmin, xmax, length.out = steps), coef1 = NA, 
+        ub = NA, lb = NA)
+    
+    for (i in 1:steps) {
+        coef$coef1[i] <- mean(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+            coef$fake[i] * m.sims@fixef[, match(var12, unlist(dimnames(m@pp$X)[2]))])
+        coef$ub[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+            coef$fake[i] * m.sims@fixef[, match(var12, unlist(dimnames(m@pp$X)[2]))], 
+            0.975)
+        coef$lb[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+            coef$fake[i] * m.sims@fixef[, match(var12, unlist(dimnames(m@pp$X)[2]))], 
+            0.025)
+    }
+    
+    if (plot == TRUE) {
+        interplot.plot(m = coef, steps = steps, ylab = ylab, xlab = xlab)
+    } else {
+        names(coef) <- c(var2, "coef", "ub", "lb")
+        return(coef)
+    }
 }
 
 
-interplot.glmerMod <- function(m, var1, var2, xlab=NULL, ylab=NULL, 
-                               seed=324, sims=1000, steps=100, xmin=NA,
-                               xmax=NA, labels=NULL, plot=TRUE){
-  set.seed(seed)
-  
-  m.class <- class(m)
-  m.sims <- arm::sim(m, sims)
-  
-  ifelse(var1==var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2,":",var1))
-  
-  if (!var12 %in% unlist(dimnames(m@pp$X)[2])) var12 <- paste0(var1,":",var2)
-  if (!var12 %in% unlist(dimnames(m@pp$X)[2])) stop(paste("Model does not include the interaction of",var1 ,"and",var2, "."))
-  if (is.na(xmin)) xmin <- min(m@frame[var2], na.rm=T)
-  if (is.na(xmax)) xmax <- max(m@frame[var2], na.rm=T)        
-  coef <- data.frame(fake = seq(xmin, xmax, length.out=steps), coef1 = NA, ub = NA, lb = NA)
-  
-  for(i in 1:steps) {   
-    coef$coef1[i] <- mean(m.sims@fixef[,match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-                            coef$fake[i]*m.sims@fixef[,match(var12, unlist(dimnames(m@pp$X)[2]))])
-    coef$ub[i] <- quantile(m.sims@fixef[,match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-                             coef$fake[i]*m.sims@fixef[,match(var12, unlist(dimnames(m@pp$X)[2]))], .975)
-    coef$lb[i] <- quantile(m.sims@fixef[,match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-                             coef$fake[i]*m.sims@fixef[,match(var12, unlist(dimnames(m@pp$X)[2]))], .025) 
-  }  
-  
-  if(plot==TRUE) {
-    interplot.plot(m = coef, steps = steps, ylab = ylab, xlab = xlab)
-  } else {
-    names(coef) <- c(var2, "coef", "ub", "lb")
-    return(coef)
-  }
-}
+interplot.glmerMod <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324, 
+    sims = 1000, steps = 100, xmin = NA, xmax = NA, labels = NULL, plot = TRUE) {
+    set.seed(seed)
+    
+    m.class <- class(m)
+    m.sims <- arm::sim(m, sims)
+    
+    ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, 
+        ":", var1))
+    
+    if (!var12 %in% unlist(dimnames(m@pp$X)[2])) 
+        var12 <- paste0(var1, ":", var2)
+    if (!var12 %in% unlist(dimnames(m@pp$X)[2])) 
+        stop(paste("Model does not include the interaction of", var1, "and", 
+            var2, "."))
+    if (is.na(xmin)) 
+        xmin <- min(m@frame[var2], na.rm = T)
+    if (is.na(xmax)) 
+        xmax <- max(m@frame[var2], na.rm = T)
+    coef <- data.frame(fake = seq(xmin, xmax, length.out = steps), coef1 = NA, 
+        ub = NA, lb = NA)
+    
+    for (i in 1:steps) {
+        coef$coef1[i] <- mean(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+            coef$fake[i] * m.sims@fixef[, match(var12, unlist(dimnames(m@pp$X)[2]))])
+        coef$ub[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+            coef$fake[i] * m.sims@fixef[, match(var12, unlist(dimnames(m@pp$X)[2]))], 
+            0.975)
+        coef$lb[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+            coef$fake[i] * m.sims@fixef[, match(var12, unlist(dimnames(m@pp$X)[2]))], 
+            0.025)
+    }
+    
+    if (plot == TRUE) {
+        interplot.plot(m = coef, steps = steps, ylab = ylab, xlab = xlab)
+    } else {
+        names(coef) <- c(var2, "coef", "ub", "lb")
+        return(coef)
+    }
+} 
