@@ -53,7 +53,7 @@
 
 # Coding function for non-mi mlm objects
 interplot.lmerMod <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324, 
-    sims = 1000, steps = 100, xmin = NA, xmax = NA, labels = NULL, plot = TRUE) {
+    sims = 1000, steps = 100, xmin = NA, xmax = NA, labels = NULL, plot = TRUE, bar = TRUE) {
     set.seed(seed)
     
     m.class <- class(m)
@@ -95,7 +95,7 @@ interplot.lmerMod <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 32
 
 
 interplot.glmerMod <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324, 
-    sims = 1000, steps = 100, xmin = NA, xmax = NA, labels = NULL, plot = TRUE) {
+    sims = 1000, steps = 100, xmin = NA, xmax = NA, labels = NULL, plot = TRUE, bar = TRUE) {
     set.seed(seed)
     
     m.class <- class(m)
@@ -128,7 +128,7 @@ interplot.glmerMod <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 3
     }
     
     if (plot == TRUE) {
-        interplot.plot(m = coef, steps = steps, ylab = ylab, xlab = xlab)
+        interplot.plot(m = coef, steps = steps, ylab = ylab, xlab = xlab, bar = bar)
     } else {
         names(coef) <- c(var2, "coef", "ub", "lb")
         return(coef)

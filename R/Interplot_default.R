@@ -65,7 +65,7 @@
 
 # S3 method for class 'lm' and 'glm'
 interplot.default <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324, 
-    sims = 1000, steps = 100, xmin = NA, xmax = NA, labels = NULL, plot = TRUE) {
+    sims = 1000, steps = 100, xmin = NA, xmax = NA, labels = NULL, plot = TRUE, bar = TRUE) {
     set.seed(seed)
     
     m.class <- class(m)
@@ -96,7 +96,7 @@ interplot.default <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 32
     }
     
     if (plot == TRUE) {
-        interplot.plot(m = coef, ylab = ylab, xlab = xlab)
+        interplot.plot(m = coef, ylab = ylab, xlab = xlab, bar = bar)
     } else {
         names(coef) <- c(var2, "coef", "ub", "lb")
         return(coef)

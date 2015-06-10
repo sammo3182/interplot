@@ -24,18 +24,18 @@
 #' @export
 
 ## S3 method for class 'data.frame'
-interplot.plot <- function(m, ylab = NULL, xlab = NULL, ...) {
+interplot.plot <- function(m, ylab = NULL, xlab = NULL, bar = T, ...) {
     if (class(m) == "plot") 
         class(m) <- "data.frame"
     steps <- nrow(m)
-    if (steps > 5) {
-        coef.plot <- ggplot(m, aes(x = fake, y = coef1)) + geom_line() + 
-            geom_ribbon(aes(ymin = lb, ymax = ub), alpha = 0.5) + theme_bw() + 
-            ylab(ylab) + xlab(xlab)
+    if (steps <= 5 | bar == T) {
+      coef.plot <- ggplot(m, aes(x = fake, y = coef1)) + geom_point() + 
+        geom_errorbar(aes(ymin = lb, ymax = ub), width = 0) + scale_x_continuous(breaks = 0:steps) + 
+        theme_bw() + ylab(ylab) + xlab(xlab)
     } else {
-        coef.plot <- ggplot(m, aes(x = fake, y = coef1)) + geom_point() + 
-            geom_errorbar(aes(ymin = lb, ymax = ub), width = 0) + scale_x_continuous(breaks = 0:steps) + 
-            theme_bw() + ylab(ylab) + xlab(xlab)
+      coef.plot <- ggplot(m, aes(x = fake, y = coef1)) + geom_line() + 
+        geom_ribbon(aes(ymin = lb, ymax = ub), alpha = 0.5) + theme_bw() + 
+        ylab(ylab) + xlab(xlab)
     }
     return(coef.plot)
 } 

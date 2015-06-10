@@ -31,7 +31,7 @@
 
 # Coding function for mlm, mi objects
 interplot.mlmmi <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324, 
-    sims = 1000, steps = 100, xmin = NA, xmax = NA, labels = NULL, plot = TRUE) {
+    sims = 1000, steps = 100, xmin = NA, xmax = NA, labels = NULL, plot = TRUE, bar = TRUE) {
     set.seed(seed)
     
     class(m) <- "list"
@@ -74,7 +74,7 @@ interplot.mlmmi <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324,
     }
     
     if (plot == TRUE) {
-        interplot.plot(m = coef, steps = steps, ylab = ylab, xlab = xlab)
+        interplot.plot(m = coef, steps = steps, ylab = ylab, xlab = xlab, bar = bar)
     } else {
         names(coef) <- c(var2, "coef", "ub", "lb")
         return(coef)
@@ -83,7 +83,7 @@ interplot.mlmmi <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324,
 
 
 interplot.gmlmmi <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324, 
-    sims = 1000, steps = 100, xmin = NA, xmax = NA, labels = NULL, plot = TRUE) {
+    sims = 1000, steps = 100, xmin = NA, xmax = NA, labels = NULL, plot = TRUE, bar = bar) {
     set.seed(seed)
     
     class(m) <- "list"
@@ -126,7 +126,7 @@ interplot.gmlmmi <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324
     }
     
     if (plot == TRUE) {
-        interplot.plot(m = coef, steps = steps, ylab = ylab, xlab = xlab)
+        interplot.plot(m = coef, steps = steps, ylab = ylab, xlab = xlab, bar = bar)
     } else {
         names(coef) <- c(var2, "coef", "ub", "lb")
         return(coef)

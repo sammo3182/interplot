@@ -7,11 +7,13 @@ Maintainer: Frederick Solt <frederick-solt@uiowa.edu>,
 Description: "Interplot" can be used to plot plot of the conditional graph of one 
     variable in an two-way interaction conditioned on the other variable from the 
     results of various model fitting functions.
-Depends:
+Depends: 
         R (>= 3.1.1),
         ggplot2
-Imports:
+Imports: 
         abind,
         arm
 License: file LICENSE
 LazyData: true
+Suggests: knitr
+VignetteBuilder: knitr
