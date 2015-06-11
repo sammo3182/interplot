@@ -10,10 +10,11 @@
 #' @param labels A logical value to deside whether using the variable labels.
 #' @param seed An arbitrary numeric value. The default value is 324.
 #' @param sims Number of independent simulation draws to create.
-#' @param steps Desired length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional.
-#' @param xmin a numerical value deciding the minimum value shown of x shown in the graph.
-#' @param xmax a numerical value deciding the maximum value shown of x shown in the graph.
+#' @param steps Desired length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).
+#' @param xmin A numerical value deciding the minimum value shown of x shown in the graph.
+#' @param xmax A numerical value deciding the maximum value shown of x shown in the graph.
 #' @param plot A logical value to deside the output is a plot or a list of the coefficient, upper and lower bound of var2.
+#' @param point A logical value determining the format of plot. The function produces a point plot when it is \code{TRUE}; otherwise, the fucntion produces a line plot. Both plots have 95\% confidential intervals. The default is \code{FAULSE}.
 #' @param ... additional arguments affecting the output of the plot.
 #' 
 #' @details \code{interplot} is a S3 method from the \code{interplot}. It can visualize the changes in the coefficient of one term in a two-way interaction conditioned by the other term. This function can work on interactions in two classes of objects:
@@ -65,7 +66,7 @@
 
 # S3 method for class 'lm' and 'glm'
 interplot.default <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324, 
-    sims = 1000, steps = 100, xmin = NA, xmax = NA, labels = NULL, plot = TRUE, bar = TRUE) {
+    sims = 1000, steps = NULL, xmin = NA, xmax = NA, labels = NULL, plot = TRUE, point = F) {
     set.seed(seed)
     
     m.class <- class(m)
@@ -83,6 +84,11 @@ interplot.default <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 32
         xmin <- min(m$model[var2], na.rm = T)
     if (is.na(xmax)) 
         xmax <- max(m$model[var2], na.rm = T)
+    
+    if (is.null(steps)) steps <- eval(parse(text = paste0("length(unique(m$model$",var2,"))")))
+    if (steps > 100) steps <- 100 # avoid redundant calculation
+    
+    
     coef <- data.frame(fake = seq(xmin, xmax, length.out = steps), coef1 = NA, 
         ub = NA, lb = NA)
     
@@ -96,7 +102,7 @@ interplot.default <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 32
     }
     
     if (plot == TRUE) {
-        interplot.plot(m = coef, ylab = ylab, xlab = xlab, bar = bar)
+        interplot.plot(m = coef, ylab = ylab, xlab = xlab, point = point)
     } else {
         names(coef) <- c(var2, "coef", "ub", "lb")
         return(coef)

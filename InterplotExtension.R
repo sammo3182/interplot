@@ -41,7 +41,7 @@ interplot(m2, "y", "z")
 
 interplot(m3, "x1","z")
 
-interplot(m4, "x2.miss","z")
+interplot(m4, "x2.miss","z", steps =  6)
 
 
 
@@ -585,7 +585,7 @@ interplot.default <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 32
     xmax <- max(m$model[var2], na.rm = T)
   
   
-  if (is.null(steps)) steps <- eval(parse(text = paste0("length(names(table(m$model$",var2,")))")))
+  if (is.null(steps)) steps <- eval(parse(text = paste0("length(unique(m$model$",var2,"))")))
   if (steps > 100) steps <- 100 # avoid redundant calculation
 
   
@@ -616,7 +616,7 @@ interplot.plot <- function(m, ylab = NULL, xlab = NULL, bar = F, ...) {
   steps <- nrow(m)
   levels <- sort(unique(m$fake))
   
-  if (steps <= 5 | bar == T) {
+  if (steps <= 10 | bar == T) {
     coef.plot <- ggplot(m, aes(x = fake, y = coef1)) + geom_point() + 
       geom_errorbar(aes(ymin = lb, ymax = ub), width = 0) + 
       scale_x_continuous(breaks = levels) + 
