@@ -535,18 +535,106 @@ interplot.default <- function(m, var1, var2, xlab=NULL, ylab=NULL,
      return(coef)
    }
  }
- 
- 
-interplot.plot <- function(data, steps, ylab = NULL, xlab = NULL){
-  if(steps>5) {
-    coef.plot <- ggplot(data, aes(x = fake, y = coef1)) +                       
-      geom_line() + geom_ribbon(aes(ymin=lb, ymax=ub), alpha=.5) + theme_bw()+
-      ylab(ylab) + xlab(xlab)
+
+
+
+
+
+
+
+# for categorical variables
+data(mtcars)
+
+
+m1 <- lm(mpg ~ wt + cyl + wt:cyl, data = mtcars)
+summary(m1)
+
+m2 <- glm(vs)
+
+# Coefficient for number of cylinders on mileage by weight (in thousands of lbs)
+interplot(m1, "cyl", "wt")  # as cars get heavier, 
+# the magnitude of the negative relationship
+# between number of cylinders and mileage declines and,
+# at ~3500lbs, loses statistical significance
+
+# Coefficient for weight (in thousands of lbs) on mileage by number of cylinders
+interplot(m1, "wt", "cyl", steps=3) # weight is always estimated to have a
+# statistically significant negative relationship
+# to mileage, but this relationship is weaker
+# for cars with more cylinders
+
+
+interplot.default <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324, 
+                              sims = 1000, steps = NULL, xmin = NA, xmax = NA, labels = NULL, plot = TRUE, bar = F) {
+  set.seed(seed)
+  
+  m.class <- class(m)
+  m.sims <- arm::sim(m, sims)
+  
+  ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, 
+                                                                           ":", var1))
+  
+  if (!var12 %in% names(m$coef)) 
+    var12 <- paste0(var1, ":", var2)
+  if (!var12 %in% names(m$coef)) 
+    stop(paste("Model does not include the interaction of", var1, "and", 
+               var2, "."))
+  if (is.na(xmin)) 
+    xmin <- min(m$model[var2], na.rm = T)
+  if (is.na(xmax)) 
+    xmax <- max(m$model[var2], na.rm = T)
+  
+  
+  if (is.null(steps)) steps <- eval(parse(text = paste0("length(names(table(m$model$",var2,")))")))
+  if (steps > 100) steps <- 100 # avoid redundant calculation
+
+  
+  coef <- data.frame(fake = seq(xmin, xmax, length.out = steps), coef1 = NA, 
+                     ub = NA, lb = NA)
+  
+  for (i in 1:steps) {
+    coef$coef1[i] <- mean(m.sims@coef[, match(var1, names(m$coef))] + 
+                            coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))])
+    coef$ub[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
+                             coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))], 0.975)
+    coef$lb[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
+                             coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))], 0.025)
+  }
+  
+  if (plot == TRUE) {
+    interplot.plot(m = coef, steps = steps, ylab = ylab, xlab = xlab, bar = bar)
   } else {
-    coef.plot <- ggplot(data, aes(x = fake, y = coef1)) +                       
-      geom_point() + geom_errorbar(aes(ymin=lb, ymax=ub), width=0) + 
-      scale_x_continuous(breaks = 0:steps) + theme_bw()+
+    names(coef) <- c(var2, "coef", "ub", "lb")
+    return(coef)
+  }
+} 
+
+
+interplot.plot <- function(m, ylab = NULL, xlab = NULL, bar = F, ...) {
+  if (class(m) == "plot") class(m) <- "data.frame"
+  
+  steps <- nrow(m)
+  levels <- sort(unique(m$fake))
+  
+  if (steps <= 5 | bar == T) {
+    coef.plot <- ggplot(m, aes(x = fake, y = coef1)) + geom_point() + 
+      geom_errorbar(aes(ymin = lb, ymax = ub), width = 0) + 
+      scale_x_continuous(breaks = levels) + 
+      theme_bw() + ylab(ylab) + xlab(xlab)
+  } else {
+    coef.plot <- ggplot(m, aes(x = fake, y = coef1)) + geom_line() + 
+      geom_ribbon(aes(ymin = lb, ymax = ub), alpha = 0.5) + theme_bw() + 
       ylab(ylab) + xlab(xlab)
   }
   return(coef.plot)
-}
+} 
+
+interplot.default(m1, "x1", "z", steps = 5)
+
+
+# Vignette
+devtools::use_vignette("interplot-vignette")
+
+
+
+
