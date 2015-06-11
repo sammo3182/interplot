@@ -1,4 +1,5 @@
 data(mtcars)
+devtools::install_github("sammo3182/Interplot") # install most recent version
 library(Interplot)
 
 m1 <- lm(formula = mpg ~ wt + cyl + wt:cyl, data = mtcars)
