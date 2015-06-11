@@ -61,8 +61,10 @@ interplot.mlmmi <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324,
     if (is.na(xmax)) 
         xmax <- max(m@frame[var2], na.rm = T)
     
-    if (is.null(steps)) steps <- eval(parse(text = paste0("length(unique(na.omit(m@frame$",var2,")))")))
-    if (steps > 100) steps <- 100 # avoid redundant calculation
+    if (is.null(steps)) {
+        steps <- eval(parse(text = paste0("length(unique(na.omit(m$model$",var2,")))")))
+        if (steps > 100) steps <- 100 # avoid redundant calculation
+    }
     
     
     coef <- data.frame(fake = seq(xmin, xmax, length.out = steps), coef1 = NA, 
@@ -118,8 +120,10 @@ interplot.gmlmmi <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324
     if (is.na(xmax)) 
         xmax <- max(m@frame[var2], na.rm = T)
     
-    if (is.null(steps)) steps <- eval(parse(text = paste0("length(unique(na.omit(m@frame$",var2,")))")))
-    if (steps > 100) steps <- 100 # avoid redundant calculation
+    if (is.null(steps)) {
+        steps <- eval(parse(text = paste0("length(unique(na.omit(m$model$",var2,")))")))
+        if (steps > 100) steps <- 100 # avoid redundant calculation
+    }
     
     coef <- data.frame(fake = seq(xmin, xmax, length.out = steps), coef1 = NA, 
         ub = NA, lb = NA)
