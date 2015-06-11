@@ -20,6 +20,8 @@ df$e<-rnorm(2500, 0, 2)
 df$y<-2 - df$x1 + 0.3*df$x2 + 0.5*df$z + df$u + df$e
 
 m1<-lm(y~x1+x2+d+z+x1:z, data = df)
+
+m1_1<-lm(y~x1+x2+d+z+x2:d, data = df)
 ## 2. Logit with two interaction terms (the second term is of interest)
 m2<-glm(d~y+x1+x2+z+x1:z+y:z, family=binomial(link="logit"), data = df)
 ## 3. Multilevel
@@ -36,6 +38,8 @@ m4 <- lapply(m.imp$imputations, function(i) lm(y ~ x1 + x2.miss + d + x2.miss*z,
 
 
 interplot(m1, "x1", "z")
+
+interplot(m1_1, "x2", "d")
 
 interplot(m2, "y", "z")
 
