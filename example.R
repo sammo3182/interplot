@@ -1,7 +1,7 @@
 devtools::install_github("sammo3182/Interplot") # install most recent version
 library(Interplot)
 
-data(mtcars)
+data(mtcars) # Motor Trend Cars Dataset, included in base
 
 m1 <- lm(formula = mpg ~ wt + cyl + wt:cyl, data = mtcars)
 summary(m1)
