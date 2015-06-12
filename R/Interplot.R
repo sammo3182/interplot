@@ -85,6 +85,7 @@ interplot <- function(m, ...) {
             class(m) <- "glmmi"
         }
     }
+  
     if (class(m) == "data.frame") 
         class(m) <- "plot"
     

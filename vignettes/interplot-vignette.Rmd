@@ -1,0 +1,147 @@
+---
+title: "interplot: R Package for Plotting Interactive Effects"
+author: "Frederick Solt and Yue Hu"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+`interplot` is a package ifor visualizing interactive effects in various regresssion models. The functions can plot the changes in the coefficient of one item in a two-way interaction conditioned on the other. The plot also include simulated 95/% confidential intervals of these changes. In the current version, the function can work on ordinary linear regression models, generalized linear models (e.g., logit, probit, ordered logit, etc.), multilevel regressions, with full or imputed data. This vignette will illustrate how users can use this function to improve the presentation of the interactive effects in their models.
+
+## Run a Model
+
+The example we are used here is based on the data from the 1974 *Motor Trend US* magazine. Three variables are involved; the dependent variable: miles/(US) gallon (`mpg`), and the independent variables: number of cylinders (`cyl`) and weight (`wt`).
+
+```{r}
+data(mtcars)  #load the data
+```
+
+Let's pretend our research is about how the weight can affect the influence of cylinder number on mileage and how the cylinder number can affect the influence of the car weight on its mileage. A typical design for these effects is using an two-way interaciton:
+
+```{r}
+
+m_cyl <- lm(mpg ~ wt * cyl, data = mtcars)
+summary(m_cyl)
+
+
+```
+
+The coefficient of the interactive term (`wt:cyl`) is positive and statsitically significant at .05 level. However, this estimate does not straightfowardly show **how much** the interaction can affect either item's effect on the dependent variable. A plot produced by `interplot` can easily and clearly show that.
+
+## Create a Basic Interactive Graph
+
+To do it, a user only needs three basic pieces of information: the object of a regression result (`m`), the affected variable (`var1`), and the conditioning variable (`var2`). Taking the previous example, if we intend to know how the weight of a car can affect the influence of cylinder number on the mileage, the affected variable is cylinder number, and the conditioning variable is weight. 
+
+```{r fig.width = 5}
+library(interplot)
+
+interplot(m = m_cyl, var1 = "cyl", var2 = "wt")
+```
+
+The plot clearly shows that with the incline of weight (along in the x axis), the influence of cylinder on the mileage also increases (along in the y axis).
+
+Similarly, to show the conditional effect of number of cylinders on weight's influence on mileage, one just needs to switch `var1` and `var2`:
+
+```{r fig.width = 5}
+interplot(m = m_cyl, var1 = "wt", var2 = "cyl")
+```
+
+You may already notice that the format of the plot also changes when we switch the `var1` and `var2`. This is because in the second plot the conditioning variable (`var2`) is no longer a continual variable but a categorical one. `interplot` embeds an automatic function to diagnose the variable type and conduct corresponding format of plot, from a practical view. Everytime, the funciton will detect how many unique categories are in the conditioning variable before plotting. If there are more than 10 categories, the funciton will use the default setting to produce a "line + ribbon" plot. But when the categories are more than 100, the function will only estimate 100 points for plotting, in order to avoide redundent estimating. If fewer than 10, the variable will be recognized as a categorical type, and a "point + whisker" plot will conducted instead. 
+
+A user can overwrite this automatic function by setting the option `steps`, if she want to estimate over 100 points to plot or to show a phrase effect rather than a full scale in a continuosly conditional variable. For example, if one only wants to show interactive effect of weight on cylinder number's influence in a quantile scale, she can set the `steps` to 5:
+
+```{r fig.width = 5}
+interplot(m = m_cyl, var1 = "cyl", var2 = "wt", steps = 5)
+```
+
+A user can also overwrite the plot type by setting the option `point`. The default value is `FAULSE`. If one set it as `TRUE` for a continuous conditioning variable, she can get a "dot + whisker" plot, although, more often than not the default "line + ribbon" should perform a better presentation.
+
+```{r fig.width = 5}
+interplot(m = m_cyl, var1 = "cyl", var2 = "wt", point = T)
+```
+
+
+## Change Appearance of the Graph
+
+The default plot is very basic by `interplot` default. We offer some options to make it prettier. For example, one can add the axis labels by `xlab` and `ylab`:
+
+```{r fig.width = 5}
+interplot(m = m_cyl, var1 = "cyl", var2 = "wt",
+          xlab = "Weight", ylab = "Number of Cylinders")
+```
+
+The more options and detail instructions can be referred in the `?interplot`. Moreover, because the produced plot is based on `ggplot2`, one can add any more `ggplot` layers after the `interplot`, such as adding a title or a horizontal line at y = 0 :
+
+```{r fig.width = 5}
+interplot(m = m_cyl, var1 = "cyl", var2 = "wt",
+          xlab = "Weight", ylab = "Number of Cylinders") +
+  ggtitle("The Conditional Effect of Weight \n 
+          on the Influence of Cylinder Number") + 
+     theme(plot.title = element_text(face="italic"))  # adding a italic, two-line title
+
+interplot(m = m_cyl, var1 = "cyl", var2 = "wt",
+          xlab = "Weight", ylab = "Number of Cylinders") +
+  geom_hline(yintercept = 0, color = "red")
+
+```
+
+
+## Plot Interactive Effects Without Regressions
+
+In some cases, one may analyze with some complicated or self-made regression functions which are not supported by the current version of `interplot`. For them, as long as the user has a dataset loading the simulated results of the interaction effects, she can still use `interplot` to visuallize it. The dataset needs four columes the scale of the conditioning variable (`fake`), the simulated interactive effect at each break of the conditioning variable (`coef1`), and the simulated lower bound and upper bound of the confidence interval (`lb`, and `ub`). The column names should be exactly the onese shown in the above parentheses. Here is an example with some arbitrary artificial data:
+
+```{r fig.width = 5.5}
+fake <- rnorm(100, 0, 1)
+coef1 <- fake * sample(.5:2.5, 100, replace = T)
+lb <- coef1 - .5
+ub <- coef1 + .5
+
+df_fake <- data.frame(cbind(fake, coef1, lb, ub))
+
+
+interplot(df_fake)
+
+```
+
+## Conclusion
+
+The `interplot` pakcage provides a flexible and convenient way to visualize the interactive effects. This vignette offers an overview of its use and features. We encourage users to consult the extensive help files for more details.
+
+The development of the package is ongoing, and future research promises a compatible tool for more types of regressions and more functions. You are very welcome to contact us with any confusions, bug reports, and comments.
+
+## Affiliation
+
+Frederick Solt
+
+Department of Political Science,
+
+University of Iowa, 
+
+324 Schaeffer Hall,
+
+20 E Washington St, Iowa City, IA, 52242
+
+Email: <frederick-solt@uiowa.edu>
+
+Website: <http://myweb.uiowa.edu/fsolt>
+
+<br></br>
+
+Yue Hu
+
+Department of Political Science,
+
+University of Iowa, 
+
+313 Schaeffer Hall,
+
+20 E Washington St, Iowa City, IA, 52242
+
+Email: <yue-hu-1@uiowa.edu>
+
+Website: <http://sammo3182.wix.com/huyue>
+
+

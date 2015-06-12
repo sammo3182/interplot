@@ -1,4 +1,4 @@
-Package: Interplot
+Package: interplot
 Title: A Package For Plotting the Effects of Interaction Terms
 Version: 0.1.0.9000
 Author: Frederick Solt <frederick-solt@uiowa.edu>, Yue Hu <yue-hu-1@uiowa.edu>
