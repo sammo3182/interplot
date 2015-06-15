@@ -51,7 +51,7 @@ interplot <- function(m, ...) {
             class(m) <- "mlmmi"
         }
         if (class(m[[1]]) == "glmerMod") {
-            class(m) <- "gmlmmi"
+            class(m) <- "glmmi"
         }
         if (class(m[[1]]) == "lm") {
             class(m) <- "lmmi"
