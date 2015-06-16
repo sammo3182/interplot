@@ -32,7 +32,7 @@
 
 # Coding function for non-mlm mi objects
 interplot.lmmi <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324, 
-    sims = 1000, steps = NULL, xmin = NA, xmax = NA, labels = NULL, plot = TRUE, point = F) {
+    sims = 1000, steps = NULL, xmin = NA, xmax = NA, labels = NULL, plot = TRUE, point = FALSE) {
     set.seed(seed)
     
     class(m) <- "list"
@@ -86,7 +86,7 @@ interplot.lmmi <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324,
 
 
 interplot.glmmi <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324, 
-    sims = 1000, steps = NULL, xmin = NA, xmax = NA, labels = NULL, plot = TRUE, point = TRUE) {
+    sims = 1000, steps = NULL, xmin = NA, xmax = NA, labels = NULL, plot = TRUE, point = FALSE) {
     set.seed(seed)
     
     class(m) <- "list"

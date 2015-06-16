@@ -39,7 +39,7 @@
 
 # S3 method for class 'lm' and 'glm'
 interplot.default <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324, 
-    sims = 1000, steps = NULL, xmin = NA, xmax = NA, labels = NULL, plot = TRUE, point = F) {
+    sims = 1000, steps = NULL, xmin = NA, xmax = NA, labels = NULL, plot = TRUE, point = FALSE) {
     set.seed(seed)
     
     m.class <- class(m)

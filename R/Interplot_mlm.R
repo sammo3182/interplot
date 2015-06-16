@@ -33,7 +33,7 @@
 
 # Coding function for non-mi mlm objects
 interplot.lmerMod <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324, 
-    sims = 1000, steps = NULL, xmin = NA, xmax = NA, labels = NULL, plot = TRUE, point = F) {
+    sims = 1000, steps = NULL, xmin = NA, xmax = NA, labels = NULL, plot = TRUE, point = FALSE) {
     set.seed(seed)
     
     m.class <- class(m)
@@ -81,7 +81,7 @@ interplot.lmerMod <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 32
 
 
 interplot.glmerMod <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324, 
-    sims = 1000, steps = 100, xmin = NA, xmax = NA, labels = NULL, plot = TRUE, point = TRUE) {
+    sims = 1000, steps = 100, xmin = NA, xmax = NA, labels = NULL, plot = TRUE, point = FALSE) {
     set.seed(seed)
     
     m.class <- class(m)
