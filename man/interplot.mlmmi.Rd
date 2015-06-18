@@ -6,7 +6,7 @@
 \usage{
 \method{interplot}{mlmmi}(m, var1, var2, xlab = NULL, ylab = NULL,
   seed = 324, sims = 1000, steps = NULL, xmin = NA, xmax = NA,
-  labels = NULL, plot = TRUE, point = F)
+  labels = NULL, plot = TRUE, point = FALSE)
 }
 \arguments{
 \item{m}{a model object including the interaction of interest.}

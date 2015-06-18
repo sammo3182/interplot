@@ -29,7 +29,7 @@ interplot(m = m_cyl, var1 = "cyl", var2 = "wt",
 ## ----fig.width = 5-------------------------------------------------------
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt",
           xlab = "Weight", ylab = "Number of Cylinders") +
-  ggtitle("The Conditional Effect of Weight \n 
+  ggtitle("The Conditional Effect of Weight
           on the Influence of Cylinder Number") + 
      theme(plot.title = element_text(face="italic"))  # adding a italic, two-line title
 
