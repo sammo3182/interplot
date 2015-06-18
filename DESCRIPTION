@@ -15,5 +15,6 @@ Imports:
         arm
 License: MIT + file LICENSE
 LazyData: true
-Suggests: knitr
+Suggests: knitr,
+    testthat
 VignetteBuilder: knitr
