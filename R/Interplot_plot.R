@@ -2,18 +2,17 @@
 #' 
 #' Graph based on the data frame of statistics about the conditional effect of an interaciton.
 #' 
-#' @param m a data.frame recording the statistics of the changes caused by the interaction. The data.frame should includes four columns:
+#' @param m A data.frame recording the statistics of the changes caused by the interaction. The data.frame should includes four columns:
 #' \itemize{
-#'    \item fake: the sequence of \code{var1} (the item whose effect will be conditioned on in the interaction);
-#'    \item coef1: the point estimates of the coefficient of \code{var1} at each break point.
-#'    \item ub: the upper bound of the simulated 95\% CI.
-#'    \item lb: the lower bound of the simulated 95\% CI.
+#'    \item fake: The sequence of \code{var1} (the item whose effect will be conditioned on in the interaction);
+#'    \item coef1: The point estimates of the coefficient of \code{var1} at each break point.
+#'    \item ub: The upper bound of the simulated 95\% CI.
+#'    \item lb: The lower bound of the simulated 95\% CI.
 #' }
-#' @param ylab set the label of the y axis.
-#' @param xlab set the label of the x axis.
-#' @param steps Desired length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).
+#' @param ylab A character value to set the label of the y axis.
+#' @param xlab A character value to set the label of the x axis.
+#' @param steps A numeric value desiring length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).
 #' @param point A logical value determining the format of plot. The function produces a point plot when it is \code{TRUE}; otherwise, the fucntion produces a line plot. Both plots have 95\% confidential intervals. The default is \code{FAULSE}.
-#' @param ... additional arguments from \code{\link[ggplot2]{ggplot}}. 
 #' 
 #' @details \code{interplot.plot} is a S3 method from the \code{interplot}. It can graph the interaction effects based on a statistic data.frame recording the effects in a numeric way.
 #' 
@@ -26,7 +25,7 @@
 #' @export
 
 ## S3 method for class 'data.frame'
-interplot.plot <- function(m, ylab = NULL, xlab = NULL, steps = NULL, point = F, ...) {
+interplot.plot <- function(m, ylab = NULL, xlab = NULL, steps = NULL, point = F) {
   if(is.null(steps)) steps <- nrow(m)
   levels <- sort(unique(m$fake))
   

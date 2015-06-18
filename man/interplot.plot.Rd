@@ -5,26 +5,24 @@
 \title{Visualize Numeric Statistics of An Interaction}
 \usage{
 \method{interplot}{plot}(m, ylab = NULL, xlab = NULL, steps = NULL,
-  point = F, ...)
+  point = F)
 }
 \arguments{
-\item{m}{a data.frame recording the statistics of the changes caused by the interaction. The data.frame should includes four columns:
+\item{m}{A data.frame recording the statistics of the changes caused by the interaction. The data.frame should includes four columns:
 \itemize{
-   \item fake: the sequence of \code{var1} (the item whose effect will be conditioned on in the interaction);
-   \item coef1: the point estimates of the coefficient of \code{var1} at each break point.
-   \item ub: the upper bound of the simulated 95\% CI.
-   \item lb: the lower bound of the simulated 95\% CI.
+   \item fake: The sequence of \code{var1} (the item whose effect will be conditioned on in the interaction);
+   \item coef1: The point estimates of the coefficient of \code{var1} at each break point.
+   \item ub: The upper bound of the simulated 95\% CI.
+   \item lb: The lower bound of the simulated 95\% CI.
 }}
 
-\item{ylab}{set the label of the y axis.}
+\item{ylab}{A character value to set the label of the y axis.}
 
-\item{xlab}{set the label of the x axis.}
+\item{xlab}{A character value to set the label of the x axis.}
 
-\item{steps}{Desired length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).}
+\item{steps}{A numeric value desiring length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).}
 
 \item{point}{A logical value determining the format of plot. The function produces a point plot when it is \code{TRUE}; otherwise, the fucntion produces a line plot. Both plots have 95\% confidential intervals. The default is \code{FAULSE}.}
-
-\item{...}{additional arguments from \code{\link[ggplot2]{ggplot}}.}
 }
 \value{
 The function returns a \code{ggplot} object.
