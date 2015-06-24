@@ -9,8 +9,6 @@
 #'    \item ub: The upper bound of the simulated 95\% CI.
 #'    \item lb: The lower bound of the simulated 95\% CI.
 #' }
-#' @param ylab A character value to set the label of the y axis.
-#' @param xlab A character value to set the label of the x axis.
 #' @param steps A numeric value desiring length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).
 #' @param point A logical value determining the format of plot. The function produces a point plot when it is \code{TRUE}; otherwise, the fucntion produces a line plot. Both plots have 95\% confidential intervals. The default is \code{FAULSE}.
 #' 
@@ -25,7 +23,7 @@
 #' @export
 
 ## S3 method for class 'data.frame'
-interplot.plot <- function(m, ylab = NULL, xlab = NULL, steps = NULL, point = F) {
+interplot.plot <- function(m, steps = NULL, point = F) {
   if(is.null(steps)) steps <- nrow(m)
   levels <- sort(unique(m$fake))
   

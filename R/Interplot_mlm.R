@@ -5,9 +5,6 @@
 #' @param m A model object including the interaction of interest.
 #' @param var1 A charecter value showing the target variable in the interaction term of interest, whose coefficient changes is intended to plot.
 #' @param var2 A charecter value showing the changing variable in the interaction term of interest, along with the changes of which the changes of the coefficient of the other variable is shown in the plot.
-#' @param xlab A character variable to set the title for the x axis.
-#' @param ylab A character variable to set the title for the y axis.
-#' @param labels A logical value to deside whether using the variable labels.
 #' @param seed An arbitrary numeric value. The default value is 324.
 #' @param sims Number of independent simulation draws to create.
 #' @param steps Desired length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).
@@ -31,8 +28,8 @@
 #' @export
 
 # Coding function for non-mi mlm objects
-interplot.lmerMod <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324, 
-    sims = 1000, steps = NULL, xmin = NA, xmax = NA, labels = NULL, plot = TRUE, point = FALSE) {
+interplot.lmerMod <- function(m, var1, var2, seed = 324, 
+    sims = 1000, steps = NULL, xmin = NA, xmax = NA, plot = TRUE, point = FALSE) {
     set.seed(seed)
     
     m.class <- class(m)
@@ -71,7 +68,7 @@ interplot.lmerMod <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 32
     }
     
     if (plot == TRUE) {
-        interplot.plot(m = coef, steps = steps, ylab = ylab, xlab = xlab, point = point)
+        interplot.plot(m = coef, steps = steps, point = point)
     } else {
         names(coef) <- c(var2, "coef", "ub", "lb")
         return(coef)
@@ -79,8 +76,8 @@ interplot.lmerMod <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 32
 }
 
 
-interplot.glmerMod <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 324, 
-    sims = 1000, steps = 100, xmin = NA, xmax = NA, labels = NULL, plot = TRUE, point = FALSE) {
+interplot.glmerMod <- function(m, var1, var2, seed = 324, 
+    sims = 1000, steps = 100, xmin = NA, xmax = NA, plot = TRUE, point = FALSE) {
     set.seed(seed)
     
     m.class <- class(m)
@@ -120,7 +117,7 @@ interplot.glmerMod <- function(m, var1, var2, xlab = NULL, ylab = NULL, seed = 3
     }
     
     if (plot == TRUE) {
-        interplot.plot(m = coef, steps = steps, ylab = ylab, xlab = xlab, point = point)
+        interplot.plot(m = coef, steps = steps, point = point)
     } else {
         names(coef) <- c(var2, "coef", "ub", "lb")
         return(coef)
