@@ -33,11 +33,11 @@ interplot.plot <- function(m, ylab = NULL, xlab = NULL, steps = NULL, point = F)
     coef.plot <- ggplot(m, aes(x = fake, y = coef1)) + geom_point() + 
       geom_errorbar(aes(ymin = lb, ymax = ub), width = 0) + 
       scale_x_continuous(breaks = levels) + 
-      theme_bw() + ylab(ylab) + xlab(xlab)
+      ylab(NULL) + xlab(NULL)
   } else {
     coef.plot <- ggplot(m, aes(x = fake, y = coef1)) + geom_line() + 
-      geom_ribbon(aes(ymin = lb, ymax = ub), alpha = 0.5) + theme_bw() + 
-      ylab(ylab) + xlab(xlab)
+      geom_ribbon(aes(ymin = lb, ymax = ub), alpha = 0.5) + 
+      ylab(NULL) + xlab(NULL)
   }
   return(coef.plot)
 } 
