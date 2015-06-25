@@ -7,6 +7,7 @@
 #' @param var2 The name (as a string) of the other variable in the interaction term
 #' @param plot A logical value indicating whether the output is a plot or a dataframe including the conditional coefficient estimates of var1, their upper and lower bounds, and the corresponding values of var2.
 #' @param point A logical value determining the format of plot. By default, the function produces a line plot when var2 takes on more than ten distinct values and a point (dot-and-whisker) plot otherwise; option TRUE forces a point plot.
+#' @param sims Number of independent simulation draws used to calculate upper and lower bounds of coefficient estimates: lower values run faster; higher values produce smoother curves.
 #' @param xmin A numerical value indicating the minimum value shown of x shown in the graph. Rarely used.
 #' @param xmax A numerical value indicating the maximum value shown of x shown in the graph. Rarely used.
 #' 
@@ -57,7 +58,7 @@
 
 
 
-interplot <- function(m, var1, var2, plot = TRUE, point = FALSE, xmin = NA, xmax = NA) {
+interplot <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5000, xmin = NA, xmax = NA) {
     
     
     if (class(m) == "list") {
