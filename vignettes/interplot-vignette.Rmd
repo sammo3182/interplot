@@ -74,13 +74,8 @@ interplot(m = m_cyl, var1 = "cyl", var2 = "wt") +
     ylab("Estimated Coefficient for\nNumber of Cylinders") +
   # Change the background
     theme_bw() +
-<<<<<<< HEAD
   # Add the title
     ggtitle("Estimated Coefficient of Engine Cylinders \non Mileage by Automobile Weight") +
-=======
-  # Add a title
-    ggtitle("Estimated Coefficient of Engine Cylinders\non Mileage by Automobile Weight") +
->>>>>>> c686de83620c895af1a469c1eba11b829c70d3c1
     theme(plot.title = element_text(face="bold")) +
   # Add a horizontal line at y = 0
     geom_hline(yintercept = 0, linetype = "dashed")
