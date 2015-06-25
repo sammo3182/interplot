@@ -48,7 +48,7 @@ interplot(m = m_cyl, var1 = "cyl", var2 = "wt")
 
 The plot clearly shows that with increasing automobile weight (along in the x axis), the magnitude of the coefficient of the number of cylinders on the mileage also increases (along in the y axis).
 
-Similarly, to show the conditional effect of number of cylinders on the coefficient of automobile weight on mileage, one only needs to switch `var1` and `var2`:
+Similarly, to show how the number of cylinders affects the coefficient of automobile weight on mileage, one only needs to switch `var1` and `var2`:
 
 ```{r fig.width = 5}
 interplot(m = m_cyl, var1 = "wt", var2 = "cyl")
