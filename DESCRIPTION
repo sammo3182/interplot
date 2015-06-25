@@ -4,9 +4,8 @@ Version: 0.1.0.9000
 Author: Frederick Solt <frederick-solt@uiowa.edu>, Yue Hu <yue-hu-1@uiowa.edu>
 Maintainer: Frederick Solt <frederick-solt@uiowa.edu>, 
   Yue Hu <yue-hu-1@uiowa.edu>
-Description: "Interplot" can be used to plot plot of the conditional graph of one 
-    variable in an two-way interaction conditioned on the other variable from the 
-    results of various model fitting functions.
+Description: "interplot" is a package for plotting the conditional coefficients
+of variables included in multiplicative interaction terms.
 Depends: 
         R (>= 3.1.1),
         ggplot2
