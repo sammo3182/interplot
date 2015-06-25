@@ -1,5 +1,5 @@
 ---
-title: "interplot: R Package for Plotting Interactive Effects"
+title: "interplot: An R Package for Plotting Interaction Terms"
 author: "Frederick Solt and Yue Hu"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -9,23 +9,21 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-`interplot` is a package for visualizing interactive effects in various regression models. The functions can plot the changes in the coefficient of one item in a two-way interaction conditioned on the other. The plot also include simulated 95/% confidential intervals of these changes. In the current version, the function can work on ordinary linear regression models, generalized linear models (e.g., logit, probit, ordered logit, etc.), multilevel regressions, with full or imputed data. 
+`interplot` is a package for plotting the conditional coefficients of variables included in multiplicative interaction terms. The function plots the changes in the coefficient of one variable in a two-way interaction term conditional on the value of the other included variable. The plot also includes simulated 95% confidential intervals of these coefficients.  In the current version, the function works with ordinary linear regression models, generalized linear models (e.g., logit, probit, ordered logit, etc.), and multilevel (mixed-effects) regressions, all with complete or multiply imputed data. 
 
+Comparing to established alternatives such as `effects::plot` and `sjplot::sjp.int`, `interplot` provides a more user-friendly way to quickly produce plots that are easy to interpret. `interplot` plots the changes in the *conditional coefficient* of one variable in the interaction, rather than changes in the dependent variable itself as in the aforementioned functions. This approach avoids displaying interaction effects across multiple panels or multiple lines in favor of a single plot containing all the relevant information. Moreover, by outputting `ggplot' objects, `interplot' allows users to easily further customize their graphs.
 
-Comparing to the established alternatives, such as `effects::plot` and `sjplot::sjp.int`, `interplot` is more user-friendly and produces more succinct yet straightforward plots. We chooses a strategy to plot the changes in the *influence (coefficients) on the dependent variable* of one item in the interaction, rather than the dependent variable itself. This prevents showing the interactive effects in multiple panels or multiple lines. One single plot contains all the information! Moreover, the users are given a large free room to manipulate their graphs. They can freely present interactive effects in various intervals, various plot formats and appearance, and which interaction they want to present if there are multiple interaction term in the regression.
-
-
-This vignette purposes to illustrate how users can apply these functions to improve the presentation of the interactive effects in their models. 
+This vignette purposes to illustrate how users can apply these functions to improve the presentation of the interactions in their models. 
 
 ## Run a Model
 
-The example we are used here is based on the data from the 1974 *Motor Trend US* magazine. Three variables are involved; the dependent variable: miles/(US) gallon (`mpg`), and the independent variables: number of cylinders (`cyl`) and weight (`wt`).
+This example is based on the `mtcars` dataset, which is drawn from the 1974 volume of the US magazine *Motor Trend*. The dependent variable is mileage in miles per (US) gallon (`mpg`), and the independent variables are the number of engine cylinders (`cyl`) and automobile weight in thousands of pounds (`wt`).
 
 ```{r}
 data(mtcars)  #load the data
 ```
 
-Let's pretend our research is about how the weight can affect the influence of cylinder number on mileage and how the cylinder number can affect the influence of the car weight on its mileage. A typical design for these effects is using an two-way interaction:
+Suppose we are interested in how automobile weight affectw the relationship between of the number of engine cylinders on mileage and how the number of cylinders affects the relationship between the car's weight and its mileage. Such conditional effects are modeled using a two-way multiplicative interaction term:
 
 ```{r}
 
@@ -35,11 +33,12 @@ summary(m_cyl)
 
 ```
 
-The coefficient of the interactive term (`wt:cyl`) is positive and statistically significant at .05 level. However, this estimate does not straightforwardly show **how much** the interaction can affect either item's effect on the dependent variable. A plot produced by `interplot` can easily and clearly show that.
+The coefficient of the interactive term (`wt:cyl`) is positive and statistically significant at .05 level.  This tells us that the coefficient of `wt` depends on the value of `cyl` and vice versa; these estimated coefficients are conditional.  It does not indicate anything, however, about the magnitude or statistical significance of these conditional coefficients.  A plot produced by `interplot` easily and clearly answers these latter questions.
 
-## Create a Basic Interactive Graph
 
-To do it, a user only needs three basic pieces of information: the object of a regression result (`m`), the affected variable (`var1`), and the conditioning variable (`var2`). Taking the previous example, if we intend to know how the weight of a car can affect the influence of cylinder number on the mileage, the affected variable is cylinder number, and the conditioning variable is weight. 
+## Create a Basic Graph of the Conditional Coefficients
+
+To plot conditional coefficients, a user needs to provide only three basic pieces of information: the object of a regression result (`m`), the variable whose coefficient is to be plotted (`var1`), and the variable on which the coefficient is conditional (`var2`). Taking the previous example, if we intend to know how the weight of a car can affect the coefficient for number of cylinders on the mileage, `var1` is `cyl`, and `var2` is `wt`. 
 
 ```{r fig.width = 5}
 library(interplot)
@@ -47,55 +46,37 @@ library(interplot)
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt")
 ```
 
-The plot clearly shows that with the incline of weight (along in the x axis), the influence of cylinder on the mileage also increases (along in the y axis).
+The plot clearly shows that with increasing automobile weight (along in the x axis), the magnitude of the coefficient of the number of cylinders on the mileage also increases (along in the y axis).
 
-Similarly, to show the conditional effect of number of cylinders on weight's influence on mileage, one just needs to switch `var1` and `var2`:
+Similarly, to show the conditional effect of number of cylinders on the coefficient of automobile weight on mileage, one only needs to switch `var1` and `var2`:
 
 ```{r fig.width = 5}
 interplot(m = m_cyl, var1 = "wt", var2 = "cyl")
 ```
 
-You may already notice that the format of the plot also changes when we switch the `var1` and `var2`. This is because in the second plot the conditioning variable (`var2`) is no longer a continual variable but a categorical one. `interplot` embeds an automatic function to diagnose the variable type and conduct corresponding format of plot, from a practical view. Every time, the function will detect how many unique categories are in the conditioning variable before plotting. If there are more than 10 categories, the function will use the default setting to produce a "line + ribbon" plot. But when the categories are more than 100, the function will only estimate 100 points for plotting, in order to avoid redundant estimating. If fewer than 10, the variable will be recognized as a categorical type, and a "point + whisker" plot will conducted instead. 
-
-A user can overwrite this automatic function by setting the option `steps`, if she want to estimate over 100 points to plot or to show a phrase effect rather than a full scale in a continuously conditional variable. For example, if one only wants to show interactive effect of weight on cylinder number's influence in a quantile scale, she can set the `steps` to 5:
-
-```{r fig.width = 5}
-interplot(m = m_cyl, var1 = "cyl", var2 = "wt", steps = 5)
-```
-
-A user can also overwrite the plot type by setting the option `point`. The default value is `FAULSE`. If one set it as `TRUE` for a continuous conditioning variable, she can get a "dot + whisker" plot, although, more often than not the default "line + ribbon" should perform a better presentation.
+The format of the plot also changes when `wt` is `var1` and `cyl` is `var2`. This is because `cyl` is not a continuous variable but a categorical one with just three values: 4, 6, and 8. `interplot` automatically detects the number of values taken on by `var2` and chooses the appropriate plot format.  If there are fewer than 10 values, the function will produce a "dot-and-whisker" plot; otherwise, by default, it will generate a "line-and-ribbon" plot.  Users may override this default by setting the argument `point` to `TRUE`.
 
 ```{r fig.width = 5}
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt", point = T)
 ```
 
 
-## Change Appearance of the Graph
+## Change the Appearance of the Plot
 
-The default plot is very basic by `interplot` default. We offer some options to make it prettier. For example, one can add the axis labels by `xlab` and `ylab`:
-
-```{r fig.width = 5}
-interplot(m = m_cyl, var1 = "cyl", var2 = "wt",
-          xlab = "Weight", ylab = "Number of Cylinders")
-```
-
-The more options and detail instructions can be referred in the `?interplot`. Moreover, because the produced plot is based on `ggplot2`, one can add any more `ggplot` layers after the `interplot`, such as adding a title or a horizontal line at y = 0 :
+Plots generated by `interplot` are, by design, very basic. They are, however, `ggplot' objects and so may be easily modified further.
 
 ```{r fig.width = 5}
-interplot(m = m_cyl, var1 = "cyl", var2 = "wt",
-          xlab = "Weight", ylab = "Number of Cylinders") +
-  ggtitle("The Conditional Effect of Weight
-          on the Influence of Cylinder Number") + 
-     theme(plot.title = element_text(face="italic"))  # adding a italic, two-line title
-
-interplot(m = m_cyl, var1 = "cyl", var2 = "wt",
-          xlab = "Weight", ylab = "Number of Cylinders") +
-  geom_hline(yintercept = 0, color = "red")
-
+interplot(m = m_cyl, var1 = "cyl", var2 = "wt") + 
+    xlab("Automobile Weight (thousands lbs)") +
+    ylab("Estimated Coefficient for\nNumber of Cylinders") +
+    theme_bw() +
+    ggtitle("Estimated Coefficient of Engine Cylinders\non Mileage by Automobile Weight") +
+    theme(plot.title = element_text(face="bold")) +
+    geom_hline(yintercept = 0, linetype = "dashed")
 ```
 
 
-## Plot Interactive Effects Without Regressions
+## Advanced Use: Plot Conditional Effects Without a Model
 
 In some cases, one may analyze with some complicated or self-made regression functions which are not supported by the current version of `interplot`. For them, as long as the user has a dataset loading the simulated results of the interaction effects, she can still use `interplot` to visualize it. The dataset needs four columns the scale of the conditioning variable (`fake`), the simulated interactive effect at each break of the conditioning variable (`coef1`), and the simulated lower bound and upper bound of the confidence interval (`lb`, and `ub`). The column names should be exactly the ones shown in the above parentheses. Here is an example with some arbitrary artificial data:
 
@@ -114,9 +95,9 @@ interplot(df_fake)
 
 ## Conclusion
 
-The `interplot` package provides a flexible and convenient way to visualize the interactive effects. This vignette offers an overview of its use and features. We encourage users to consult the extensive help files for more details. 
+The `interplot` package provides a flexible and convenient way to visualize conditional coefficients of variables in multiplicative interaction terms. This vignette offers an overview of its use and features. We encourage users to consult the help files for more details. 
 
-The development of the package is ongoing, and future research promises a compatible tool for more types of regressions and more functions. You are very welcome to contact us with any confusions, bug reports, and comments.
+The development of the package is ongoing, and future research promises a compatible tool for more types of regressions and more functions. Please contact us with any questions, bug reports, and comments.
 
 ## Affiliation
 
