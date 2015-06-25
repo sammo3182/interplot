@@ -8,7 +8,7 @@
   sims = 5000, xmin = NA, xmax = NA)
 }
 \arguments{
-\item{m}{A data.frame recording the statistics of the changes caused by the interaction. The data.frame should includes four columns:
+\item{m}{A model object including an interaction term, or, alternately, a data frame recording conditional coefficients. This data frame should includes four columns:
 \itemize{
    \item fake: The sequence of \code{var1} (the item whose effect will be conditioned on in the interaction);
    \item coef1: The point estimates of the coefficient of \code{var1} at each break point.
@@ -16,9 +16,19 @@
    \item lb: The lower bound of the simulated 95\% CI.
 }}
 
-\item{point}{A logical value determining the format of plot. The function produces a point plot when it is \code{TRUE}; otherwise, the fucntion produces a line plot. Both plots have 95\% confidential intervals. The default is \code{FAULSE}.}
+\item{var1}{The name (as a string) of the variable of interest in the interaction term; its conditional coefficient estimates will be plotted.}
 
-\item{steps}{A numeric value desiring length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).}
+\item{var2}{The name (as a string) of the other variable in the interaction term.}
+
+\item{plot}{A logical value indicating whether the output is a plot or a dataframe including the conditional coefficient estimates of var1, their upper and lower bounds, and the corresponding values of var2.}
+
+\item{point}{A logical value determining the format of plot. By default, the function produces a line plot when var2 takes on ten or more distinct values and a point (dot-and-whisker) plot otherwise; option TRUE forces a point plot.}
+
+\item{sims}{Number of independent simulation draws used to calculate upper and lower bounds of coefficient estimates: lower values run faster; higher values produce smoother curves.}
+
+\item{xmin}{A numerical value indicating the minimum value shown of x shown in the graph. Rarely used.}
+
+\item{xmax}{A numerical value indicating the maximum value shown of x shown in the graph. Rarely used.}
 }
 \value{
 The function returns a \code{ggplot} object.

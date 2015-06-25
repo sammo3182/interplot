@@ -2,15 +2,20 @@
 #' 
 #' Graph based on the data frame of statistics about the conditional effect of an interaciton.
 #' 
-#' @param m A data.frame recording the statistics of the changes caused by the interaction. The data.frame should includes four columns:
+#' @param m A model object including an interaction term, or, alternately, a data frame recording conditional coefficients. This data frame should includes four columns:
 #' \itemize{
 #'    \item fake: The sequence of \code{var1} (the item whose effect will be conditioned on in the interaction);
 #'    \item coef1: The point estimates of the coefficient of \code{var1} at each break point.
 #'    \item ub: The upper bound of the simulated 95\% CI.
 #'    \item lb: The lower bound of the simulated 95\% CI.
 #' }
-#' @param steps A numeric value desiring length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).
-#' @param point A logical value determining the format of plot. The function produces a point plot when it is \code{TRUE}; otherwise, the fucntion produces a line plot. Both plots have 95\% confidential intervals. The default is \code{FAULSE}.
+#' @param var1 The name (as a string) of the variable of interest in the interaction term; its conditional coefficient estimates will be plotted.
+#' @param var2 The name (as a string) of the other variable in the interaction term.
+#' @param plot A logical value indicating whether the output is a plot or a dataframe including the conditional coefficient estimates of var1, their upper and lower bounds, and the corresponding values of var2.
+#' @param point A logical value determining the format of plot. By default, the function produces a line plot when var2 takes on ten or more distinct values and a point (dot-and-whisker) plot otherwise; option TRUE forces a point plot.
+#' @param sims Number of independent simulation draws used to calculate upper and lower bounds of coefficient estimates: lower values run faster; higher values produce smoother curves.
+#' @param xmin A numerical value indicating the minimum value shown of x shown in the graph. Rarely used.
+#' @param xmax A numerical value indicating the maximum value shown of x shown in the graph. Rarely used.
 #' 
 #' @details \code{interplot.plot} is a S3 method from the \code{interplot}. It generates plots of conditional coefficients.
 #' 
