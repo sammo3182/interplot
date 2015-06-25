@@ -13,8 +13,8 @@ interplot(m1, "cyl", "wt")  # as cars get heavier,
                             # at ~3500lbs, loses statistical significance
 
 # Coefficient for weight (in thousands of lbs) on mileage by number of cylinders
-interplot(m1, "wt", "cyl", steps=3) # weight is always estimated to have a
-                                    # statistically significant negative relationship
-                                    # to mileage, but this relationship is weaker
-                                    # for cars with more cylinders
+interplot(m1, "wt", "cyl")  # weight is always estimated to have a
+                            # statistically significant negative relationship
+                            # to mileage, but this relationship is weaker
+                            # for cars with more cylinders
 
