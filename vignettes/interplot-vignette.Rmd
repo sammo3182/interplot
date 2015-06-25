@@ -52,44 +52,38 @@ The plot clearly shows that with the incline of weight (along in the x axis), th
 Similarly, to show the conditional effect of number of cylinders on weight's influence on mileage, one just needs to switch `var1` and `var2`:
 
 ```{r fig.width = 5}
-interplot(m = m_cyl, var1 = "wt", var2 = "cyl")
+interplot(m = m_cyl, var1 = "wt", var2 = "cyl") +
+  theme(axis.text.x  = element_text(angle=90))
 ```
 
 You may already notice that the format of the plot also changes when we switch the `var1` and `var2`. This is because in the second plot the conditioning variable (`var2`) is no longer a continual variable but a categorical one. `interplot` embeds an automatic function to diagnose the variable type and conduct corresponding format of plot, from a practical view. Every time, the function will detect how many unique categories are in the conditioning variable before plotting. If there are more than 10 categories, the function will use the default setting to produce a "line + ribbon" plot. But when the categories are more than 100, the function will only estimate 100 points for plotting, in order to avoid redundant estimating. If fewer than 10, the variable will be recognized as a categorical type, and a "point + whisker" plot will conducted instead. 
 
-A user can overwrite this automatic function by setting the option `steps`, if she want to estimate over 100 points to plot or to show a phrase effect rather than a full scale in a continuously conditional variable. For example, if one only wants to show interactive effect of weight on cylinder number's influence in a quantile scale, she can set the `steps` to 5:
+
+A user can overwrite the plot type by setting the option `point`. The default value is `FAULSE`. If one set it as `TRUE` for a continuous conditioning variable, she can get a "dot + whisker" plot, although, more often than not the default "line + ribbon" should perform a better presentation.
 
 ```{r fig.width = 5}
-interplot(m = m_cyl, var1 = "cyl", var2 = "wt", steps = 5)
-```
-
-A user can also overwrite the plot type by setting the option `point`. The default value is `FAULSE`. If one set it as `TRUE` for a continuous conditioning variable, she can get a "dot + whisker" plot, although, more often than not the default "line + ribbon" should perform a better presentation.
-
-```{r fig.width = 5}
-interplot(m = m_cyl, var1 = "cyl", var2 = "wt", point = T)
+interplot(m = m_cyl, var1 = "cyl", var2 = "wt", point = T) +
+  theme(axis.text.x  = element_text(angle=90))
 ```
 
 
 ## Change Appearance of the Graph
 
-The default plot is very basic by `interplot` default. We offer some options to make it prettier. For example, one can add the axis labels by `xlab` and `ylab`:
+The default plot is very basic by `interplot` default. But, because the produced plot is based on `ggplot2`, one can add any additional `ggplot` layers after the `interplot`, such as axis labels, a title, or a horizontal line at y = 0, to make the output more decent:
+
 
 ```{r fig.width = 5}
-interplot(m = m_cyl, var1 = "cyl", var2 = "wt",
-          xlab = "Weight", ylab = "Number of Cylinders")
-```
-
-The more options and detail instructions can be referred in the `?interplot`. Moreover, because the produced plot is based on `ggplot2`, one can add any more `ggplot` layers after the `interplot`, such as adding a title or a horizontal line at y = 0 :
-
-```{r fig.width = 5}
-interplot(m = m_cyl, var1 = "cyl", var2 = "wt",
-          xlab = "Weight", ylab = "Number of Cylinders") +
+interplot(m = m_cyl, var1 = "cyl", var2 = "wt") +
+  # adding the axis labels
+  xlab("Weight") + ylab ("Number of Cylinders") + 
+  # let the title to be italic and double-line
   ggtitle("The Conditional Effect of Weight
           on the Influence of Cylinder Number") + 
-     theme(plot.title = element_text(face="italic"))  # adding a italic, two-line title
+     theme(plot.title = element_text(face="italic"))  
 
-interplot(m = m_cyl, var1 = "cyl", var2 = "wt",
-          xlab = "Weight", ylab = "Number of Cylinders") +
+interplot(m = m_cyl, var1 = "cyl", var2 = "wt") +
+  xlab("Weight") + ylab ("Number of Cylinders") + 
+  #adding a horizontal line at y = 0
   geom_hline(yintercept = 0, color = "red")
 
 ```
