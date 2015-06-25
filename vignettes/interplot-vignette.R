@@ -14,27 +14,25 @@ library(interplot)
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt")
 
 ## ----fig.width = 5-------------------------------------------------------
-interplot(m = m_cyl, var1 = "wt", var2 = "cyl")
+interplot(m = m_cyl, var1 = "wt", var2 = "cyl") +
+  theme(axis.text.x  = element_text(angle=90))
 
 ## ----fig.width = 5-------------------------------------------------------
-interplot(m = m_cyl, var1 = "cyl", var2 = "wt", steps = 5)
+interplot(m = m_cyl, var1 = "cyl", var2 = "wt", point = T) +
+  theme(axis.text.x  = element_text(angle=90))
 
 ## ----fig.width = 5-------------------------------------------------------
-interplot(m = m_cyl, var1 = "cyl", var2 = "wt", point = T)
-
-## ----fig.width = 5-------------------------------------------------------
-interplot(m = m_cyl, var1 = "cyl", var2 = "wt",
-          xlab = "Weight", ylab = "Number of Cylinders")
-
-## ----fig.width = 5-------------------------------------------------------
-interplot(m = m_cyl, var1 = "cyl", var2 = "wt",
-          xlab = "Weight", ylab = "Number of Cylinders") +
+interplot(m = m_cyl, var1 = "cyl", var2 = "wt") +
+  # adding the axis labels
+  xlab("Weight") + ylab ("Number of Cylinders") + 
+  # let the title to be italic and double-line
   ggtitle("The Conditional Effect of Weight
           on the Influence of Cylinder Number") + 
-     theme(plot.title = element_text(face="italic"))  # adding a italic, two-line title
+     theme(plot.title = element_text(face="italic"))  
 
-interplot(m = m_cyl, var1 = "cyl", var2 = "wt",
-          xlab = "Weight", ylab = "Number of Cylinders") +
+interplot(m = m_cyl, var1 = "cyl", var2 = "wt") +
+  xlab("Weight") + ylab ("Number of Cylinders") + 
+  #adding a horizontal line at y = 0
   geom_hline(yintercept = 0, color = "red")
 
 
