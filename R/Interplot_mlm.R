@@ -64,7 +64,7 @@ interplot.lmerMod <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 
     }
     
     if (plot == TRUE) {
-        interplot.plot(m = coef, steps = steps, point = point)
+        interplot.plot(m = coef, point = point)
     } else {
         names(coef) <- c(var2, "coef", "ub", "lb")
         return(coef)
@@ -110,7 +110,7 @@ interplot.glmerMod <- function(m, var1, var2, plot = TRUE, point = FALSE, sims =
     }
     
     if (plot == TRUE) {
-        interplot.plot(m = coef, steps = steps, point = point)
+        interplot.plot(m = coef, point = point)
     } else {
         names(coef) <- c(var2, "coef", "ub", "lb")
         return(coef)

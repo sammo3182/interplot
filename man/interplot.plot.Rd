@@ -4,7 +4,8 @@
 \alias{interplot.plot}
 \title{Plot Conditional Coefficients in Models with Interaction Terms}
 \usage{
-\method{interplot}{plot}(m, steps = NULL, point = F)
+\method{interplot}{plot}(m, var1, var2, plot = TRUE, point = FALSE,
+  sims = 5000, xmin = NA, xmax = NA)
 }
 \arguments{
 \item{m}{A data.frame recording the statistics of the changes caused by the interaction. The data.frame should includes four columns:
@@ -15,9 +16,9 @@
    \item lb: The lower bound of the simulated 95\% CI.
 }}
 
-\item{steps}{A numeric value desiring length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).}
-
 \item{point}{A logical value determining the format of plot. The function produces a point plot when it is \code{TRUE}; otherwise, the fucntion produces a line plot. Both plots have 95\% confidential intervals. The default is \code{FAULSE}.}
+
+\item{steps}{A numeric value desiring length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).}
 }
 \value{
 The function returns a \code{ggplot} object.

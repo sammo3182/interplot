@@ -23,8 +23,9 @@
 #' @export
 
 ## S3 method for class 'data.frame'
-interplot.plot <- function(m, steps = NULL, point = F) {
-  if(is.null(steps)) steps <- nrow(m)
+interplot.plot <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5000,
+                           xmin = NA, xmax = NA) {
+  steps <- nrow(m)
   levels <- sort(unique(m$fake))
   
   if (steps < 10 | point == T) {
