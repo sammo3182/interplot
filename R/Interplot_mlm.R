@@ -26,7 +26,7 @@
 #' @export
 
 # Coding function for non-mi mlm objects
-interplot.lmerMod <- function(m, var1, var2, sims = 5000, plot = TRUE, point = FALSE, 
+interplot.lmerMod <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5000, 
                               xmin = NA, xmax = NA) {
     set.seed(324)
     
@@ -72,7 +72,7 @@ interplot.lmerMod <- function(m, var1, var2, sims = 5000, plot = TRUE, point = F
 }
 
 
-interplot.glmerMod <- function(m, var1, var2, sims = 5000, plot = TRUE, point = FALSE, 
+interplot.glmerMod <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5000, 
                                xmin = NA, xmax = NA) {
     set.seed(324)
     

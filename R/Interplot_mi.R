@@ -25,7 +25,7 @@
 #' @export
 
 # Coding function for non-mlm mi objects
-interplot.lmmi <- function(m, var1, var2, sims = 5000, plot = TRUE, point = FALSE, 
+interplot.lmmi <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5000, 
                            xmin = NA, xmax = NA) {
     set.seed(324)
     
@@ -77,7 +77,7 @@ interplot.lmmi <- function(m, var1, var2, sims = 5000, plot = TRUE, point = FALS
 }
 
 
-interplot.glmmi <- function(m, var1, var2, sims = 5000, plot = TRUE, point = FALSE, 
+interplot.glmmi <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5000, 
                             xmin = NA, xmax = NA) {
     set.seed(324)
     
