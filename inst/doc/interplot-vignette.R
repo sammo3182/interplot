@@ -13,17 +13,17 @@ library(interplot)
 
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt")
 
-## ----fig.width = 5-------------------------------------------------------
+## ----fig.width = 5------------------------------------------------------
 interplot(m = m_cyl, var1 = "wt", var2 = "cyl")
 
-## ----fig.width = 5-------------------------------------------------------
+## ----fig.width = 5------------------------------------------------------
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt", point = T) +
   # changing the angle of x labels for a clearer vision
   theme(axis.text.x  = element_text(angle=90))
 
-## ----fig.width = 5-------------------------------------------------------
+## ----fig.width = 5------------------------------------------------------
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt") + 
-  # Add labels in X and Y axes
+  # Add labels for X and Y axes
     xlab("Automobile Weight (thousands lbs)") +
     ylab("Estimated Coefficient for\nNumber of Cylinders") +
   # Change the background
@@ -34,7 +34,7 @@ interplot(m = m_cyl, var1 = "cyl", var2 = "wt") +
   # Add a horizontal line at y = 0
     geom_hline(yintercept = 0, linetype = "dashed")
 
-## ----fig.width = 5.5-----------------------------------------------------
+## ----fig.width = 5.5----------------------------------------------------
 # Create a fake dataset of conditional effects
 fake <- rnorm(100, 0, 1)
 coef1 <- fake * sample(.5:2.5, 100, replace = T)

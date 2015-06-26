@@ -10,9 +10,9 @@
 
 <meta name="author" content="Frederick Solt and Yue Hu" />
 
-<meta name="date" content="2015-06-25" />
+<meta name="date" content="2015-06-26" />
 
-<title>interplot: An R Package for Plotting Interaction Terms</title>
+<title>interplot: Plot the Effects of Variables in Interaction Terms</title>
 
 
 
@@ -52,20 +52,20 @@ code > span.er { color: #ff0000; font-weight: bold; }
 
 
 <div id="header">
-<h1 class="title">interplot: An R Package for Plotting Interaction Terms</h1>
+<h1 class="title">interplot: Plot the Effects of Variables in Interaction Terms</h1>
 <h4 class="author"><em>Frederick Solt and Yue Hu</em></h4>
-<h4 class="date"><em>2015-06-25</em></h4>
+<h4 class="date"><em>2015-06-26</em></h4>
 </div>
 
 
-<p>The <code>interplot</code> package is a tool for plotting the conditional coefficients of variables included in multiplicative interaction terms. The function plots the changes in the coefficient of one variable in a two-way interaction term conditional on the value of the other included variable. The plot also includes simulated 95% confidential intervals of these coefficients. In the current version, the function works with ordinary linear regression models, generalized linear models (e.g., logit, probit, ordered logit, etc.), and multilevel (mixed-effects) regressions, all with complete or multiply imputed data.</p>
+<p>The <code>interplot</code> package is a tool for plotting the conditional coefficients (“marginal effects”) of variables included in multiplicative interaction terms. The function plots the changes in the coefficient of one variable in a two-way interaction term conditional on the value of the other included variable. The plot also includes simulated 95% confidential intervals of these coefficients. In the current version, the function works with ordinary linear regression models, generalized linear models (e.g., logit, probit, ordered logit, etc.), and multilevel (mixed-effects) regressions, all with complete or multiply imputed data.</p>
 <p>Comparing to established alternatives such as <code>effects::plot</code> and <code>sjplot::sjp.int</code>, <code>interplot</code> provides a more user-friendly way to quickly produce plots that are easy to interpret. <code>interplot</code> plots the changes in the <em>conditional coefficient</em> of one variable in the interaction, rather than changes in the dependent variable itself as in the aforementioned functions. This approach avoids displaying interaction effects across multiple panels or multiple lines in favor of a single plot containing all the relevant information. Moreover, by outputting <code>ggplot</code> objects, <code>interplot</code> allows users to easily further customize their graphs.</p>
 <p>This vignette purposes to illustrate how users can apply these functions to improve the presentation of the interactions in their models.</p>
 <div id="run-a-model" class="section level2">
 <h2>Run a Model</h2>
 <p>This example is based on the <code>mtcars</code> dataset, which is drawn from the 1974 volume of the US magazine <em>Motor Trend</em>. The dependent variable is mileage in miles per (US) gallon (<code>mpg</code>), and the independent variables are the number of engine cylinders (<code>cyl</code>) and automobile weight in thousands of pounds (<code>wt</code>).</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(mtcars)  <span class="co">#load the data</span></code></pre>
-<p>Suppose we are interested in how automobile weight affectw the relationship between of the number of engine cylinders on mileage and how the number of cylinders affects the relationship between the car’s weight and its mileage. Such conditional effects are modeled using a two-way multiplicative interaction term:</p>
+<p>Suppose we are interested in how automobile weight affects the relationship between of the number of engine cylinders on mileage and how the number of cylinders affects the relationship between the car’s weight and its mileage. Such conditional effects are modeled using a two-way multiplicative interaction term:</p>
 <pre class="sourceCode r"><code class="sourceCode r">m_cyl &lt;-<span class="st"> </span><span class="kw">lm</span>(mpg ~<span class="st"> </span>wt *<span class="st"> </span>cyl, <span class="dt">data =</span> mtcars)
 <span class="kw">summary</span>(m_cyl)</code></pre>
 <pre><code>## 
@@ -93,9 +93,18 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="create-a-basic-graph-of-the-conditional-coefficients" class="section level2">
 <h2>Create a Basic Graph of the Conditional Coefficients</h2>
 <p>To plot conditional coefficients, a user needs to provide only three basic pieces of information: the object of a regression result (<code>m</code>), the variable whose coefficient is to be plotted (<code>var1</code>), and the variable on which the coefficient is conditional (<code>var2</code>). Taking the previous example, if we intend to know how the weight of a car can affect the coefficient for number of cylinders on the mileage, <code>var1</code> is <code>cyl</code>, and <code>var2</code> is <code>wt</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(interplot)
-
-<span class="kw">interplot</span>(<span class="dt">m =</span> m_cyl, <span class="dt">var1 =</span> <span class="st">&quot;cyl&quot;</span>, <span class="dt">var2 =</span> <span class="st">&quot;wt&quot;</span>)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(interplot)</code></pre>
+<pre><code>## Loading required package: ggplot2
+## Loading required package: abind
+## Loading required package: arm
+## Loading required package: MASS
+## Loading required package: Matrix
+## Loading required package: lme4
+## 
+## arm (Version 1.8-5, built: 2015-05-13)
+## 
+## Working directory is E:/Dropbox_sync/Dropbox/Instruction/Research paper/Interplot/vignettes</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">interplot</span>(<span class="dt">m =</span> m_cyl, <span class="dt">var1 =</span> <span class="st">&quot;cyl&quot;</span>, <span class="dt">var2 =</span> <span class="st">&quot;wt&quot;</span>)</code></pre>
 <p><img src="data:image/png;base64,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" /></p>
 <p>The plot clearly shows that with increasing automobile weight (along in the x axis), the magnitude of the coefficient of the number of cylinders on the mileage also increases (along in the y axis).</p>
 <p>Similarly, to show how the number of cylinders affects the coefficient of automobile weight on mileage, one only needs to switch <code>var1</code> and <code>var2</code>:</p>
@@ -111,7 +120,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <h2>Change the Appearance of the Plot</h2>
 <p>Plots generated by <code>interplot</code> are, by design, very basic. They are, however, <code>ggplot</code> objects and so may be easily modified further.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">interplot</span>(<span class="dt">m =</span> m_cyl, <span class="dt">var1 =</span> <span class="st">&quot;cyl&quot;</span>, <span class="dt">var2 =</span> <span class="st">&quot;wt&quot;</span>) +<span class="st"> </span>
-<span class="st">  </span><span class="co"># Add labels in X and Y axes</span>
+<span class="st">  </span><span class="co"># Add labels for X and Y axes</span>
 <span class="st">    </span><span class="kw">xlab</span>(<span class="st">&quot;Automobile Weight (thousands lbs)&quot;</span>) +
 <span class="st">    </span><span class="kw">ylab</span>(<span class="st">&quot;Estimated Coefficient for</span><span class="ch">\n</span><span class="st">Number of Cylinders&quot;</span>) +
 <span class="st">  </span><span class="co"># Change the background</span>
@@ -159,7 +168,7 @@ df_fake &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span c
 <p>313 Schaeffer Hall,</p>
 <p>20 E Washington St, Iowa City, IA, 52242</p>
 <p>Email: <a href="mailto:yue-hu-1@uiowa.edu">yue-hu-1@uiowa.edu</a></p>
-<p>Website: <a href="http://sammo3182.wix.com/huyue" class="uri">http://sammo3182.wix.com/huyue</a></p>
+<p>Website: <a href="http://clas.uiowa.edu/polisci/people/yue-hu" class="uri">http://clas.uiowa.edu/polisci/people/yue-hu</a></p>
 </div>
 
 
