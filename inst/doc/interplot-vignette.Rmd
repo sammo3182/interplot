@@ -15,6 +15,10 @@ Comparing to established alternatives such as `effects::plot` and `sjplot::sjp.i
 
 This vignette purposes to illustrate how users can apply these functions to improve the presentation of the interactions in their models. 
 
+## Installation
+
+To install the latest released version: `install.packages("interplot")`
+
 ## Run a Model
 
 This example is based on the `mtcars` dataset, which is drawn from the 1974 volume of the US magazine *Motor Trend*. The dependent variable is mileage in miles per (US) gallon (`mpg`), and the independent variables are the number of engine cylinders (`cyl`) and automobile weight in thousands of pounds (`wt`).
