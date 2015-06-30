@@ -5,6 +5,8 @@
 
 
 ## R CMD check results
+
+### V 0.1.0.0
 There were no ERRORs or WARNINGs. 
 
 This is a resubmission with corrections based on the comments from CRAN maintainer Kurt Hornik <Kurt.Hornik@wu.ac.at>. 
@@ -12,3 +14,8 @@ This is a resubmission with corrections based on the comments from CRAN maintain
 1. Change the maintainer to be a single person
 2. Correct the title and description field of the DESCRIPTION
 3. Change the website URL in vignette
+
+
+### V 0.1.0.1
+
+There were no ERRORs or WARNINGs. 

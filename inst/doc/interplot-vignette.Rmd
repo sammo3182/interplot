@@ -17,8 +17,10 @@ This vignette purposes to illustrate how users can apply these functions to impr
 
 ## Installation
 
-* To install the latest released version: `install.packages("interplot")`.
-* To install the latest developing version: `devtools::install_github("sammo3182/interplot")`.
+To install:
+
+* the latest released version: `install.packages("interplot")`.
+* the latest developing version: `devtools::install_github("sammo3182/interplot")`.
 
 ## Run a Model
 
