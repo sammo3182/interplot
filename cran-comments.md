@@ -19,3 +19,19 @@ This is a resubmission with corrections based on the comments from CRAN maintain
 ### V 0.1.0.1
 
 There were no ERRORs or WARNINGs. 
+
+From Kurt Hornik
+
+> We see
+> * checking R code for possible problems ... NOTE
+> interplot.default: no visible global function definition for ???quantile???
+> interplot.glmerMod: no visible global function definition for
+>   ???quantile???
+> interplot.glmmi: no visible global function definition for ???quantile???
+> interplot.gmlmmi: no visible global function definition for ???quantile???
+> interplot.lmerMod: no visible global function definition for ???quantile???
+> interplot.lmmi: no visible global function definition for ???quantile???
+> interplot.mlmmi: no visible global function definition for ???quantile???
+
+change the nameplace for it.
+
