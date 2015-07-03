@@ -5,6 +5,7 @@ Author: Frederick Solt <frederick-solt@uiowa.edu>, Yue Hu <yue-hu-1@uiowa.edu>
 Maintainer: Yue Hu <yue-hu-1@uiowa.edu>
 Description: Plots the conditional coefficients ("marginal effects") of variables included in multiplicative interaction terms.
 Depends: R (>= 3.1.1), ggplot2, abind, arm
+Imports: stats
 License: MIT + file LICENSE
 LazyData: true
 Suggests: knitr
