@@ -29,10 +29,9 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 500
                            xmin = NA, xmax = NA) {
     set.seed(324)
     
-    class(m) <- "list"
     m.list <- m
     m <- m.list[[1]]
-    m.class <- class(m)
+    class(m.list) <- class(m)
     m.sims.list <- lapply(m.list, function(i) arm::sim(i, sims))
     m.sims <- m.sims.list[[1]]
     
@@ -81,10 +80,9 @@ interplot.glmmi <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 50
                             xmin = NA, xmax = NA) {
     set.seed(324)
     
-    class(m) <- "list"
     m.list <- m
     m <- m.list[[1]]
-    m.class <- class(m)
+    class(m.list) <- class(m)
     m.sims.list <- lapply(m.list, function(i) arm::sim(i, sims))
     m.sims <- m.sims.list[[1]]
     
