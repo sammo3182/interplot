@@ -80,6 +80,7 @@ interplot.mlmmi <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 50
 }
 
 
+
 interplot.gmlmmi <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5000, 
                              xmin = NA, xmax = NA) {
     set.seed(324)

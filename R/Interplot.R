@@ -66,7 +66,7 @@ interplot <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5000, xm
             class(m) <- "mlmmi"
         }
         if (class(m[[1]]) == "glmerMod") {
-            class(m) <- "glmmi"
+            class(m) <- "gmlmmi"
         }
         if (class(m[[1]]) == "lm") {
             class(m) <- "lmmi"
