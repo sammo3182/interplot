@@ -35,3 +35,6 @@ From Kurt Hornik
 
 change the nameplace for it.
 
+### v 0.1.0.2
+There were no ERRORs or WARNINGs. 
+R CMD check succeeded
