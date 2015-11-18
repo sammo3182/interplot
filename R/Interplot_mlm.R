@@ -71,7 +71,7 @@ interplot.lmerMod <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 
     }
 }
 
-
+#' @export
 interplot.glmerMod <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5000, 
                                xmin = NA, xmax = NA) {
     set.seed(324)
