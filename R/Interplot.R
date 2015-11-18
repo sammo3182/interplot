@@ -61,22 +61,22 @@
 interplot <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5000, xmin = NA, xmax = NA) {
     
     
-    if (class(m) == "list") {
-        if (class(m[[1]]) == "lmerMod") {
+    if (class(m)[1] == "list") {
+        if (class(m[[1]])[1] == "lmerMod") {
             class(m) <- "mlmmi"
         }
-        if (class(m[[1]]) == "glmerMod") {
+        if (class(m[[1]])[1] == "glmerMod") {
             class(m) <- "gmlmmi"
         }
-        if (class(m[[1]]) == "lm") {
+        if (class(m[[1]])[1] == "lm") {
             class(m) <- "lmmi"
         }
-        if (class(m[[1]]) == "glm") {
+        if (class(m[[1]])[1] == "glm") {
             class(m) <- "glmmi"
         }
     }
   
-    if (class(m) == "data.frame") 
+    if (class(m)[1] == "data.frame") 
         class(m) <- "plot"
     
     
