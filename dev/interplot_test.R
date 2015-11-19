@@ -1,4 +1,6 @@
+library(mi)
 library(mitools)
+library(Amelia)
 
 p2005 <- read_sav("../Meritocracy_Rep/data/pew/merit/version_a/Dec05/Dec05c.sav")
 p2005x <- data.frame(
@@ -45,6 +47,7 @@ for (i in 1:10) {
 }
 p2005x_mi_list3 <- imputationList(p2005x_mi_list2)
 
+
 m2_mitools <- with(p2005x_mi_list3, 
                   glm(formula = rej_merit ~ income * educ + age,
                   family=binomial(link="logit")))
@@ -54,3 +57,11 @@ m3_mitools <- with(p2005x_mi_list3,
                    glmer(formula = rej_merit~income * educ + age +
                           (1+income|state), family=binomial(link="logit")))
 interplot(m3_mitools, "income", "educ")
+
+
+a <- amelia(p2005x, m = 5, ords = 4) # lgstc doesn't seem to work
+a2 <- imputationList(a$imputations)
+
+m4_amelia <- with(a2, glm(formula = rej_merit ~ income * educ + age,
+                   family=binomial(link="logit")))
+interplot(a4, "income", "educ")
