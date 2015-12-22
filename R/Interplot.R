@@ -29,9 +29,6 @@
 #' 
 #' @return The function returns a \code{ggplot} object.
 #'
-#' @import  abind 
-#' @import  arm
-#' @import  ggplot2
 #' 
 #' @examples
 #' data(mtcars)
