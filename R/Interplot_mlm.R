@@ -17,8 +17,7 @@
 #' 
 #' @return The function returns a \code{ggplot} object.
 #' 
-#' @import  abind
-#' @import  arm
+#' @importFrom  arm sim
 #' @import  ggplot2
 #' 
 #' 
