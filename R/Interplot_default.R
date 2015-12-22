@@ -17,8 +17,6 @@
 #'   \item Generalized linear models (object class: \code{glm}).
 #'   }
 #' 
-#' The examples below illustrate how methods invoked by this generic deal with different type of objects.
-#' 
 #' Because the output function is based on \code{\link[ggplot2]{ggplot}}, any additional arguments and layers supported by \code{ggplot2} can be added with the \code{+}. 
 #' 
 #' @return The function returns a \code{ggplot} object.
@@ -34,43 +32,124 @@
 # S3 method for class 'lm' and 'glm'
 interplot.default <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5000,
                               xmin = NA, xmax = NA) {
-    set.seed(324)
-    
-    m.class <- class(m)
-    m.sims <- arm::sim(m, sims)
-    
-    ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, 
-        ":", var1))
-    
-    if (!var12 %in% names(m$coef)) 
-        var12 <- paste0(var1, ":", var2)
-    if (!var12 %in% names(m$coef)) 
-        stop(paste("Model does not include the interaction of", var1, "and", 
-            var2, "."))
+  set.seed(324)
+  
+  m.class <- class(m)
+  m.sims <- arm::sim(m, sims)
+  
+  factor_v1 <- factor_v2 <- FALSE
+  
+  ###插入factor内容###
+  if(is.factor(eval(parse(text = paste0("m$model$", var1))))){
+    var1_bk <- var1
+    var1 <-  paste0(var1, eval(parse(text = paste0("m$xlevel$", var1)))) 
+    factor_v1 <- TRUE
+  }
+  
+  if(is.factor(eval(parse(text = paste0("m$model$", var2))))){
+    var2_bk <- var2
+    var2 <-  paste0(var2, eval(parse(text = paste0("m$xlevel$", var2)))) 
+    factor_v2 <- TRUE
+  }
+  
+  ###################
+  
+  ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, 
+                                                                           ":", var1)[-1])
+  # the first is censored to avoid multicolinarity
+  for(i in seq(var12)){
+    if (!var12[i] %in% names(m$coef)) 
+      var12[i] <- paste0(var1, ":", var2)[-1][i]
+    if (!var12[i] %in% names(m$coef)) 
+      stop(paste("Model does not include the interaction of", var1, "and", 
+                 var2, "."))
+  }
+  
+  
+  if (factor_v2){
+    xmin <- 0
+    xmax <- 1
+    steps <- 2
+  } else{
     if (is.na(xmin)) 
-        xmin <- min(m$model[var2], na.rm = T)
+      xmin <- min(m$model[var2], na.rm = T)
     if (is.na(xmax)) 
-        xmax <- max(m$model[var2], na.rm = T)
+      xmax <- max(m$model[var2], na.rm = T)
     
     steps <- eval(parse(text = paste0("length(unique(na.omit(m$model$",var2,")))")))
     if (steps > 100) steps <- 100 # avoid redundant calculation
+  }
+  
+  coef <- data.frame(fake = seq(xmin, xmax, length.out = steps), coef1 = NA, 
+                     ub = NA, lb = NA)
+  coef_df <- data.frame(fake = numeric(0), coef1= numeric(0), ub = numeric(0), lb = numeric(0), model = character(0))
+  
+  if(factor_v1){
+    for(j in 1:(length(eval(parse(text = paste0("m$xlevel$", var1_bk)))) - 1)){
+      # only n - 1 interactions; one category is avoided against multicolinarity
+      
+      for (i in 1:steps) {
+        coef$coef1[i] <- mean(m.sims@coef[, match(var1[j + 1], names(m$coef))] + 
+                                coef$fake[i] * m.sims@coef[, match(var12[j], names(m$coef))])
+        coef$ub[i] <- quantile(m.sims@coef[, match(var1[j + 1], names(m$coef))] + 
+                                 coef$fake[i] * m.sims@coef[, match(var12[j], names(m$coef))], 0.975)
+        coef$lb[i] <- quantile(m.sims@coef[, match(var1[j + 1], names(m$coef))] + 
+                                 coef$fake[i] * m.sims@coef[, match(var12[j], names(m$coef))], 0.025)
+      }    
+      
+      if (plot == TRUE) {
+        coef$value <- var1[j + 1]
+        coef_df <- rbind(coef_df, coef)
+      } else {
+        names(coef) <- c(var2, "coef", "ub", "lb")
+        return(coef)
+      }  
+    }
+    coef_df$value <- as.factor(coef_df$value)
+    interplot.plot(m = coef_df, point = point) + facet_grid(. ~ value)
     
-    coef <- data.frame(fake = seq(xmin, xmax, length.out = steps), coef1 = NA, 
-        ub = NA, lb = NA)
-    
-    for (i in 1:steps) {
+  } else if(factor_v2){
+    for(j in 1:(length(eval(parse(text = paste0("m$xlevel$", var2_bk)))) - 1)){
+      # only n - 1 interactions; one category is avoided against multicolinarity
+      
+      for (i in 1:steps) {
         coef$coef1[i] <- mean(m.sims@coef[, match(var1, names(m$coef))] + 
-            coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))])
+                                coef$fake[i] * m.sims@coef[, match(var12[j], names(m$coef))])
         coef$ub[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
-            coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))], 0.975)
+                                 coef$fake[i] * m.sims@coef[, match(var12[j], names(m$coef))], 0.975)
         coef$lb[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
-            coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))], 0.025)
+                                 coef$fake[i] * m.sims@coef[, match(var12[j], names(m$coef))], 0.025)
+      }    
+      
+      if (plot == TRUE) {
+        coef$value <- var2[j + 1]
+        coef_df <- rbind(coef_df, coef)
+      } else {
+        names(coef) <- c(var2, "coef", "ub", "lb")
+        return(coef)
+      }  
+    }
+    coef_df$value <- as.factor(coef_df$value)
+    interplot.plot(m = coef_df, point = point) + facet_grid(. ~ value)
+    
+    
+  } else {
+    for (i in 1:steps) {
+      coef$coef1[i] <- mean(m.sims@coef[, match(var1, names(m$coef))] + 
+                              coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))])
+      coef$ub[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
+                               coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))], 0.975)
+      coef$lb[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
+                               coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))], 0.025)
     }
     
     if (plot == TRUE) {
-        interplot.plot(m = coef, point = point)
+      interplot.plot(m = coef, point = point)
     } else {
-        names(coef) <- c(var2, "coef", "ub", "lb")
-        return(coef)
-    }
+      names(coef) <- c(var2, "coef", "ub", "lb")
+      return(coef)
+    }  
+    
+  }
+  
 } 
