@@ -28,20 +28,19 @@
 #' @export
 
 ## S3 method for class 'data.frame'
-interplot.plot <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5000,
-                           xmin = NA, xmax = NA) {
-  steps <- nrow(m)
-  levels <- sort(unique(m$fake))
-  
-  if (steps < 10 | point == T) {
-    coef.plot <- ggplot(m, aes_string(x = 'fake', y = 'coef1')) + geom_point() + 
-      geom_errorbar(aes_string(ymin = 'lb', ymax = 'ub'), width = 0) + 
-      scale_x_continuous(breaks = levels) + 
-      ylab(NULL) + xlab(NULL)
-  } else {
-    coef.plot <- ggplot(m, aes_string(x = 'fake', y = 'coef1')) + geom_line() + 
-      geom_ribbon(aes_string(ymin = 'lb', ymax = 'ub'), alpha = 0.5) + 
-      ylab(NULL) + xlab(NULL)
-  }
-  return(coef.plot)
+interplot.plot <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5000, 
+    xmin = NA, xmax = NA) {
+    steps <- nrow(m)
+    levels <- sort(unique(m$fake))
+    
+    if (steps < 10 | point == T) {
+        coef.plot <- ggplot(m, aes_string(x = "fake", y = "coef1")) + geom_point() + 
+            geom_errorbar(aes_string(ymin = "lb", ymax = "ub"), width = 0) + scale_x_continuous(breaks = levels) + 
+            ylab(NULL) + xlab(NULL)
+    } else {
+        coef.plot <- ggplot(m, aes_string(x = "fake", y = "coef1")) + geom_line() + 
+            geom_ribbon(aes_string(ymin = "lb", ymax = "ub"), alpha = 0.5) + ylab(NULL) + 
+            xlab(NULL)
+    }
+    return(coef.plot)
 } 

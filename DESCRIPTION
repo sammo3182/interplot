@@ -1,6 +1,6 @@
 Package: interplot
 Title: Plot the Effects of Variables in Interaction Terms
-Version: 0.1.0.9000
+Version: 0.1.1.0
 Author: Frederick Solt <frederick-solt@uiowa.edu>, Yue Hu <yue-hu-1@uiowa.edu>
 Maintainer: Yue Hu <yue-hu-1@uiowa.edu>
 Description: Plots the conditional coefficients ("marginal effects") of
