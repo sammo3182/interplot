@@ -37,8 +37,6 @@ The function returns a \code{ggplot} object.
   \item Generalized linear models (object class: \code{glm}).
   }
 
-The examples below illustrate how methods invoked by this generic deal with different type of objects.
-
 Because the output function is based on \code{\link[ggplot2]{ggplot}}, any additional arguments and layers supported by \code{ggplot2} can be added with the \code{+}.
 }
 
