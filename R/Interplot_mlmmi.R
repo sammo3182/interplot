@@ -17,9 +17,9 @@
 #' 
 #' @return The function returns a \code{ggplot} object.
 #' 
-#' @import  abind
-#' @import  arm
-#' @import  ggplot2
+#' @importFrom abind abind
+#' @importFrom arm sim
+#' @import ggplot2
 #' 
 #' 
 #' @export
@@ -37,7 +37,7 @@ interplot.mlmmi <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 50
     
     for (i in 2:length(m.sims.list)) {
         m.sims@fixef <- rbind(m.sims@fixef, m.sims.list[[i]]@fixef)
-        m.sims@ranef[[1]] <- abind(m.sims@ranef[[1]], m.sims.list[[i]]@ranef[[1]], 
+        m.sims@ranef[[1]] <- abind::abind(m.sims@ranef[[1]], m.sims.list[[i]]@ranef[[1]], 
             along = 1)
     }
     
@@ -93,7 +93,7 @@ interplot.gmlmmi <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5
     
     for (i in 2:length(m.sims.list)) {
         m.sims@fixef <- rbind(m.sims@fixef, m.sims.list[[i]]@fixef)
-        m.sims@ranef[[1]] <- abind(m.sims@ranef[[1]], m.sims.list[[i]]@ranef[[1]], 
+        m.sims@ranef[[1]] <- abind::abind(m.sims@ranef[[1]], m.sims.list[[i]]@ranef[[1]], 
             along = 1)
     }
     
