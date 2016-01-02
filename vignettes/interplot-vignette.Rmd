@@ -88,6 +88,17 @@ interplot(m = m_cyl, var1 = "cyl", var2 = "wt") +
     geom_hline(yintercept = 0, linetype = "dashed")
 ```
 
+## Special Case: Interactions with A Factor Base Term
+
+When either the conditioned or the conditioning base term of an interaction is a factor, `interplot` creates a facet in which the conditional effect under each category of the factor is visualized in a separate panel.
+
+```{r fig.width = 5}
+mtcars$gear <- factor(mtcars$gear)
+m_gear <- lm(mpg ~ gear * wt, data = mtcars)
+
+interplot(m = m_gear, var1 = "wt", var2 = "gear")
+```
+
 
 ## Advanced Use: Plot Conditional Effects Without a Model
 
