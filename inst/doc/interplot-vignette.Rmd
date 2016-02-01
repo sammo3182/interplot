@@ -53,7 +53,7 @@ library(interplot)
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt")
 ```
 
-The plot clearly shows that with increasing automobile weight (along in the x axis), the magnitude of the coefficient of the number of cylinders on the mileage also increases (along in the y axis).
+The plot clearly shows that with increasing automobile weight (along the x axis), the magnitude of the coefficient of the number of cylinders on the mileage also increases (along the y axis).
 
 Similarly, to show how the number of cylinders affects the coefficient of automobile weight on mileage, one only needs to switch `var1` and `var2`:
 
@@ -86,6 +86,17 @@ interplot(m = m_cyl, var1 = "cyl", var2 = "wt") +
     theme(plot.title = element_text(face="bold")) +
   # Add a horizontal line at y = 0
     geom_hline(yintercept = 0, linetype = "dashed")
+```
+
+## Special Case: Interactions with A Factor Base Term
+
+When either the conditioned or the conditioning base term of an interaction is a factor, `interplot` creates a facet in which the conditional effect under each category of the factor is visualized in a separate panel.
+
+```{r fig.width = 5}
+mtcars$gear <- factor(mtcars$gear)
+m_gear <- lm(mpg ~ gear * wt, data = mtcars)
+
+interplot(m = m_gear, var1 = "wt", var2 = "gear")
 ```
 
 
