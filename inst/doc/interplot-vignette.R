@@ -34,6 +34,12 @@ interplot(m = m_cyl, var1 = "cyl", var2 = "wt") +
   # Add a horizontal line at y = 0
     geom_hline(yintercept = 0, linetype = "dashed")
 
+## ----fig.width = 5-------------------------------------------------------
+mtcars$gear <- factor(mtcars$gear)
+m_gear <- lm(mpg ~ gear * wt, data = mtcars)
+
+interplot(m = m_gear, var1 = "wt", var2 = "gear")
+
 ## ----fig.width = 5.5-----------------------------------------------------
 # Create a fake dataset of conditional effects
 fake <- rnorm(100, 0, 1)
