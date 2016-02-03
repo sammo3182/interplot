@@ -173,13 +173,16 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 500
         
         
     } else {
+        ## Correct marginal effect for quadratic terms
+        multiplier <- if (var1 == var2) 2 else 1
+
         for (i in 1:steps) {
-            coef$coef1[i] <- mean(m.sims@coef[, match(var1, names(m$coef))] + coef$fake[i] * 
+            coef$coef1[i] <- mean(m.sims@coef[, match(var1, names(m$coef))] + multiplier * coef$fake[i] * 
                 m.sims@coef[, match(var12, names(m$coef))])
             coef$ub[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
-                coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))], 0.975)
+                multiplier * coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))], 0.975)
             coef$lb[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
-                coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))], 0.025)
+                multiplier * coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))], 0.025)
         }
         
         if (plot == TRUE) {
@@ -339,13 +342,16 @@ interplot.glmmi <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 50
         
         
     } else {
+        ## Correct marginal effect for quadratic terms
+        multiplier <- if (var1 == var2) 2 else 1
+
         for (i in 1:steps) {
-            coef$coef1[i] <- mean(m.sims@coef[, match(var1, names(m$coef))] + coef$fake[i] * 
+            coef$coef1[i] <- mean(m.sims@coef[, match(var1, names(m$coef))] + multiplier * coef$fake[i] * 
                 m.sims@coef[, match(var12, names(m$coef))])
             coef$ub[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
-                coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))], 0.975)
+                multiplier * coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))], 0.975)
             coef$lb[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
-                coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))], 0.025)
+                multiplier * coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))], 0.025)
         }
         
         if (plot == TRUE) {
