@@ -3,6 +3,7 @@
 Adding the function to plot interactions based on factor variables.
 ## Bug fix
 Fit `ggplot2` 2.0.0
+Fixed the quadratic error (#16)
 
 
 # interplot 0.1.1.0
