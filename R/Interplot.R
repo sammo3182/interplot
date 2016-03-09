@@ -55,8 +55,7 @@
 
 
 
-interplot <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5000, xmin = NA, 
-    xmax = NA) {
+interplot <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = "black", esize = .5, ralpha = .5, rfill = "grey70", ...) {
     
     
     if (class(m)[1] == "list") {

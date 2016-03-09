@@ -10,6 +10,11 @@
 #' @param sims Number of independent simulation draws used to calculate upper and lower bounds of coefficient estimates: lower values run faster; higher values produce smoother curves.
 #' @param xmin A numerical value indicating the minimum value shown of x shown in the graph. Rarely used.
 #' @param xmax A numerical value indicating the maximum value shown of x shown in the graph. Rarely used.
+#' @param ercolor A character value indicating the outline color of the whisker or ribbon.
+#' @param esize A numerical value indicating the size of the whisker or ribbon.
+#' @param ralpha A numerical value indicating the transparency of the ribbon.
+#' @param rfill A character value indicating the filling color of the ribbon.
+#' @param ... Other ggplot aesthetics arguments for points in the dot-whisker plot or lines in the line-ribbon plots. Not currently used.
 #' 
 #' @details \code{interplot.default} is a S3 method from the \code{interplot}. It works on two classes of objects:
 #' \itemize{
@@ -30,8 +35,8 @@
 #' @export
 
 # S3 method for class 'lm' and 'glm'
-interplot.default <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5000, 
-    xmin = NA, xmax = NA) {
+interplot.default <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5000,
+    xmin = NA, xmax = NA, ercolor = "black", esize = .5, ralpha = .5, rfill = "grey70", ...) {
     set.seed(324)
     
     m.class <- class(m)
@@ -187,7 +192,7 @@ interplot.default <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 
         }
         
         if (plot == TRUE) {
-            interplot.plot(m = coef, point = point)
+            interplot.plot(m = coef, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ...)
         } else {
             names(coef) <- c(var2, "coef", "ub", "lb")
             return(coef)

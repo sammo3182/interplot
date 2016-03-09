@@ -16,6 +16,11 @@
 #' @param sims Number of independent simulation draws used to calculate upper and lower bounds of coefficient estimates: lower values run faster; higher values produce smoother curves.
 #' @param xmin A numerical value indicating the minimum value shown of x shown in the graph. Rarely used.
 #' @param xmax A numerical value indicating the maximum value shown of x shown in the graph. Rarely used.
+#' @param ercolor A character value indicating the outline color of the whisker or ribbon.
+#' @param esize A numerical value indicating the size of the whisker or ribbon.
+#' @param ralpha A numerical value indicating the transparency of the ribbon.
+#' @param rfill A character value indicating the filling color of the ribbon.
+#' @param ... Other ggplot aesthetics arguments for points in the dot-whisker plot or lines in the line-ribbon plots. Not currently used.
 #' 
 #' @details \code{interplot.plot} is a S3 method from the \code{interplot}. It generates plots of conditional coefficients.
 #' 
@@ -29,18 +34,18 @@
 
 ## S3 method for class 'data.frame'
 interplot.plot <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5000, 
-    xmin = NA, xmax = NA) {
+    xmin = NA, xmax = NA, ercolor = "black", esize = .5, ralpha = .5, rfill = "grey70", ...) {
     steps <- nrow(m)
     levels <- sort(unique(m$fake))
     
     if (steps < 10 | point == T) {
-        coef.plot <- ggplot(m, aes_string(x = "fake", y = "coef1")) + geom_point() + 
-            geom_errorbar(aes_string(ymin = "lb", ymax = "ub"), width = 0) + scale_x_continuous(breaks = levels) + 
+        coef.plot <- ggplot(m, aes_string(x = "fake", y = "coef1")) + geom_point(...) + 
+            geom_errorbar(aes_string(ymin = "lb", ymax = "ub"), width = 0, color = ercolor, size = esize) + scale_x_continuous(breaks = levels) + 
             ylab(NULL) + xlab(NULL)
     } else {
-        coef.plot <- ggplot(m, aes_string(x = "fake", y = "coef1")) + geom_line() + 
-            geom_ribbon(aes_string(ymin = "lb", ymax = "ub"), alpha = 0.5) + ylab(NULL) + 
-            xlab(NULL)
+        coef.plot <- ggplot(m, aes_string(x = "fake", y = "coef1")) + geom_line(...) + 
+            geom_ribbon(aes_string(ymin = "lb", ymax = "ub"), alpha = ralpha, color = ercolor, fill = rfill) + 
+          ylab(NULL) + xlab(NULL)
     }
     return(coef.plot)
 } 

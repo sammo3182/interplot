@@ -27,7 +27,7 @@
 
 # Coding function for mlm, mi objects
 interplot.mlmmi <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5000, 
-    xmin = NA, xmax = NA) {
+    xmin = NA, xmax = NA, ercolor = "black", esize = .5, ralpha = .5, rfill = "grey70", ...) {
     set.seed(324)
     
     m.list <- m
@@ -188,7 +188,7 @@ interplot.mlmmi <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 50
         }
         
         if (plot == TRUE) {
-            interplot.plot(m = coef, point = point)
+            interplot.plot(m = coef, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ...)
         } else {
             names(coef) <- c(var2, "coef", "ub", "lb")
             return(coef)
@@ -359,7 +359,7 @@ interplot.gmlmmi <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5
         }
         
         if (plot == TRUE) {
-            interplot.plot(m = coef, point = point)
+            interplot.plot(m = coef, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ...)
         } else {
             names(coef) <- c(var2, "coef", "ub", "lb")
             return(coef)
