@@ -4,7 +4,7 @@ author: "Frederick Solt and Yue Hu"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{interplot: Plot the Effects of Variables in Interaction Terms}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{ASCII}
 ---

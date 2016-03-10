@@ -200,7 +200,7 @@ interplot.mlmmi <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 50
 
 #' @export
 interplot.gmlmmi <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5000, 
-    xmin = NA, xmax = NA) {
+    xmin = NA, xmax = NA, ercolor = "black", esize = .5, ralpha = .5, rfill = "grey70", ...) {
     set.seed(324)
     
     m.list <- m

@@ -98,9 +98,7 @@ interplot.default <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 
     }
     
     ################### 
-    
-    
-    
+
     
     if (factor_v2) {
         xmin <- 0
@@ -148,7 +146,7 @@ interplot.default <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 
             }
         }
         coef_df$value <- as.factor(coef_df$value)
-        interplot.plot(m = coef_df, point = point) + facet_grid(. ~ value)
+        interplot.plot(m = coef_df, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ...) + facet_grid(. ~ value)
         
     } else if (factor_v2) {
         for (j in 1:(length(eval(parse(text = paste0("m$xlevel$", var2_bk)))) - 
@@ -175,7 +173,7 @@ interplot.default <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 
             }
         }
         coef_df$value <- as.factor(coef_df$value)
-        interplot.plot(m = coef_df, point = point) + facet_grid(. ~ value)
+        interplot.plot(m = coef_df, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ...) + facet_grid(. ~ value)
         
         
     } else {
