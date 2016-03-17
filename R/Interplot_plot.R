@@ -90,7 +90,7 @@ interplot.plot <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = N
             
         } else {
             
-            yrange <- c(m$ub, m$lb, var2_dt)
+            yrange <- c(m$ub, m$lb)
             
             maxdiff <- (max(yrange) - min(yrange))
             
