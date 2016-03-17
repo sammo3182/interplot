@@ -143,7 +143,7 @@ interplot.mlmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = 
             }
         }
         coef_df$value <- as.factor(coef_df$value)
-        interplot.plot(m = coef_df, point = point) + facet_grid(. ~ value)
+        interplot.plot(m = coef_df, hist = hist, var2_dt = var2_dt, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ...) + facet_grid(. ~ value)
         
     } else if (factor_v2) {
         for (j in 1:(length(eval(parse(text = paste0("m$xlevel$", var2_bk)))) - 1)) {
@@ -199,8 +199,7 @@ interplot.mlmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = 
                   var2_dt <- var2_dt
                 }
             }
-            interplot.plot(m = coef, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, 
-                rfill = rfill, ...)
+          interplot.plot(m = coef, hist = hist, var2_dt = var2_dt, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ...)
         } else {
             names(coef) <- c(var2, "coef", "ub", "lb")
             return(coef)
@@ -319,7 +318,7 @@ interplot.gmlmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt =
             }
         }
         coef_df$value <- as.factor(coef_df$value)
-        interplot.plot(m = coef_df, point = point) + facet_grid(. ~ value)
+        interplot.plot(m = coef_df, hist = hist, var2_dt = var2_dt, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ...) + facet_grid(. ~ value)
         
     } else if (factor_v2) {
         for (j in 1:(length(eval(parse(text = paste0("m$xlevel$", var2_bk)))) - 1)) {
@@ -350,7 +349,7 @@ interplot.gmlmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt =
             }
         }
         coef_df$value <- as.factor(coef_df$value)
-        interplot.plot(m = coef_df, point = point) + facet_grid(. ~ value)
+        interplot.plot(m = coef_df, hist = hist, var2_dt = var2_dt, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ...) + facet_grid(. ~ value)
         
         
     } else {
@@ -375,8 +374,7 @@ interplot.gmlmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt =
                   var2_dt <- var2_dt
                 }
             }
-            interplot.plot(m = coef, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, 
-                rfill = rfill, ...)
+          interplot.plot(m = coef, hist = hist, var2_dt = var2_dt, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ...)
         } else {
             names(coef) <- c(var2, "coef", "ub", "lb")
             return(coef)
