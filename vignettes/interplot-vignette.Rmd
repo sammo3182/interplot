@@ -96,7 +96,7 @@ interplot(m = m_cyl, var1 = "wt", var2 = "cyl", ercolor = "blue", esize = 1.5) +
   geom_point(size = 2, color = "red")
 ```
 
-## Special Case I: Quadratic Term
+## Plot the Effect of a Variable with a Quadratic Term
 
 The simplies type of interaction is quadratic term, which can be regarded as a variable interact with itself. `interplot` can visualize this case when the variable names of `var1` and `var2` are the same.
 
@@ -107,7 +107,7 @@ interplot(m = m_wt, var1 = "wt", var2 = "wt")
 ```
 
 
-## Special Case II: Interactions with A Factor Base Term
+## Plot Interactions with a Factor Term
 
 When either the conditioned or the conditioning base term of an interaction is a factor, `interplot` creates a facet in which the conditional effect under each category of the factor is visualized in a separate panel.
 
@@ -119,21 +119,21 @@ interplot(m = m_gear, var1 = "wt", var2 = "gear")
 ```
 
 
-## Special Case III: Interactions with Histogram
+## Include the Distribution of the Conditioning Variable
 
-Our package intends to provides the convenicnece to present the interactive effects as @Brambor2006 suggested. Nevertheless, @Berry2012 pointed out that it is sometimes not adequate to assess a variable's conditional effect on the dependent variable, especially when only part of the effect is significant. In such case, the frequency distribution is helpful to evaluation of the substantive significance of this variable. For this purpose, `interplot` has the `hist` argument for users to choose if to superimpose a histogram at the bottom of the conditional effect plot.
+@Berry2012 points out that, when a variable's conditional effect reaches statistical significance over only part of the range of the conditioning variable, it can be helpful to the evaluation of the substantive significance of the conditional effect to know the distribution of the conditioning variable. For this purpose, `interplot` has the `hist` argument for users to choose to superimpose a histogram at the bottom of the conditional effect plot.
 
 ```{r fig.width = 5}
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt", hist = TRUE) +
     geom_hline(yintercept = 0, linetype = "dashed")
 ```
 
-Our codes to achieve this function is insighted by the decent and creative works of @Hainmueller2016.
+Our implementation of this option was inspired by the excellent work of @Hainmueller2016.
 
 
 ## Advanced Use: Plot Conditional Effects Without a Model
 
-In some cases, one may analyze with some complicated or self-made regression functions which are not supported by the current version of `interplot`. For them, as long as the user has a dataset loading the simulated results of the interaction effects, she can still use `interplot` to visualize it. The dataset needs four columns the scale of the conditioning variable (`fake`), the simulated interactive effect at each break of the conditioning variable (`coef1`), and the simulated lower bound and upper bound of the confidence interval (`lb`, and `ub`). The column names should be exactly the ones shown in the above parentheses. Here is an example with some arbitrary artificial data:
+In some cases, one may analyze some complicated or self-made regression functions which are not supported by the current version of `interplot`. For such models, as long as the user has a dataset loading the simulated results of the interaction effects, she can still use `interplot` to visualize it. The dataset needs four columns the scale of the conditioning variable (`fake`), the simulated interactive effect at each break of the conditioning variable (`coef1`), and the simulated lower bound and upper bound of the confidence interval (`lb`, and `ub`). The column names should be exactly the ones shown in the above parentheses. Here is an example with some arbitrary artificial data:
 
 ```{r fig.width = 5.5}
 # Create a fake dataset of conditional effects
