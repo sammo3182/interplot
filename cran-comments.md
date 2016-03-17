@@ -46,3 +46,7 @@ R CMD check succeeded
 ### v 0.1.1.1
 There were no ERRORs or WARNINGs. 
 R CMD check succeeded
+
+### v 0.1.2.0
+There were no ERRORs or WARNINGs. 
+R CMD check succeeded

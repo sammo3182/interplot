@@ -1,3 +1,9 @@
+# interplot 0.1.2.0
+## Additional Function
+1. The aeathetics can be modified through built-in arguments or the ggplot `geom_` functions.
+2. A hisogram can be superimposed into the plot.
+
+
 # interplot 0.1.1.1
 ## Additional Function
 Adding the function to plot interactions based on factor variables.
