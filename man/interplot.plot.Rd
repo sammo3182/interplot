@@ -4,8 +4,9 @@
 \alias{interplot.plot}
 \title{Plot Conditional Coefficients in Models with Interaction Terms}
 \usage{
-\method{interplot}{plot}(m, var1, var2, plot = TRUE, point = FALSE,
-  sims = 5000, xmin = NA, xmax = NA)
+\method{interplot}{plot}(m, var1, var2, plot = TRUE, hist = FALSE,
+  var2_dt = NULL, point = FALSE, sims = 5000, xmin = NA, xmax = NA,
+  ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", ...)
 }
 \arguments{
 \item{m}{A model object including an interaction term, or, alternately, a data frame recording conditional coefficients. This data frame should includes four columns:
@@ -22,6 +23,10 @@
 
 \item{plot}{A logical value indicating whether the output is a plot or a dataframe including the conditional coefficient estimates of var1, their upper and lower bounds, and the corresponding values of var2.}
 
+\item{hist}{A logical value indicating if there is a histogram of `var2` added at the bottom of the conditional effect plot.}
+
+\item{var2_dt}{A numerical value indicating the frequency distibution of `var2`. It is only used when `hist == TRUE`. When the object is a model, the default is the distribution of `var2` of the model.}
+
 \item{point}{A logical value determining the format of plot. By default, the function produces a line plot when var2 takes on ten or more distinct values and a point (dot-and-whisker) plot otherwise; option TRUE forces a point plot.}
 
 \item{sims}{Number of independent simulation draws used to calculate upper and lower bounds of coefficient estimates: lower values run faster; higher values produce smoother curves.}
@@ -29,6 +34,16 @@
 \item{xmin}{A numerical value indicating the minimum value shown of x shown in the graph. Rarely used.}
 
 \item{xmax}{A numerical value indicating the maximum value shown of x shown in the graph. Rarely used.}
+
+\item{ercolor}{A character value indicating the outline color of the whisker or ribbon.}
+
+\item{esize}{A numerical value indicating the size of the whisker or ribbon.}
+
+\item{ralpha}{A numerical value indicating the transparency of the ribbon.}
+
+\item{rfill}{A character value indicating the filling color of the ribbon.}
+
+\item{...}{Other ggplot aesthetics arguments for points in the dot-whisker plot or lines in the line-ribbon plots. Not currently used.}
 }
 \value{
 The function returns a \code{ggplot} object.

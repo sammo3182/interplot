@@ -6,10 +6,17 @@
 #' @param var1 The name (as a string) of the variable of interest in the interaction term; its conditional coefficient estimates will be plotted.
 #' @param var2 The name (as a string) of the other variable in the interaction term
 #' @param plot A logical value indicating whether the output is a plot or a dataframe including the conditional coefficient estimates of var1, their upper and lower bounds, and the corresponding values of var2.
+#' @param hist A logical value indicating if there is a histogram of `var2` added at the bottom of the conditional effect plot.
+#' @param var2_dt A numerical value indicating the frequency distibution of `var2`. It is only used when `hist == TRUE`. When the object is a model, the default is the distribution of `var2` of the model.  
 #' @param point A logical value determining the format of plot. By default, the function produces a line plot when var2 takes on ten or more distinct values and a point (dot-and-whisker) plot otherwise; option TRUE forces a point plot.
 #' @param sims Number of independent simulation draws used to calculate upper and lower bounds of coefficient estimates: lower values run faster; higher values produce smoother curves.
 #' @param xmin A numerical value indicating the minimum value shown of x shown in the graph. Rarely used.
 #' @param xmax A numerical value indicating the maximum value shown of x shown in the graph. Rarely used.
+#' @param ercolor A character value indicating the outline color of the whisker or ribbon.
+#' @param esize A numerical value indicating the size of the whisker or ribbon.
+#' @param ralpha A numerical value indicating the transparency of the ribbon.
+#' @param rfill A character value indicating the filling color of the ribbon.
+#' @param ... Other ggplot aesthetics arguments for points in the dot-whisker plot or lines in the line-ribbon plots. Not currently used.
 #' 
 #' @details \code{interplot} visualizes the changes in the coefficient of one term in a two-way interaction conditioned by the other term. In the current version, the function works with interactions in the following classes of models:
 #' \itemize{
@@ -55,7 +62,8 @@
 
 
 
-interplot <- function(m, var1, var2, plot = TRUE, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = "black", esize = .5, ralpha = .5, rfill = "grey70", ...) {
+interplot <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = NA, point = FALSE, sims = 5000, 
+    xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", ...) {
     
     
     if (class(m)[1] == "list") {
