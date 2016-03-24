@@ -178,9 +178,6 @@ University of Iowa,
 
 Email: <frederick-solt@uiowa.edu>
 
-
-## Reference
-
 Website: <http://myweb.uiowa.edu/fsolt>
 
 <br></br>
@@ -199,4 +196,4 @@ Email: <yue-hu-1@uiowa.edu>
 
 Website: <http://clas.uiowa.edu/polisci/people/yue-hu>
 
-
+## Reference

@@ -1,6 +1,10 @@
 # interplot 0.1.2.0
 ## Additional Function
-1. The aeathetics can be modified through built-in arguments or the ggplot `geom_` functions.
+Updated the vignette including instructions of how to change the aesthetics of the plot and how to use histogram function.
+
+# interplot 0.1.2.0
+## Additional Function
+1. The aesthetics can be modified through built-in arguments or the ggplot `geom_` functions.
 2. A hisogram can be superimposed into the plot.
 
 

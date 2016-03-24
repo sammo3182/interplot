@@ -3,6 +3,7 @@ title: "interplot: Plot the Effects of Variables in Interaction Terms"
 author: "Frederick Solt and Yue Hu"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
+bibliography: vignette.bib
 vignette: >
   %\VignetteIndexEntry{interplot: Plot the Effects of Variables in Interaction Terms}
   %\VignetteEngine{knitr::rmarkdown}
@@ -47,7 +48,7 @@ The coefficient of the interactive term (`wt:cyl`) is positive and statistically
 
 To plot conditional coefficients, a user needs to provide only three basic pieces of information: the object of a regression result (`m`), the variable whose coefficient is to be plotted (`var1`), and the variable on which the coefficient is conditional (`var2`). Taking the previous example, if we intend to know how the weight of a car can affect the coefficient for number of cylinders on the mileage, `var1` is `cyl`, and `var2` is `wt`. 
 
-```{r fig.width = 5}
+```{r fig.width = 5, message=FALSE}
 library(interplot)
 
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt")
@@ -88,7 +89,25 @@ interplot(m = m_cyl, var1 = "cyl", var2 = "wt") +
     geom_hline(yintercept = 0, linetype = "dashed")
 ```
 
-## Special Case: Interactions with A Factor Base Term
+For the default settings of the whisker or ribbon, the users can also use arguments, such as `ercolor` and `esize` to modify. More arguments can be found in the `?interplot` file.
+
+```{r fig.width = 5}
+interplot(m = m_cyl, var1 = "wt", var2 = "cyl", ercolor = "blue", esize = 1.5) +
+  geom_point(size = 2, color = "red")
+```
+
+## Plot the Effect of a Variable with a Quadratic Term
+
+The simplies type of interaction is quadratic term, which can be regarded as a variable interact with itself. `interplot` can visualize this case when the variable names of `var1` and `var2` are the same.
+
+```{r fig.width = 5}
+m_wt <- lm(mpg ~ wt + I(wt^2), data = mtcars)
+
+interplot(m = m_wt, var1 = "wt", var2 = "wt")
+```
+
+
+## Plot Interactions with a Factor Term
 
 When either the conditioned or the conditioning base term of an interaction is a factor, `interplot` creates a facet in which the conditional effect under each category of the factor is visualized in a separate panel.
 
@@ -100,9 +119,21 @@ interplot(m = m_gear, var1 = "wt", var2 = "gear")
 ```
 
 
+## Include the Distribution of the Conditioning Variable
+
+@Berry2012 points out that, when a variable's conditional effect reaches statistical significance over only part of the range of the conditioning variable, it can be helpful to the evaluation of the substantive significance of the conditional effect to know the distribution of the conditioning variable. For this purpose, `interplot` has the `hist` argument for users to choose to superimpose a histogram at the bottom of the conditional effect plot.
+
+```{r fig.width = 5}
+interplot(m = m_cyl, var1 = "cyl", var2 = "wt", hist = TRUE) +
+    geom_hline(yintercept = 0, linetype = "dashed")
+```
+
+Our implementation of this option was inspired by the excellent work of @Hainmueller2016.
+
+
 ## Advanced Use: Plot Conditional Effects Without a Model
 
-In some cases, one may analyze with some complicated or self-made regression functions which are not supported by the current version of `interplot`. For them, as long as the user has a dataset loading the simulated results of the interaction effects, she can still use `interplot` to visualize it. The dataset needs four columns the scale of the conditioning variable (`fake`), the simulated interactive effect at each break of the conditioning variable (`coef1`), and the simulated lower bound and upper bound of the confidence interval (`lb`, and `ub`). The column names should be exactly the ones shown in the above parentheses. Here is an example with some arbitrary artificial data:
+In some cases, one may analyze some complicated or self-made regression functions which are not supported by the current version of `interplot`. For such models, as long as the user has a dataset loading the simulated results of the interaction effects, she can still use `interplot` to visualize it. The dataset needs four columns the scale of the conditioning variable (`fake`), the simulated interactive effect at each break of the conditioning variable (`coef1`), and the simulated lower bound and upper bound of the confidence interval (`lb`, and `ub`). The column names should be exactly the ones shown in the above parentheses. Here is an example with some arbitrary artificial data:
 
 ```{r fig.width = 5.5}
 # Create a fake dataset of conditional effects
@@ -116,6 +147,16 @@ df_fake <- data.frame(cbind(fake, coef1, lb, ub))
 # Use interplot directly with the dataset
 interplot(df_fake)
 ```
+
+If one also has the data of the `var2`, she can also draw a histogram under it by the argument `var_dt`. 
+
+```{r fig.width = 5.5}
+var2_fake <- fake
+# Set `hist` to TRUE is required to superimpose a histogram.
+interplot(df_fake, hist = TRUE, var2_dt = var2_fake)
+## The ribbon and histogram do not fit. This is just an illustration
+```
+
 
 ## Conclusion
 
@@ -155,4 +196,4 @@ Email: <yue-hu-1@uiowa.edu>
 
 Website: <http://clas.uiowa.edu/polisci/people/yue-hu>
 
-
+## Reference
