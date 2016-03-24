@@ -1,5 +1,5 @@
-# interplot 0.1.2.0
-## Additional Function
+# interplot 0.1.2.1
+## Vignette Updates
 Updated the vignette including instructions of how to change the aesthetics of the plot and how to use histogram function.
 
 # interplot 0.1.2.0
