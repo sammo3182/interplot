@@ -1,7 +1,10 @@
 Package: interplot
 Title: Plot the Effects of Variables in Interaction Terms
 Version: 0.1.2.9999
-Author: Frederick Solt <frederick-solt@uiowa.edu>, Yue Hu <yue-hu-1@uiowa.edu>
+Authors@R: c(
+    person("Frederick", "Solt", email = "frederick-solt@uiowa.edu", role = c("aut", "cre")),
+    person("Yue", "Hu", email = "yue-hu-1@uiowa.edu", role = c("aut", "cre"),
+    person("Brenton", "Kenkel", email = "brenton.kenkel@gmail.com", role = "ctb"))
 Maintainer: Yue Hu <yue-hu-1@uiowa.edu>
 Description: Plots the conditional coefficients ("marginal effects") of
     variables included in multiplicative interaction terms.
