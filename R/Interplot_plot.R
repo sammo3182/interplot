@@ -32,16 +32,16 @@
 #' 
 #' @import  ggplot2
 #' @importFrom graphics hist
+#' @importFrom dplyr mutate
 #' 
 #' @export
 
 ## S3 method for class 'data.frame'
-interplot.plot <- function(m, var1, var2, plot = TRUE, steps = steps, hist = FALSE, var2_dt = NULL, point = FALSE, 
-    sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", 
-    ...) {
-    #steps <- nrow(m)
+interplot.plot <- function(m, var1 = NULL, var2 = NULL, plot = TRUE, steps = NULL, hist = FALSE, var2_dt = NULL, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", ...) {
+    if(is.null(steps)) steps <- nrow(m)
     levels <- sort(unique(m$fake))
     ymin <- ymax <- vector() # to deal with the "no visible binding for global variable" issue
+    
     if (hist == FALSE) {
         if (steps < 10 | point == T) {
             if (is.na(ercolor)) 
@@ -57,7 +57,7 @@ interplot.plot <- function(m, var1, var2, plot = TRUE, steps = steps, hist = FAL
         }
         return(coef.plot)
     } else {
-        if (steps < 10 | point == T) {
+        if (point == T) {
             if (is.na(ercolor)) 
                 {
                   ercolor <- "black"
@@ -77,12 +77,19 @@ interplot.plot <- function(m, var1, var2, plot = TRUE, steps = steps, hist = FAL
             } else {dist <- hist.out$mids[2] - hist.out$mids[1]}
             hist.max <- max(hist.out$counts)
             
-            
-            histX <- data.frame(ymin = rep(min(yrange) - maxdiff/5, n.hist),
-                                ymax = hist.out$counts/hist.max * 
-                                  maxdiff/5 + min(yrange) - maxdiff/5, 
+            if (steps <10) {
+              histX <- data.frame(ymin = rep(min(yrange) - maxdiff/5, n.hist),
+                                ymax = hist.out$counts/hist.max * maxdiff/5 + min(yrange) - maxdiff/5, 
                                 xmin = sort(unique(var2_dt)) - dist/2, 
                                 xmax = sort(unique(var2_dt)) + dist/2)
+            } else {
+              histX <- data.frame(ymin = rep(min(yrange) - maxdiff/5, n.hist), 
+                                  ymax = hist.out$counts/hist.max * maxdiff/5 + min(yrange) - maxdiff/5, 
+                                  xmin = hist.out$mids - dist/2, 
+                                  xmax = hist.out$mids + dist/2)
+                                } 
+            #when up to 10, the sort(unique(var2_dt)) - dist/2 leads to problemtic histogram
+            
             
             if (steps <10) {
               histX_sub <- histX
@@ -94,10 +101,13 @@ interplot.plot <- function(m, var1, var2, plot = TRUE, steps = steps, hist = FAL
             coef.plot <- coef.plot + geom_rect(data = histX, aes(xmin = xmin, xmax = xmax, ymin = ymin, 
                 ymax = ymax), colour = "gray50", alpha = 0, size = 0.5)  #histgram
             
-            coef.plot <- coef.plot + geom_point(data = m, aes_string(x = "fake", y = "coef1")) + 
+            coef.plot <- coef.plot +
                 geom_errorbar(data = m, aes_string(x = "fake", ymin = "lb", ymax = "ub"), width = 0, 
                   color = ercolor, size = esize) + scale_x_continuous(breaks = levels) + ylab(NULL) + 
-                xlab(NULL)
+                xlab(NULL) + 
+              geom_point(data = m, aes_string(x = "fake", y = "coef1")) 
+            # 点颜色选项无用，需要用aes(size = 5, color = "red")
+              　
             
         } else {
             

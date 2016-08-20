@@ -32,8 +32,9 @@
 #' @export
 
 # Coding function for non-mlm mi objects
-interplot.lmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = NA, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", 
-    ...) {
+interplot.lmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = NA, 
+    point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, 
+    ralpha = 0.5, rfill = "grey70", ...) {
     set.seed(324)
     
     m.list <- m
@@ -58,39 +59,45 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = N
         var1_bk <- var1
         var1 <- paste0(var1, eval(parse(text = paste0("m$xlevel$", var1))))
         factor_v1 <- TRUE
-        ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, ":", var1)[-1])
+        ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, 
+            ":", var1)[-1])
         
         # the first category is censored to avoid multicolinarity
         for (i in seq(var12)) {
             if (!var12[i] %in% names(m$coef)) 
                 var12[i] <- paste0(var1, ":", var2)[-1][i]
             if (!var12[i] %in% names(m$coef)) 
-                stop(paste("Model does not include the interaction of", var1, "and", var2, "."))
+                stop(paste("Model does not include the interaction of", 
+                  var1, "and", var2, "."))
         }
         
     } else if (is.factor(eval(parse(text = paste0("m$model$", var2))))) {
         var2_bk <- var2
         var2 <- paste0(var2, eval(parse(text = paste0("m$xlevel$", var2))))
         factor_v2 <- TRUE
-        ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, ":", var1)[-1])
+        ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, 
+            ":", var1)[-1])
         
         # the first category is censored to avoid multicolinarity
         for (i in seq(var12)) {
             if (!var12[i] %in% names(m$coef)) 
                 var12[i] <- paste0(var1, ":", var2)[-1][i]
             if (!var12[i] %in% names(m$coef)) 
-                stop(paste("Model does not include the interaction of", var1, "and", var2, "."))
+                stop(paste("Model does not include the interaction of", 
+                  var1, "and", var2, "."))
         }
         
     } else {
-        ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, ":", var1))
+        ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, 
+            ":", var1))
         
         # the first category is censored to avoid multicolinarity
         for (i in seq(var12)) {
             if (!var12[i] %in% names(m$coef)) 
                 var12[i] <- paste0(var1, ":", var2)[i]
             if (!var12[i] %in% names(m$coef)) 
-                stop(paste("Model does not include the interaction of", var1, "and", var2, "."))
+                stop(paste("Model does not include the interaction of", 
+                  var1, "and", var2, "."))
         }
     }
     
@@ -107,26 +114,33 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = N
         if (is.na(xmax)) 
             xmax <- max(m$model[var2], na.rm = T)
         
-        steps <- eval(parse(text = paste0("length(unique(na.omit(m$model$", var2, ")))")))
+        steps <- eval(parse(text = paste0("length(unique(na.omit(m$model$", 
+            var2, ")))")))
         if (steps > 100) 
             steps <- 100  # avoid redundant calculation
     }
     
-    coef <- data.frame(fake = seq(xmin, xmax, length.out = steps), coef1 = NA, ub = NA, lb = NA)
-    coef_df <- data.frame(fake = numeric(0), coef1 = numeric(0), ub = numeric(0), lb = numeric(0), 
-        model = character(0))
+    coef <- data.frame(fake = seq(xmin, xmax, length.out = steps), coef1 = NA, 
+        ub = NA, lb = NA)
+    coef_df <- data.frame(fake = numeric(0), coef1 = numeric(0), ub = numeric(0), 
+        lb = numeric(0), model = character(0))
     
     if (factor_v1) {
-        for (j in 1:(length(eval(parse(text = paste0("m$xlevel$", var1_bk)))) - 1)) {
-            # only n - 1 interactions; one category is avoided against multicolinarity
+        for (j in 1:(length(eval(parse(text = paste0("m$xlevel$", var1_bk)))) - 
+            1)) {
+            # only n - 1 interactions; one category is avoided against
+            # multicolinarity
             
             for (i in 1:steps) {
-                coef$coef1[i] <- mean(m.sims@coef[, match(var1[j + 1], names(m$coef))] + coef$fake[i] * 
-                  m.sims@coef[, match(var12[j], names(m$coef))])
-                coef$ub[i] <- quantile(m.sims@coef[, match(var1[j + 1], names(m$coef))] + coef$fake[i] * 
-                  m.sims@coef[, match(var12[j], names(m$coef))], 0.975)
-                coef$lb[i] <- quantile(m.sims@coef[, match(var1[j + 1], names(m$coef))] + coef$fake[i] * 
-                  m.sims@coef[, match(var12[j], names(m$coef))], 0.025)
+                coef$coef1[i] <- mean(m.sims@coef[, match(var1[j + 1], 
+                  names(m$coef))] + coef$fake[i] * m.sims@coef[, match(var12[j], 
+                  names(m$coef))])
+                coef$ub[i] <- quantile(m.sims@coef[, match(var1[j + 1], 
+                  names(m$coef))] + coef$fake[i] * m.sims@coef[, match(var12[j], 
+                  names(m$coef))], 0.975)
+                coef$lb[i] <- quantile(m.sims@coef[, match(var1[j + 1], 
+                  names(m$coef))] + coef$fake[i] * m.sims@coef[, match(var12[j], 
+                  names(m$coef))], 0.025)
             }
             
             if (plot == TRUE) {
@@ -145,20 +159,24 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = N
             }
         }
         coef_df$value <- as.factor(coef_df$value)
-        interplot.plot(m = coef_df, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, 
-            rfill = rfill, ...) + facet_grid(. ~ value)
+        interplot.plot(m = coef_df, point = point, ercolor = ercolor, esize = esize, 
+            ralpha = ralpha, rfill = rfill, ...) + facet_grid(. ~ value)
         
     } else if (factor_v2) {
-        for (j in 1:(length(eval(parse(text = paste0("m$xlevel$", var2_bk)))) - 1)) {
-            # only n - 1 interactions; one category is avoided against multicolinarity
+        for (j in 1:(length(eval(parse(text = paste0("m$xlevel$", var2_bk)))) - 
+            1)) {
+            # only n - 1 interactions; one category is avoided against
+            # multicolinarity
             
             for (i in 1:steps) {
-                coef$coef1[i] <- mean(m.sims@coef[, match(var1, names(m$coef))] + coef$fake[i] * 
-                  m.sims@coef[, match(var12[j], names(m$coef))])
-                coef$ub[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + coef$fake[i] * 
-                  m.sims@coef[, match(var12[j], names(m$coef))], 0.975)
-                coef$lb[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + coef$fake[i] * 
-                  m.sims@coef[, match(var12[j], names(m$coef))], 0.025)
+                coef$coef1[i] <- mean(m.sims@coef[, match(var1, names(m$coef))] + 
+                  coef$fake[i] * m.sims@coef[, match(var12[j], names(m$coef))])
+                coef$ub[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
+                  coef$fake[i] * m.sims@coef[, match(var12[j], names(m$coef))], 
+                  0.975)
+                coef$lb[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
+                  coef$fake[i] * m.sims@coef[, match(var12[j], names(m$coef))], 
+                  0.025)
             }
             
             if (plot == TRUE) {
@@ -177,8 +195,8 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = N
             }
         }
         coef_df$value <- as.factor(coef_df$value)
-        interplot.plot(m = coef_df, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, 
-            rfill = rfill, ...) + facet_grid(. ~ value)
+        interplot.plot(m = coef_df, point = point, ercolor = ercolor, esize = esize, 
+            ralpha = ralpha, rfill = rfill, ...) + facet_grid(. ~ value)
         
         
     } else {
@@ -187,12 +205,15 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = N
             2 else 1
         
         for (i in 1:steps) {
-            coef$coef1[i] <- mean(m.sims@coef[, match(var1, names(m$coef))] + multiplier * coef$fake[i] * 
-                m.sims@coef[, match(var12, names(m$coef))])
-            coef$ub[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + multiplier * coef$fake[i] * 
-                m.sims@coef[, match(var12, names(m$coef))], 0.975)
-            coef$lb[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + multiplier * coef$fake[i] * 
-                m.sims@coef[, match(var12, names(m$coef))], 0.025)
+            coef$coef1[i] <- mean(m.sims@coef[, match(var1, names(m$coef))] + 
+                multiplier * coef$fake[i] * m.sims@coef[, match(var12, 
+                  names(m$coef))])
+            coef$ub[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
+                multiplier * coef$fake[i] * m.sims@coef[, match(var12, 
+                  names(m$coef))], 0.975)
+            coef$lb[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
+                multiplier * coef$fake[i] * m.sims@coef[, match(var12, 
+                  names(m$coef))], 0.025)
         }
         
         if (plot == TRUE) {
@@ -203,8 +224,8 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = N
                   var2_dt <- var2_dt
                 }
             }
-            interplot.plot(m = coef, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, 
-                rfill = rfill, ...)
+            interplot.plot(m = coef, point = point, ercolor = ercolor, 
+                esize = esize, ralpha = ralpha, rfill = rfill, ...)
         } else {
             names(coef) <- c(var2, "coef", "ub", "lb")
             return(coef)
@@ -214,7 +235,9 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = N
 }
 
 #' @export
-interplot.glmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = NA, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", ...) {
+interplot.glmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = NA, 
+    point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, 
+    ralpha = 0.5, rfill = "grey70", ...) {
     set.seed(324)
     
     m.list <- m
@@ -238,39 +261,45 @@ interplot.glmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = 
         var1_bk <- var1
         var1 <- paste0(var1, eval(parse(text = paste0("m$xlevel$", var1))))
         factor_v1 <- TRUE
-        ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, ":", var1)[-1])
+        ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, 
+            ":", var1)[-1])
         
         # the first category is censored to avoid multicolinarity
         for (i in seq(var12)) {
             if (!var12[i] %in% names(m$coef)) 
                 var12[i] <- paste0(var1, ":", var2)[-1][i]
             if (!var12[i] %in% names(m$coef)) 
-                stop(paste("Model does not include the interaction of", var1, "and", var2, "."))
+                stop(paste("Model does not include the interaction of", 
+                  var1, "and", var2, "."))
         }
         
     } else if (is.factor(eval(parse(text = paste0("m$model$", var2))))) {
         var2_bk <- var2
         var2 <- paste0(var2, eval(parse(text = paste0("m$xlevel$", var2))))
         factor_v2 <- TRUE
-        ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, ":", var1)[-1])
+        ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, 
+            ":", var1)[-1])
         
         # the first category is censored to avoid multicolinarity
         for (i in seq(var12)) {
             if (!var12[i] %in% names(m$coef)) 
                 var12[i] <- paste0(var1, ":", var2)[-1][i]
             if (!var12[i] %in% names(m$coef)) 
-                stop(paste("Model does not include the interaction of", var1, "and", var2, "."))
+                stop(paste("Model does not include the interaction of", 
+                  var1, "and", var2, "."))
         }
         
     } else {
-        ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, ":", var1))
+        ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, 
+            ":", var1))
         
         # the first category is censored to avoid multicolinarity
         for (i in seq(var12)) {
             if (!var12[i] %in% names(m$coef)) 
                 var12[i] <- paste0(var1, ":", var2)[i]
             if (!var12[i] %in% names(m$coef)) 
-                stop(paste("Model does not include the interaction of", var1, "and", var2, "."))
+                stop(paste("Model does not include the interaction of", 
+                  var1, "and", var2, "."))
         }
     }
     
@@ -286,26 +315,33 @@ interplot.glmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = 
         if (is.na(xmax)) 
             xmax <- max(m$model[var2], na.rm = T)
         
-        steps <- eval(parse(text = paste0("length(unique(na.omit(m$model$", var2, ")))")))
+        steps <- eval(parse(text = paste0("length(unique(na.omit(m$model$", 
+            var2, ")))")))
         if (steps > 100) 
             steps <- 100  # avoid redundant calculation
     }
     
-    coef <- data.frame(fake = seq(xmin, xmax, length.out = steps), coef1 = NA, ub = NA, lb = NA)
-    coef_df <- data.frame(fake = numeric(0), coef1 = numeric(0), ub = numeric(0), lb = numeric(0), 
-        model = character(0))
+    coef <- data.frame(fake = seq(xmin, xmax, length.out = steps), coef1 = NA, 
+        ub = NA, lb = NA)
+    coef_df <- data.frame(fake = numeric(0), coef1 = numeric(0), ub = numeric(0), 
+        lb = numeric(0), model = character(0))
     
     if (factor_v1) {
-        for (j in 1:(length(eval(parse(text = paste0("m$xlevel$", var1_bk)))) - 1)) {
-            # only n - 1 interactions; one category is avoided against multicolinarity
+        for (j in 1:(length(eval(parse(text = paste0("m$xlevel$", var1_bk)))) - 
+            1)) {
+            # only n - 1 interactions; one category is avoided against
+            # multicolinarity
             
             for (i in 1:steps) {
-                coef$coef1[i] <- mean(m.sims@coef[, match(var1[j + 1], names(m$coef))] + coef$fake[i] * 
-                  m.sims@coef[, match(var12[j], names(m$coef))])
-                coef$ub[i] <- quantile(m.sims@coef[, match(var1[j + 1], names(m$coef))] + coef$fake[i] * 
-                  m.sims@coef[, match(var12[j], names(m$coef))], 0.975)
-                coef$lb[i] <- quantile(m.sims@coef[, match(var1[j + 1], names(m$coef))] + coef$fake[i] * 
-                  m.sims@coef[, match(var12[j], names(m$coef))], 0.025)
+                coef$coef1[i] <- mean(m.sims@coef[, match(var1[j + 1], 
+                  names(m$coef))] + coef$fake[i] * m.sims@coef[, match(var12[j], 
+                  names(m$coef))])
+                coef$ub[i] <- quantile(m.sims@coef[, match(var1[j + 1], 
+                  names(m$coef))] + coef$fake[i] * m.sims@coef[, match(var12[j], 
+                  names(m$coef))], 0.975)
+                coef$lb[i] <- quantile(m.sims@coef[, match(var1[j + 1], 
+                  names(m$coef))] + coef$fake[i] * m.sims@coef[, match(var12[j], 
+                  names(m$coef))], 0.025)
             }
             
             if (plot == TRUE) {
@@ -324,20 +360,24 @@ interplot.glmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = 
             }
         }
         coef_df$value <- as.factor(coef_df$value)
-        interplot.plot(m = coef_df, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, 
-            rfill = rfill, ...) + facet_grid(. ~ value)
+        interplot.plot(m = coef_df, point = point, ercolor = ercolor, esize = esize, 
+            ralpha = ralpha, rfill = rfill, ...) + facet_grid(. ~ value)
         
     } else if (factor_v2) {
-        for (j in 1:(length(eval(parse(text = paste0("m$xlevel$", var2_bk)))) - 1)) {
-            # only n - 1 interactions; one category is avoided against multicolinarity
+        for (j in 1:(length(eval(parse(text = paste0("m$xlevel$", var2_bk)))) - 
+            1)) {
+            # only n - 1 interactions; one category is avoided against
+            # multicolinarity
             
             for (i in 1:steps) {
-                coef$coef1[i] <- mean(m.sims@coef[, match(var1, names(m$coef))] + coef$fake[i] * 
-                  m.sims@coef[, match(var12[j], names(m$coef))])
-                coef$ub[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + coef$fake[i] * 
-                  m.sims@coef[, match(var12[j], names(m$coef))], 0.975)
-                coef$lb[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + coef$fake[i] * 
-                  m.sims@coef[, match(var12[j], names(m$coef))], 0.025)
+                coef$coef1[i] <- mean(m.sims@coef[, match(var1, names(m$coef))] + 
+                  coef$fake[i] * m.sims@coef[, match(var12[j], names(m$coef))])
+                coef$ub[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
+                  coef$fake[i] * m.sims@coef[, match(var12[j], names(m$coef))], 
+                  0.975)
+                coef$lb[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
+                  coef$fake[i] * m.sims@coef[, match(var12[j], names(m$coef))], 
+                  0.025)
             }
             
             if (plot == TRUE) {
@@ -356,8 +396,8 @@ interplot.glmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = 
             }
         }
         coef_df$value <- as.factor(coef_df$value)
-        interplot.plot(m = coef_df, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, 
-            rfill = rfill, ...) + facet_grid(. ~ value)
+        interplot.plot(m = coef_df, point = point, ercolor = ercolor, esize = esize, 
+            ralpha = ralpha, rfill = rfill, ...) + facet_grid(. ~ value)
         
         
     } else {
@@ -366,12 +406,15 @@ interplot.glmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = 
             2 else 1
         
         for (i in 1:steps) {
-            coef$coef1[i] <- mean(m.sims@coef[, match(var1, names(m$coef))] + multiplier * coef$fake[i] * 
-                m.sims@coef[, match(var12, names(m$coef))])
-            coef$ub[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + multiplier * coef$fake[i] * 
-                m.sims@coef[, match(var12, names(m$coef))], 0.975)
-            coef$lb[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + multiplier * coef$fake[i] * 
-                m.sims@coef[, match(var12, names(m$coef))], 0.025)
+            coef$coef1[i] <- mean(m.sims@coef[, match(var1, names(m$coef))] + 
+                multiplier * coef$fake[i] * m.sims@coef[, match(var12, 
+                  names(m$coef))])
+            coef$ub[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
+                multiplier * coef$fake[i] * m.sims@coef[, match(var12, 
+                  names(m$coef))], 0.975)
+            coef$lb[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
+                multiplier * coef$fake[i] * m.sims@coef[, match(var12, 
+                  names(m$coef))], 0.025)
         }
         
         if (plot == TRUE) {
@@ -382,12 +425,12 @@ interplot.glmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = 
                   var2_dt <- var2_dt
                 }
             }
-            interplot.plot(m = coef, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, 
-                rfill = rfill, ...)
+            interplot.plot(m = coef, point = point, ercolor = ercolor, 
+                esize = esize, ralpha = ralpha, rfill = rfill, ...)
         } else {
             names(coef) <- c(var2, "coef", "ub", "lb")
             return(coef)
         }
         
     }
-} 
+}
