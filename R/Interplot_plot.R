@@ -36,10 +36,10 @@
 #' @export
 
 ## S3 method for class 'data.frame'
-interplot.plot <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = NULL, point = FALSE, 
+interplot.plot <- function(m, var1, var2, plot = TRUE, steps = steps, hist = FALSE, var2_dt = NULL, point = FALSE, 
     sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", 
     ...) {
-    steps <- nrow(m)
+    #steps <- nrow(m)
     levels <- sort(unique(m$fake))
     ymin <- ymax <- vector() # to deal with the "no visible binding for global variable" issue
     if (hist == FALSE) {
@@ -66,18 +66,29 @@ interplot.plot <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = N
             yrange <- c(m$ub, m$lb, var2_dt)
             maxdiff <- (max(yrange) - min(yrange))
             
-            break_var2 <- length(unique(var2_dt))
+            break_var2 <- steps + 1
             if (break_var2 >= 100) 
                 break_var2 <- 100
-            hist.out <- hist(var2_dt, breaks = break_var2, plot = FALSE)
+            hist.out <- hist(var2_dt, breaks = seq(min(var2_dt), max(var2_dt), l = break_var2), plot = FALSE)
             
             n.hist <- length(hist.out$mids)
-            dist <- hist.out$mids[2] - hist.out$mids[1]
+            
+            if (steps <10) {dist <- (hist.out$mids[2] - hist.out$mids[1])/3
+            } else {dist <- hist.out$mids[2] - hist.out$mids[1]}
             hist.max <- max(hist.out$counts)
             
-            histX <- data.frame(ymin = rep(min(yrange) - maxdiff/5, n.hist), ymax = hist.out$counts/hist.max * 
-                maxdiff/5 + min(yrange) - maxdiff/5, xmin = hist.out$mids - dist/2, xmax = hist.out$mids + 
-                dist/2)
+            
+            histX <- data.frame(ymin = rep(min(yrange) - maxdiff/5, n.hist),
+                                ymax = hist.out$counts/hist.max * 
+                                  maxdiff/5 + min(yrange) - maxdiff/5, 
+                                xmin = sort(unique(var2_dt)) - dist/2, 
+                                xmax = sort(unique(var2_dt)) + dist/2)
+            
+            if (steps <10) {
+              histX_sub <- histX
+            } else {
+              histX_sub <- mutate(histX, xdiff = xmax - xmin, xmax = xmax - xdiff/2)
+            }
             
             coef.plot <- ggplot()
             coef.plot <- coef.plot + geom_rect(data = histX, aes(xmin = xmin, xmax = xmax, ymin = ymin, 
