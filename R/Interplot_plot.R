@@ -12,6 +12,7 @@
 #' @param var1 The name (as a string) of the variable of interest in the interaction term; its conditional coefficient estimates will be plotted.
 #' @param var2 The name (as a string) of the other variable in the interaction term.
 #' @param plot A logical value indicating whether the output is a plot or a dataframe including the conditional coefficient estimates of var1, their upper and lower bounds, and the corresponding values of var2.
+#' @param steps Desired length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).
 #' @param hist A logical value indicating if there is a histogram of `var2` added at the bottom of the conditional effect plot.
 #' @param var2_dt A numerical value indicating the frequency distibution of `var2`. It is only used when `hist == TRUE`. When the object is a model, the default is the distribution of `var2` of the model. 
 #' @param point A logical value determining the format of plot. By default, the function produces a line plot when var2 takes on ten or more distinct values and a point (dot-and-whisker) plot otherwise; option TRUE forces a point plot.
@@ -41,6 +42,8 @@ interplot.plot <- function(m, var1 = NULL, var2 = NULL, plot = TRUE, steps = NUL
     if(is.null(steps)) steps <- nrow(m)
     levels <- sort(unique(m$fake))
     ymin <- ymax <- vector() # to deal with the "no visible binding for global variable" issue
+    xdiff <- vector() # to deal with the "no visible binding for global variable" issue
+    
     
     if (hist == FALSE) {
         if (steps < 10 | point == T) {
@@ -104,10 +107,7 @@ interplot.plot <- function(m, var1 = NULL, var2 = NULL, plot = TRUE, steps = NUL
             coef.plot <- coef.plot +
                 geom_errorbar(data = m, aes_string(x = "fake", ymin = "lb", ymax = "ub"), width = 0, 
                   color = ercolor, size = esize) + scale_x_continuous(breaks = levels) + ylab(NULL) + 
-                xlab(NULL) + 
-              geom_point(data = m, aes_string(x = "fake", y = "coef1")) 
-            # 点颜色选项无用，需要用aes(size = 5, color = "red")
-              　
+                xlab(NULL) + geom_point(data = m, aes_string(x = "fake", y = "coef1")) 
             
         } else {
             

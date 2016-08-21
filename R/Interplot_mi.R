@@ -6,6 +6,7 @@
 #' @param var1 The name (as a string) of the variable of interest in the interaction term; its conditional coefficient estimates will be plotted.
 #' @param var2 The name (as a string) of the other variable in the interaction term.
 #' @param plot A logical value indicating whether the output is a plot or a dataframe including the conditional coefficient estimates of var1, their upper and lower bounds, and the corresponding values of var2.
+#' @param steps Desired length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).
 #' @param hist A logical value indicating if there is a histogram of `var2` added at the bottom of the conditional effect plot.
 #' @param var2_dt A numerical value indicating the frequency distibution of `var2`. It is only used when `hist == TRUE`. When the object is a model, the default is the distribution of `var2` of the model. 
 #' @param point A logical value determining the format of plot. By default, the function produces a line plot when var2 takes on ten or more distinct values and a point (dot-and-whisker) plot otherwise; option TRUE forces a point plot.
@@ -32,7 +33,7 @@
 #' @export
 
 # Coding function for non-mlm mi objects
-interplot.lmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = NA, 
+interplot.lmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, hist = FALSE, var2_dt = NA, 
     point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, 
     ralpha = 0.5, rfill = "grey70", ...) {
     set.seed(324)
@@ -114,8 +115,11 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = N
         if (is.na(xmax)) 
             xmax <- max(m$model[var2], na.rm = T)
         
-        steps <- eval(parse(text = paste0("length(unique(na.omit(m$model$", 
-            var2, ")))")))
+        if (is.null(steps)) {
+          steps <- eval(parse(text = paste0("length(unique(na.omit(m$model$", 
+                                            var2, ")))")))
+        }
+        
         if (steps > 100) 
             steps <- 100  # avoid redundant calculation
     }
@@ -159,8 +163,7 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = N
             }
         }
         coef_df$value <- as.factor(coef_df$value)
-        interplot.plot(m = coef_df, point = point, ercolor = ercolor, esize = esize, 
-            ralpha = ralpha, rfill = rfill, ...) + facet_grid(. ~ value)
+        interplot.plot(m = coef_df, steps = steps, hist = hist, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ...) + facet_grid(. ~ value)
         
     } else if (factor_v2) {
         for (j in 1:(length(eval(parse(text = paste0("m$xlevel$", var2_bk)))) - 
@@ -195,8 +198,7 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = N
             }
         }
         coef_df$value <- as.factor(coef_df$value)
-        interplot.plot(m = coef_df, point = point, ercolor = ercolor, esize = esize, 
-            ralpha = ralpha, rfill = rfill, ...) + facet_grid(. ~ value)
+        interplot.plot(m = coef_df, steps = steps, hist = hist, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ...) + facet_grid(. ~ value)
         
         
     } else {
@@ -235,7 +237,7 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = N
 }
 
 #' @export
-interplot.glmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = NA, 
+interplot.glmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, hist = FALSE, var2_dt = NA, 
     point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, 
     ralpha = 0.5, rfill = "grey70", ...) {
     set.seed(324)
@@ -315,8 +317,11 @@ interplot.glmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = 
         if (is.na(xmax)) 
             xmax <- max(m$model[var2], na.rm = T)
         
-        steps <- eval(parse(text = paste0("length(unique(na.omit(m$model$", 
-            var2, ")))")))
+        if (is.null(steps)) {
+          steps <- eval(parse(text = paste0("length(unique(na.omit(m$model$", 
+                                            var2, ")))")))
+        }
+        
         if (steps > 100) 
             steps <- 100  # avoid redundant calculation
     }
@@ -360,8 +365,7 @@ interplot.glmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = 
             }
         }
         coef_df$value <- as.factor(coef_df$value)
-        interplot.plot(m = coef_df, point = point, ercolor = ercolor, esize = esize, 
-            ralpha = ralpha, rfill = rfill, ...) + facet_grid(. ~ value)
+        interplot.plot(m = coef_df, hist = hist, point = point, steps = steps, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ...) + facet_grid(. ~ value)
         
     } else if (factor_v2) {
         for (j in 1:(length(eval(parse(text = paste0("m$xlevel$", var2_bk)))) - 
@@ -425,7 +429,7 @@ interplot.glmmi <- function(m, var1, var2, plot = TRUE, hist = FALSE, var2_dt = 
                   var2_dt <- var2_dt
                 }
             }
-            interplot.plot(m = coef, point = point, ercolor = ercolor, 
+            interplot.plot(m = coef, steps = steps, hist = hist, point = point, ercolor = ercolor, 
                 esize = esize, ralpha = ralpha, rfill = rfill, ...)
         } else {
             names(coef) <- c(var2, "coef", "ub", "lb")

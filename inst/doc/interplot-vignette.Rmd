@@ -98,7 +98,7 @@ interplot(m = m_cyl, var1 = "wt", var2 = "cyl", ercolor = "blue", esize = 1.5) +
 
 ## Plot the Effect of a Variable with a Quadratic Term
 
-The simplies type of interaction is quadratic term, which can be regarded as a variable interact with itself. `interplot` can visualize this case when the variable names of `var1` and `var2` are the same.
+The simplest type of interaction is quadratic term, which can be regarded as a variable interact with itself. `interplot` can visualize this case when the variable names of `var1` and `var2` are the same.
 
 ```{r fig.width = 5}
 m_wt <- lm(mpg ~ wt + I(wt^2), data = mtcars)
@@ -129,6 +129,14 @@ interplot(m = m_cyl, var1 = "cyl", var2 = "wt", hist = TRUE) +
 ```
 
 Our implementation of this option was inspired by the excellent work of @Hainmueller2016.
+A tip is that when presenting the histogram, some default setting would not be directly modified by the build-in arguments or the `geom` functions. 
+Instead, one can change these settings by the `aes` function---as illustrated by the following example.
+
+```{r fig.width = 5}
+interplot(m = m_cyl, var1 = "cyl", var2 = "wt", hist = TRUE) +
+  aes(color = "pink") + theme(legend.position="none") +  # geom_line(color = "pink") + 
+  geom_hline(yintercept = 0, linetype = "dashed")
+```
 
 
 ## Advanced Use: Plot Conditional Effects Without a Model

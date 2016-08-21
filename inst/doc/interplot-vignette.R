@@ -53,6 +53,11 @@ interplot(m = m_gear, var1 = "wt", var2 = "gear")
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt", hist = TRUE) +
     geom_hline(yintercept = 0, linetype = "dashed")
 
+## ----fig.width = 5-------------------------------------------------------
+interplot(m = m_cyl, var1 = "cyl", var2 = "wt", hist = TRUE) +
+  aes(color = "pink") + theme(legend.position="none") +  # geom_line(color = "pink") + 
+  geom_hline(yintercept = 0, linetype = "dashed")
+
 ## ----fig.width = 5.5-----------------------------------------------------
 # Create a fake dataset of conditional effects
 fake <- rnorm(100, 0, 1)

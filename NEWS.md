@@ -1,3 +1,12 @@
+# interplot 0.1.3
+## Function Updates
+* Take the `steps` argument back in case of special design requirement of the plot.
+* Fixed an error in presenting the histogram on categorical conditioning variables.
+* Improving the histogram presentation: all the bars for categorical variables are centered.
+
+## Vignette Updates
+Updated the vignette including instructions of how to change the aesthetics of the plot and how to use histogram function.
+
 # interplot 0.1.2.1
 ## Vignette Updates
 Updated the vignette including instructions of how to change the aesthetics of the plot and how to use histogram function.
@@ -5,7 +14,7 @@ Updated the vignette including instructions of how to change the aesthetics of t
 # interplot 0.1.2.0
 ## Additional Function
 1. The aesthetics can be modified through built-in arguments or the ggplot `geom_` functions.
-2. A hisogram can be superimposed into the plot.
+2. A histogram can be superimposed into the plot.
 
 
 # interplot 0.1.1.1
@@ -31,6 +40,7 @@ Fix the bug for nonlinear multilevel models with multiply imputed data (gmlmmi).
 # interplot 0.1.0.1
 ## Bug fix
 Fix the error to run mlm and mlmmi.
+
 
 
 

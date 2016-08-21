@@ -1,7 +1,5 @@
 ## Test environments
-* OS X, R 3.2.1
-* Win 8.1, R 3.2.1
-* Ubuntu 12.04, R 3.1.3
+* R 3.4.0
 
 
 ## R CMD check results
@@ -37,20 +35,24 @@ change the nameplace for it.
 
 ### v 0.1.0.2
 There were no ERRORs or WARNINGs. 
-R CMD check succeeded
+R CMD check succeeded.
 
 ### v 0.1.1.0
 There were no ERRORs or WARNINGs. 
-R CMD check succeeded
+R CMD check succeeded.
 
 ### v 0.1.1.1
 There were no ERRORs or WARNINGs. 
-R CMD check succeeded
+R CMD check succeeded.
 
 ### v 0.1.2.0
 There were no ERRORs or WARNINGs. 
-R CMD check succeeded
+R CMD check succeeded.
 
 ### v 0.1.2.1
 There were no ERRORs or WARNINGs. 
-R CMD check succeeded
+R CMD check succeeded.
+
+### v 0.1.3
+There were no ERRORs or WARNINGs. 
+R CMD check succeeded.

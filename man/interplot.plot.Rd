@@ -4,9 +4,10 @@
 \alias{interplot.plot}
 \title{Plot Conditional Coefficients in Models with Interaction Terms}
 \usage{
-\method{interplot}{plot}(m, var1, var2, plot = TRUE, hist = FALSE,
-  var2_dt = NULL, point = FALSE, sims = 5000, xmin = NA, xmax = NA,
-  ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", ...)
+\method{interplot}{plot}(m, var1 = NULL, var2 = NULL, plot = TRUE,
+  steps = NULL, hist = FALSE, var2_dt = NULL, point = FALSE,
+  sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5,
+  ralpha = 0.5, rfill = "grey70", ...)
 }
 \arguments{
 \item{m}{A model object including an interaction term, or, alternately, a data frame recording conditional coefficients. This data frame should includes four columns:
@@ -22,6 +23,8 @@
 \item{var2}{The name (as a string) of the other variable in the interaction term.}
 
 \item{plot}{A logical value indicating whether the output is a plot or a dataframe including the conditional coefficient estimates of var1, their upper and lower bounds, and the corresponding values of var2.}
+
+\item{steps}{Desired length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).}
 
 \item{hist}{A logical value indicating if there is a histogram of `var2` added at the bottom of the conditional effect plot.}
 
