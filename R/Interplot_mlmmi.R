@@ -118,7 +118,7 @@ interplot.mlmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, hist = FAL
             xmax <- max(m@frame[var2], na.rm = T)
         
         if (is.null(steps)) {
-          steps <- eval(parse(text = paste0("length(unique(na.omit(m$model$", 
+          steps <- eval(parse(text = paste0("length(unique(na.omit(m@frame$", 
                                             var2, ")))")))
         }
         
@@ -325,7 +325,7 @@ interplot.gmlmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, hist = FA
             xmax <- max(m@frame[var2], na.rm = T)
         
         if (is.null(steps)) {
-          steps <- eval(parse(text = paste0("length(unique(na.omit(m$model$", 
+          steps <- eval(parse(text = paste0("length(unique(na.omit(m@frame$", 
                                             var2, ")))")))
         }
         
