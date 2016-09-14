@@ -56,3 +56,7 @@ R CMD check succeeded.
 ### v 0.1.3
 There were no ERRORs or WARNINGs. 
 R CMD check succeeded.
+
+### v 0.1.4
+There were no ERRORs or WARNINGs. 
+R CMD check succeeded.

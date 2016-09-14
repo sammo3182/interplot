@@ -12,7 +12,7 @@
 
 <meta name="author" content="Frederick Solt and Yue Hu" />
 
-<meta name="date" content="2016-08-21" />
+<meta name="date" content="2016-09-14" />
 
 <title>interplot: Plot the Effects of Variables in Interaction Terms</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">interplot: Plot the Effects of Variables in Interaction Terms</h1>
 <h4 class="author"><em>Frederick Solt and Yue Hu</em></h4>
-<h4 class="date"><em>2016-08-21</em></h4>
+<h4 class="date"><em>2016-09-14</em></h4>
 
 
 
@@ -101,17 +101,17 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## -4.2288 -1.3495 -0.5042  1.4647  5.2344 
 ## 
 ## Coefficients:
-##             Estimate Std. Error t value      Pr(&gt;|t|)    
-## (Intercept)  54.3068     6.1275   8.863 0.00000000129 ***
-## wt           -8.6556     2.3201  -3.731      0.000861 ***
-## cyl          -3.8032     1.0050  -3.784      0.000747 ***
-## wt:cyl        0.8084     0.3273   2.470      0.019882 *  
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  54.3068     6.1275   8.863 1.29e-09 ***
+## wt           -8.6556     2.3201  -3.731 0.000861 ***
+## cyl          -3.8032     1.0050  -3.784 0.000747 ***
+## wt:cyl        0.8084     0.3273   2.470 0.019882 *  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## Residual standard error: 2.368 on 28 degrees of freedom
 ## Multiple R-squared:  0.8606, Adjusted R-squared:  0.8457 
-## F-statistic: 57.62 on 3 and 28 DF,  p-value: 0.000000000004231</code></pre>
+## F-statistic: 57.62 on 3 and 28 DF,  p-value: 4.231e-12</code></pre>
 <p>The coefficient of the interactive term (<code>wt:cyl</code>) is positive and statistically significant at .05 level. This tells us that the coefficient of <code>wt</code> depends on the value of <code>cyl</code> and vice versa; these estimated coefficients are conditional. It does not indicate anything, however, about the magnitude or statistical significance of these conditional coefficients. A plot produced by <code>interplot</code> easily and clearly answers these latter questions.</p>
 </div>
 <div id="create-a-basic-graph-of-the-conditional-coefficients" class="section level2">

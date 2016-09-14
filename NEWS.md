@@ -1,3 +1,8 @@
+# interplot 0.1.4
+## Error Fixed
+* Fixed the error in plotting `lmer` projects.
+
+
 # interplot 0.1.3
 ## Function Updates
 * Take the `steps` argument back in case of special design requirement of the plot.
