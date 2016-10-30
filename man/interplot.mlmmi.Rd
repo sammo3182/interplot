@@ -41,6 +41,8 @@
 \item{rfill}{A character value indicating the filling color of the ribbon.}
 
 \item{...}{Other ggplot aesthetics arguments for points in the dot-whisker plot or lines in the line-ribbon plots. Not currently used.}
+
+\item{ci}{A numeric value defining the confidence intervals. The default value is 95\% (0.95).}
 }
 \value{
 The function returns a \code{ggplot} object.
