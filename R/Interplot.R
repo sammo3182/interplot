@@ -63,11 +63,10 @@
 
 
 
-interplot <- function(m, var1, var2, plot = TRUE, steps = NULL, hist = FALSE, 
-    var2_dt = NA, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, 
-    esize = 0.5, ralpha = 0.5, rfill = "grey70", ...) {
-    
-    
+interplot <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, 
+                      hist = FALSE, var2_dt = NA, point = FALSE, sims = 5000, 
+                      xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, 
+                      ralpha = 0.5, rfill = "grey70", ...) {
     if (class(m)[1] == "list") {
         if (class(m[[1]])[1] == "lmerMod") {
             class(m) <- "mlmmi"

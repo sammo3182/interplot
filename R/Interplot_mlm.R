@@ -7,6 +7,7 @@
 #' @param var2 The name (as a string) of the other variable in the interaction term.
 #' @param plot A logical value indicating whether the output is a plot or a dataframe including the conditional coefficient estimates of var1, their upper and lower bounds, and the corresponding values of var2.
 #' @param steps Desired length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).
+#' @param ci A numeric value defining the confidence intervals. The default value is 95% (0.95).
 #' @param hist A logical value indicating if there is a histogram of `var2` added at the bottom of the conditional effect plot.
 #' @param var2_dt A numerical value indicating the frequency distibution of `var2`. It is only used when `hist == TRUE`. When the object is a model, the default is the distribution of `var2` of the model. 
 #' @param point A logical value determining the format of plot. By default, the function produces a line plot when var2 takes on ten or more distinct values and a point (dot-and-whisker) plot otherwise; option TRUE forces a point plot.
@@ -133,10 +134,10 @@ interplot.lmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, hist = F
                   match(var12[j], unlist(dimnames(m@pp$X)[2]))])
                 coef$ub[i] <- quantile(m.sims@fixef[, match(var1[j + 1], 
                   unlist(dimnames(m@pp$X)[2]))] + coef$fake[i] * m.sims@fixef[, 
-                  match(var12[j], unlist(dimnames(m@pp$X)[2]))], 0.975)
+                  match(var12[j], unlist(dimnames(m@pp$X)[2]))], (1 - ci) / 2)
                 coef$lb[i] <- quantile(m.sims@fixef[, match(var1[j + 1], 
                   unlist(dimnames(m@pp$X)[2]))] + coef$fake[i] * m.sims@fixef[, 
-                  match(var12[j], unlist(dimnames(m@pp$X)[2]))], 0.025)
+                  match(var12[j], unlist(dimnames(m@pp$X)[2]))], 1 - (1 - ci) / 2)
             }
             
             if (plot == TRUE) {
@@ -170,10 +171,10 @@ interplot.lmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, hist = F
                   coef$fake[i] * m.sims@fixef[, match(var12[j], unlist(dimnames(m@pp$X)[2]))])
                 coef$ub[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
                   coef$fake[i] * m.sims@fixef[, match(var12[j], unlist(dimnames(m@pp$X)[2]))], 
-                  0.975)
+                  (1 - ci) / 2)
                 coef$lb[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
                   coef$fake[i] * m.sims@fixef[, match(var12[j], unlist(dimnames(m@pp$X)[2]))], 
-                  0.025)
+                  1 - (1 - ci) / 2)
             }
             
             if (plot == TRUE) {
@@ -208,10 +209,10 @@ interplot.lmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, hist = F
                   unlist(dimnames(m@pp$X)[2]))])
             coef$ub[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
                 multiplier * coef$fake[i] * m.sims@fixef[, match(var12, 
-                  unlist(dimnames(m@pp$X)[2]))], 0.975)
+                  unlist(dimnames(m@pp$X)[2]))], (1 - ci) / 2)
             coef$lb[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
                 multiplier * coef$fake[i] * m.sims@fixef[, match(var12, 
-                  unlist(dimnames(m@pp$X)[2]))], 0.025)
+                  unlist(dimnames(m@pp$X)[2]))], 1 - (1 - ci) / 2)
         }
         
         if (plot == TRUE) {
@@ -333,10 +334,10 @@ interplot.glmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, hist = 
                   match(var12[j], unlist(dimnames(m@pp$X)[2]))])
                 coef$ub[i] <- quantile(m.sims@fixef[, match(var1[j + 1], 
                   unlist(dimnames(m@pp$X)[2]))] + coef$fake[i] * m.sims@fixef[, 
-                  match(var12[j], unlist(dimnames(m@pp$X)[2]))], 0.975)
+                  match(var12[j], unlist(dimnames(m@pp$X)[2]))], (1 - ci) / 2)
                 coef$lb[i] <- quantile(m.sims@fixef[, match(var1[j + 1], 
                   unlist(dimnames(m@pp$X)[2]))] + coef$fake[i] * m.sims@fixef[, 
-                  match(var12[j], unlist(dimnames(m@pp$X)[2]))], 0.025)
+                  match(var12[j], unlist(dimnames(m@pp$X)[2]))], 1 - (1 - ci) / 2)
             }
             
             if (plot == TRUE) {
@@ -370,10 +371,10 @@ interplot.glmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, hist = 
                   coef$fake[i] * m.sims@fixef[, match(var12[j], unlist(dimnames(m@pp$X)[2]))])
                 coef$ub[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
                   coef$fake[i] * m.sims@fixef[, match(var12[j], unlist(dimnames(m@pp$X)[2]))], 
-                  0.975)
+                  (1 - ci) / 2)
                 coef$lb[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
                   coef$fake[i] * m.sims@fixef[, match(var12[j], unlist(dimnames(m@pp$X)[2]))], 
-                  0.025)
+                  1 - (1 - ci) / 2)
             }
             
             if (plot == TRUE) {
@@ -408,10 +409,10 @@ interplot.glmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, hist = 
                   unlist(dimnames(m@pp$X)[2]))])
             coef$ub[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
                 multiplier * coef$fake[i] * m.sims@fixef[, match(var12, 
-                  unlist(dimnames(m@pp$X)[2]))], 0.975)
+                  unlist(dimnames(m@pp$X)[2]))], (1 - ci) / 2)
             coef$lb[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
                 multiplier * coef$fake[i] * m.sims@fixef[, match(var12, 
-                  unlist(dimnames(m@pp$X)[2]))], 0.025)
+                  unlist(dimnames(m@pp$X)[2]))], 1 - (1 - ci) / 2)
         }
         
         if (plot == TRUE) {
