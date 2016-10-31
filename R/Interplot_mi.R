@@ -34,8 +34,9 @@
 #' @export
 
 # Coding function for non-mlm mi objects
-interplot.lmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, hist = FALSE, var2_dt = NA, 
-    point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, 
+interplot.lmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, 
+                           hist = FALSE, var2_dt = NA, point = FALSE, sims = 5000,
+                           xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, 
     ralpha = 0.5, rfill = "grey70", ...) {
     set.seed(324)
     
@@ -238,9 +239,10 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, hist = FALS
 }
 
 #' @export
-interplot.glmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, hist = FALSE, var2_dt = NA, 
-    point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, 
-    ralpha = 0.5, rfill = "grey70", ...) {
+interplot.glmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, 
+                            hist = FALSE, var2_dt = NA, point = FALSE, sims = 5000,
+                            xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, 
+                            ralpha = 0.5, rfill = "grey70", ...) {
     set.seed(324)
     
     m.list <- m

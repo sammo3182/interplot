@@ -5,8 +5,8 @@
 \title{Plot Conditional Coefficients in Mixed-Effects Models with Interaction Terms}
 \usage{
 \method{interplot}{lmerMod}(m, var1, var2, plot = TRUE, steps = NULL,
-  hist = FALSE, var2_dt = NA, point = FALSE, sims = 5000, xmin = NA,
-  xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5,
+  ci = 0.95, hist = FALSE, var2_dt = NA, point = FALSE, sims = 5000,
+  xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5,
   rfill = "grey70", ...)
 }
 \arguments{
@@ -19,6 +19,8 @@
 \item{plot}{A logical value indicating whether the output is a plot or a dataframe including the conditional coefficient estimates of var1, their upper and lower bounds, and the corresponding values of var2.}
 
 \item{steps}{Desired length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).}
+
+\item{ci}{A numeric value defining the confidence intervals. The default value is 95\% (0.95).}
 
 \item{hist}{A logical value indicating if there is a histogram of `var2` added at the bottom of the conditional effect plot.}
 
@@ -41,8 +43,6 @@
 \item{rfill}{A character value indicating the filling color of the ribbon.}
 
 \item{...}{Other ggplot aesthetics arguments for points in the dot-whisker plot or lines in the line-ribbon plots. Not currently used.}
-
-\item{ci}{A numeric value defining the confidence intervals. The default value is 95\% (0.95).}
 }
 \value{
 The function returns a \code{ggplot} object.

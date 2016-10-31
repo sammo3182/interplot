@@ -35,9 +35,10 @@
 #' @export
 
 # Coding function for non-mi mlm objects
-interplot.lmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, hist = FALSE, 
-    var2_dt = NA, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, 
-    esize = 0.5, ralpha = 0.5, rfill = "grey70", ...) {
+interplot.lmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, 
+                              hist = FALSE, var2_dt = NA, point = FALSE, sims = 5000,
+                              xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, 
+                              ralpha = 0.5, rfill = "grey70", ...) {
     set.seed(324)
     
     m.class <- class(m)
@@ -235,9 +236,10 @@ interplot.lmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, hist = F
 }
 
 #' @export
-interplot.glmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, hist = FALSE, 
-    var2_dt = NA, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, 
-    esize = 0.5, ralpha = 0.5, rfill = "grey70", ...) {
+interplot.glmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95,
+                               hist = FALSE, var2_dt = NA, point = FALSE, sims = 5000,
+                               xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, 
+                               ralpha = 0.5, rfill = "grey70", ...) {
     set.seed(324)
     
     m.class <- class(m)

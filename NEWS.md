@@ -1,3 +1,7 @@
+# interplot 0.1.5
+## Adding Argument
+* Adding an argument to adjust the CIs.
+
 # interplot 0.1.4
 ## Error Fixed
 * Fixed the error in plotting `lmer` projects.

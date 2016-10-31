@@ -1,6 +1,6 @@
 Package: interplot
 Title: Plot the Effects of Variables in Interaction Terms
-Version: 0.1.4
+Version: 0.1.5
 Authors@R: c(
     person("Frederick", "Solt", email = "frederick-solt@uiowa.edu", role = c("aut")),
     person("Yue", "Hu", email = "yue-hu-1@uiowa.edu", role = c("aut", "cre")),
@@ -19,6 +19,7 @@ Imports:
 License: MIT + file LICENSE
 LazyData: true
 Suggests:
+    rmarkdown,
     knitr
 VignetteBuilder: rmarkdown
 RoxygenNote: 5.0.1

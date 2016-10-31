@@ -62,6 +62,14 @@ Similarly, to show how the number of cylinders affects the coefficient of automo
 interplot(m = m_cyl, var1 = "wt", var2 = "cyl")
 ```
 
+Users can adjust the CI level by setting the `ci` option.
+The default value is 95% CIs.
+The following example resets the the CIs to 90%.
+
+```{r}
+interplot(m = m_cyl, var1 = "wt", var2 = "cyl", ci = .9, point = T)
+```
+
 The format of the plot also changes when `wt` is `var1` and `cyl` is `var2`. This is because `cyl` is not a continuous variable but a categorical one with just three values: 4, 6, and 8. `interplot` automatically detects the number of values taken on by `var2` and chooses the appropriate plot format.  If there are fewer than 10 values, the function will produce a "dot-and-whisker" plot; otherwise, by default, it will generate a "line-and-ribbon" plot.  Users may override this default by setting the argument `point` to `TRUE`.
 
 ```{r fig.width = 5}
@@ -69,6 +77,7 @@ interplot(m = m_cyl, var1 = "cyl", var2 = "wt", point = T) +
   # changing the angle of x labels for a clearer vision
   theme(axis.text.x  = element_text(angle=90))
 ```
+
 
 
 ## Change the Appearance of the Plot
