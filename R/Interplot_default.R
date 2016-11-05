@@ -143,10 +143,10 @@ interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL,
                   names(m$coef))])
                 coef$ub[i] <- quantile(m.sims@coef[, match(var1[j + 1], 
                   names(m$coef))] + coef$fake[i] * m.sims@coef[, match(var12[j], 
-                  names(m$coef))], 0.975)
+                  names(m$coef))], 1 - (1 - ci) / 2)
                 coef$lb[i] <- quantile(m.sims@coef[, match(var1[j + 1], 
                   names(m$coef))] + coef$fake[i] * m.sims@coef[, match(var12[j], 
-                  names(m$coef))], 0.025)
+                  names(m$coef))], (1 - ci) / 2)
             }
             
             if (plot == TRUE) {
@@ -180,10 +180,10 @@ interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL,
                   coef$fake[i] * m.sims@coef[, match(var12[j], names(m$coef))])
                 coef$ub[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
                   coef$fake[i] * m.sims@coef[, match(var12[j], names(m$coef))], 
-                  0.975)
+                  1 - (1 - ci) / 2)
                 coef$lb[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + 
                   coef$fake[i] * m.sims@coef[, match(var12[j], names(m$coef))], 
-                  0.025)
+                  (1 - ci) / 2)
             }
             
             if (plot == TRUE) {
