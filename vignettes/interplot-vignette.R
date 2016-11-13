@@ -16,6 +16,9 @@ interplot(m = m_cyl, var1 = "cyl", var2 = "wt")
 ## ----fig.width = 5-------------------------------------------------------
 interplot(m = m_cyl, var1 = "wt", var2 = "cyl")
 
+## ------------------------------------------------------------------------
+interplot(m = m_cyl, var1 = "wt", var2 = "cyl", ci = .9, point = T)
+
 ## ----fig.width = 5-------------------------------------------------------
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt", point = T) +
   # changing the angle of x labels for a clearer vision
