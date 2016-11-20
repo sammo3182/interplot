@@ -6,11 +6,11 @@ citEntry(entry = "misc",
                    as.person("Yue Hu")),
   howpublished = "Available at The Comprehensive R Archive Network (CRAN)",
   year         = "2015",
-  url          = "http://CRAN.R-project.org/package=interplot",
+  url          = "https://CRAN.R-project.org/package=interplot",
 
   textVersion  =
   paste("Frederick Solt and Yue Hu (2015).",
         "interplot: Plot the Effects of Variables in Interaction Terms.",
         "available at The Comprehensive R Archive Network (CRAN).",
-        "URL http://CRAN.R-project.org/package=interplot.")
+        "URL https://CRAN.R-project.org/package=interplot.")
 )
