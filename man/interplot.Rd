@@ -88,4 +88,3 @@ ggtitle('Estimated Coefficient of Automobile Weight \\non Mileage by Engine Cyli
 theme(plot.title = element_text(face='bold'))
 
 }
-

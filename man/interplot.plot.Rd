@@ -61,4 +61,3 @@ Graph based on the data frame of statistics about the conditional effect of an i
 
 Because the output function is based on \code{\link[ggplot2]{ggplot}}, any additional arguments and layers supported by \code{ggplot2} can be added with the \code{+}.
 }
-
