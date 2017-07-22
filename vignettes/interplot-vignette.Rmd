@@ -10,7 +10,30 @@ vignette: >
   %\VignetteEncoding{ASCII}
 ---
 
-The `interplot` package is a tool for plotting the conditional coefficients ("marginal effects") of variables included in multiplicative interaction terms. The function plots the changes in the coefficient of one variable in a two-way interaction term conditional on the value of the other included variable. The plot also includes simulated 95% confidential intervals of these coefficients.  In the current version, the function works with ordinary linear regression models, generalized linear models (e.g., logit, probit, ordered logit, etc.), and multilevel (mixed-effects) regressions, all with complete or multiply imputed data. 
+Interaction is a powerful tool to test conditional effects of one variable on the contribution of another variable to the dependent variable and has been extensively applied in the empirical research of social science since the 1970s [@WrightJr1976].
+Unfortunately, the nonlinear nature determines that the statistical estimate of an interactive effect cannot be interpreted as straightforward as the coefficient of a regular regression parameter.
+Let's use a simple example to illustrate this point:
+The following model use an interaction term to test the conditional effect of Z on X's contribution (or the conditional effect of X on Z's contribution) to the variance of Y. 
+
+$$Y = \beta_0 + \beta_1X + \beta_2Z + \beta_3X\times Z + \varepsilon.$$
+The contribution of X on Y is typically represented by the marginal effect:
+
+$$\frac{\partial Y}{\partial X} = \beta_1 + \beta_3Z.$$
+
+The standard error of this estimate is thus: 
+
+$$\hat{\sigma}_{\frac{\partial Y}{\partial X}} = \sqrt{var(\hat{\beta_1}) + Z^2var(\hat{\beta_3}) + 2Zcov(\hat{\beta_1}, \hat{\beta_3})}.$$
+
+As @Brambor2006 [p.70] indicates, the above equation suggests that its perfectly possible for the contribution of X on Y to be statistically significant for certain values of Z "even if all of the model parameters are insignificant."
+In other words, one cannot infer whether X has a meaningful conditional effect on Y simply from the magnitude and significance of either $\beta_1$ or $\beta_3$ (Ibid., 74). 
+Instead, the conditional effect should be examined based on the marginal effect at every observed value of Z [@Berry2012; @Brambor2006; @Braumoeller2004].
+
+Furthermore, scholars have noticed that the point estimation of some interaction models, especially those depending on link functions (e.g., logit and probit) may not be as reliable as the estimates of the confidence intervals [@Berry2016].
+Therefore, it is even more important to accurately present and examine the boundaries established by the confidence intervals than the point estimates in the test of conditional effect.
+@Berry2012 also pointed out that the substantive significance of the conditional effect highly relates to the distribution of the conditioning variable (viz., Z in the above example). 
+They thus recommend researchers to present the frequency distribution of the conditioning variable together with the marginal effects (especially when the effect trend goes across the zero point).
+
+The `interplot` package provides a convenient way to address above points with one or a series of plots produced by a single function. The function visualizes the changes in the coefficient of one variable in a two-way interaction term conditional on the value of the other included variable. The plot also includes simulated 95% confidential intervals of these coefficients.  In the current version, the function works with ordinary linear regression models, generalized linear models (e.g., logit, probit, ordered logit, etc.), and multilevel (mixed-effects) regressions, all with complete or multiply imputed data. 
 
 Comparing to established alternatives such as `effects::plot` and `sjplot::sjp.int`, `interplot` provides a more user-friendly way to quickly produce plots that are easy to interpret. `interplot` plots the changes in the *conditional coefficient* of one variable in the interaction, rather than changes in the dependent variable itself as in the aforementioned functions. This approach avoids displaying interaction effects across multiple panels or multiple lines in favor of a single plot containing all the relevant information. Moreover, by outputting `ggplot` objects, `interplot` allows users to easily further customize their graphs.
 

@@ -41,11 +41,11 @@
 }
 
 @Unpublished{Hainmueller2016,
-  author =  {Hainmueller, Jens and Mummolo, Jonathan and Xu, Yiqing},
-  title =   {How Much Should We Trust Estimates from Multiplicative Interaction Models? Simple Tools to Improve Empirical Practice},
-  note =    {http://polmeth.wustl.edu/node/1262},
-  year =    {2016},
-  journal = {Simple Tools to Improve Empirical Practice (February 27, 2016)}
+  author    = {Hainmueller, Jens and Mummolo, Jonathan and Xu, Yiqing},
+  title     = {How Much Should We Trust Estimates from Multiplicative Interaction Models? Simple Tools to Improve Empirical Practice},
+  year      = {2016},
+  timestamp = {2017-07-20},
+  url       = {https://ssrn.com/abstract=2739221},
 }
 
 @Article{Clark2006,
@@ -59,3 +59,23 @@
   publisher = {SPM-PMSAPSA}
 }
 
+@Article{Berry2016,
+  author    = {Berry, William D and DeMeritt, Jacqueline HR and Esarey, Justin},
+  title     = {Bias and Overconfidence in Parametric Models of Interactive Processes},
+  journal   = {American Journal of Political Science},
+  year      = {2016},
+  volume    = {60},
+  number    = {2},
+  pages     = {521--539},
+  publisher = {Wiley Online Library},
+}
+
+@Unpublished{Esarey2015,
+  author    = {Esarey, Justin and Sumner, Jane Lawrence},
+  title     = {Marginal Effects in Interaction Models: Determining and Controlling the False Positive Rate},
+  year      = {2015},
+  timestamp = {2017-07-20},
+  url       = {http://jee3.web.rice.edu/interaction-overconfidence.pdf},
+}
+
+@Comment{jabref-meta: databaseType:bibtex;}
