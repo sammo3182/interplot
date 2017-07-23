@@ -54,7 +54,16 @@ p1 + geom_line(data = m, aes_string(x = "fake", y = "coef1")) +
 ######################################
 
 # adjustCI option:
+
 m_cyl <- lm(mpg ~ wt * cyl, mtcars)
+
+interplot(m_cyl, var1 = "wt", var2 = "cyl")
+
+mtcars$cyl_f <- as.factor(mtcars$cyl)
+m_cylF <- lm(mpg ~ wt * cyl_f, mtcars)
+interplot.default(m_cylF, var2 = "wt", var1 = "cyl_f", adjCI = TRUE)
+
+
 
 pacman::p_load(ggplot2, interactionTest)
 

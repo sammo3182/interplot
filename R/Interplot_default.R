@@ -32,6 +32,7 @@
 #' 
 #' @importFrom arm sim
 #' @importFrom stats quantile
+#' @importFrom interactionTest fdrInteraction
 #' @import  ggplot2
 #' 
 #' 
@@ -40,7 +41,7 @@
 
 # S3 method for class 'lm' and 'glm'
 interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL, 
-    ci = .95, hist = FALSE, var2_dt = NA, point = FALSE, sims = 5000, xmin = NA, 
+    ci = .95, adjCI = FALSE, hist = FALSE, var2_dt = NA, point = FALSE, sims = 5000, xmin = NA, 
     xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", 
     ...) {
     set.seed(324)
@@ -148,7 +149,16 @@ interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL,
                   names(m$coef))], (1 - ci) / 2)
             }
             
-            if (plot == TRUE) {
+          if(adjCI == TRUE){
+            ## FDR correction
+            coef$sd <- (coef$ub - coef$coef1) / qnorm(.975) 
+            tAdj <- fdrInteraction(coef$coef1, coef$sd, df = m$df, level = .95) # calculate critical t
+            coef$ub <- coef$coef1 + tAdj * coef$sd
+            coef$lb <- coef$coef1 - tAdj * coef$sd
+          }
+          
+          # preparing for later ploting
+          if (plot == TRUE) {
                 coef$value <- var1[j + 1]
                 coef_df <- rbind(coef_df, coef)
                 if (hist == TRUE) {
@@ -158,15 +168,19 @@ interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL,
                     var2_dt <- var2_dt
                   }
                 }
-                coef_df$value <- as.factor(coef_df$value)
-                interplot.plot(m = coef_df, hist = hist, var2_dt = var2_dt, steps = steps, 
-                    point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, 
-                    rfill = rfill, ...) + facet_grid(. ~ value)
-            } else {
+            } 
+        }
+      
+      if(plot == TRUE){
+        coef_df$value <- as.factor(coef_df$value)
+        interplot.plot(m = coef_df, hist = hist, var2_dt = var2_dt, steps = steps, 
+                       point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, 
+                       rfill = rfill, ...) + facet_grid(. ~ value)
+      } else { # return coef not coef_df, since the categorical part doesn't need to be shown
                 names(coef) <- c(var2, "coef", "ub", "lb")
                 return(coef)
             }
-        }
+      
     } else if (factor_v2) {
         for (j in 1:(length(eval(parse(text = paste0("m$xlevel$", var2_bk)))) - 
             1)) {
@@ -184,6 +198,14 @@ interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL,
                   (1 - ci) / 2)
             }
             
+            if(adjCI == TRUE){
+              ## FDR correction
+              coef$sd <- (coef$ub - coef$coef1) / qnorm(.975) 
+              tAdj <- fdrInteraction(coef$coef1, coef$sd, df = m$df, level = .95) # calculate critical t
+              coef$ub <- coef$coef1 + tAdj * coef$sd
+              coef$lb <- coef$coef1 - tAdj * coef$sd
+            }
+          
             if (plot == TRUE) {
                 coef$value <- var2[j + 1]
                 coef_df <- rbind(coef_df, coef)
@@ -194,17 +216,19 @@ interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL,
                     var2_dt <- var2_dt
                   }
                 }
-                coef_df$value <- as.factor(coef_df$value)
+                
+            } 
+        }
+    
+    if(plot == TRUE){
+      coef_df$value <- as.factor(coef_df$value)
                 interplot.plot(m = coef_df, hist = hist, steps = steps, var2_dt = var2_dt, 
                     point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, 
                     rfill = rfill, ...) + facet_grid(. ~ value)
-            } else {
+    } else {
                 names(coef) <- c(var2, "coef", "ub", "lb")
                 return(coef)
             }
-        }
-
-        
         
     } else {
         ## Correct marginal effect for quadratic terms
@@ -222,6 +246,15 @@ interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL,
                 multiplier * coef$fake[i] * m.sims@coef[, match(var12, 
                   names(m$coef))], (1 - ci) / 2)
         }
+        
+        if(adjCI == TRUE){
+          ## FDR correction
+          coef$sd <- (coef$ub - coef$coef1) / qnorm(.975) 
+          tAdj <- fdrInteraction(coef$coef1, coef$sd, df = m$df, level = .95) # calculate critical t
+          coef$ub <- coef$coef1 + tAdj * coef$sd
+          coef$lb <- coef$coef1 - tAdj * coef$sd
+        }
+        
         
         if (plot == TRUE) {
             if (hist == TRUE) {
