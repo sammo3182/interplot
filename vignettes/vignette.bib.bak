@@ -70,12 +70,23 @@
   publisher = {Wiley Online Library},
 }
 
-@Unpublished{Esarey2015,
+@Unpublished{Esarey2017,
   author    = {Esarey, Justin and Sumner, Jane Lawrence},
   title     = {Marginal Effects in Interaction Models: Determining and Controlling the False Positive Rate},
-  year      = {2015},
+  year      = {2017},
   timestamp = {2017-07-20},
   url       = {http://jee3.web.rice.edu/interaction-overconfidence.pdf},
+}
+
+@Article{Braumoeller2004,
+  author    = {Braumoeller, Bear F},
+  title     = {Hypothesis Testing and Multiplicative Interaction Terms},
+  journal   = {International Organization},
+  year      = {2004},
+  volume    = {58},
+  number    = {4},
+  pages     = {807--820},
+  publisher = {Cambridge University Press},
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}

@@ -12,7 +12,7 @@
 
 <meta name="author" content="Frederick Solt and Yue Hu" />
 
-<meta name="date" content="2017-07-23" />
+<meta name="date" content="2017-07-24" />
 
 <title>interplot: Plot the Effects of Variables in Interaction Terms</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">interplot: Plot the Effects of Variables in Interaction Terms</h1>
 <h4 class="author"><em>Frederick Solt and Yue Hu</em></h4>
-<h4 class="date"><em>2017-07-23</em></h4>
+<h4 class="date"><em>2017-07-24</em></h4>
 
 
 
@@ -81,7 +81,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p><span class="math display">\[\hat{\sigma}_{\frac{\partial Y}{\partial X}} = \sqrt{var(\hat{\beta_1}) + Z^2var(\hat{\beta_3}) + 2Zcov(\hat{\beta_1}, \hat{\beta_3})}.\]</span></p>
 <p>As <span class="citation">Brambor, Clark, and Golder (2006, 70)</span> indicates, the above equation suggests that its perfectly possible for the contribution of X on Y to be statistically significant for certain values of Z “even if all of the model parameters are insignificant.” In other words, one cannot infer whether X has a meaningful conditional effect on Y simply from the magnitude and significance of either <span class="math inline">\(\beta_1\)</span> or <span class="math inline">\(\beta_3\)</span> (Ibid., 74). Instead, the conditional effect should be examined based on the marginal effect at every observed value of Z <span class="citation">(Berry, Golder, and Milton 2012; Brambor, Clark, and Golder 2006; Braumoeller 2004)</span>.</p>
 <p>Furthermore, scholars have noticed that the point estimation of some interaction models, especially those depending on link functions (e.g., logit and probit) may not be as reliable as the estimates of the confidence intervals <span class="citation">(Berry, DeMeritt, and Esarey 2016)</span>. Therefore, it is even more important to accurately present and examine the boundaries established by the confidence intervals than the point estimates in the test of conditional effect. <span class="citation">Berry, Golder, and Milton (2012)</span> also pointed out that the substantive significance of the conditional effect highly relates to the distribution of the conditioning variable (viz., Z in the above example). They thus recommend researchers to present the frequency distribution of the conditioning variable together with the marginal effects (especially when the effect trend goes across the zero point).</p>
-<p>The <code>interplot</code> package provides a convenient way to address above points with one or a series of plots produced by a single function. The function visualizes the changes in the coefficient of one variable in a two-way interaction term conditional on the value of the other included variable. The plot also includes simulated 95% confidential intervals of these coefficients. In the current version, the function works with ordinary linear regression models, generalized linear models (e.g., logit, probit, ordered logit, etc.), and multilevel (mixed-effects) regressions, all with complete or multiply imputed data.</p>
+<p>More recently, <span class="citation">Esarey and Sumner (2017)</span> uncovered that the estimation of the marginal effects suggested by <span class="citation">Brambor, Clark, and Golder (2006)</span> might cause a “multiple comparison problem” and result over- or underconfidence of the confidential intervals. They thus recommended to adjust the CIs with a critical t-statistics following the Benjamini1995 procedure.</p>
+<p>The <code>interplot</code> package provides a convenient way to operate and visualize above points with one or a series of plots produced by a single function. The function visualizes the changes in the coefficient of one variable in a two-way interaction term conditional on the value of the other included variable. The plot also includes simulated 95% confidential intervals of these coefficients. In the current version, the function works with ordinary linear regression models, generalized linear models (e.g., logit, probit, ordered logit, etc.), and multilevel (mixed-effects) regressions, all with complete or multiply imputed data.</p>
 <p>Comparing to established alternatives such as <code>effects::plot</code> and <code>sjplot::sjp.int</code>, <code>interplot</code> provides a more user-friendly way to quickly produce plots that are easy to interpret. <code>interplot</code> plots the changes in the <em>conditional coefficient</em> of one variable in the interaction, rather than changes in the dependent variable itself as in the aforementioned functions. This approach avoids displaying interaction effects across multiple panels or multiple lines in favor of a single plot containing all the relevant information. Moreover, by outputting <code>ggplot</code> objects, <code>interplot</code> allows users to easily further customize their graphs.</p>
 <p>This vignette purposes to illustrate how users can apply these functions to improve the presentation of the interactions in their models.</p>
 <div id="installation" class="section level2">
@@ -248,6 +249,9 @@ df_fake &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span c
 </div>
 <div id="ref-Braumoeller2004">
 <p>Braumoeller, Bear F. 2004. “Hypothesis Testing and Multiplicative Interaction Terms.” <em>International Organization</em> 58 (4). Cambridge University Press: 807–20.</p>
+</div>
+<div id="ref-Esarey2017">
+<p>Esarey, Justin, and Jane Lawrence Sumner. 2017. “Marginal Effects in Interaction Models: Determining and Controlling the False Positive Rate.” <a href="http://jee3.web.rice.edu/interaction-overconfidence.pdf" class="uri">http://jee3.web.rice.edu/interaction-overconfidence.pdf</a>.</p>
 </div>
 <div id="ref-Hainmueller2016">
 <p>Hainmueller, Jens, Jonathan Mummolo, and Yiqing Xu. 2016. “How Much Should We Trust Estimates from Multiplicative Interaction Models? Simple Tools to Improve Empirical Practice.” <a href="https://ssrn.com/abstract=2739221" class="uri">https://ssrn.com/abstract=2739221</a>.</p>
