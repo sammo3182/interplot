@@ -58,12 +58,14 @@ p1 + geom_line(data = m, aes_string(x = "fake", y = "coef1")) +
 m_cyl <- lm(mpg ~ wt * cyl, mtcars)
 
 interplot(m_cyl, var1 = "wt", var2 = "cyl")
+interplot.default(m_cyl, var2 = "wt", var1 = "cyl", rug == TRUE)
+
 
 mtcars$cyl_f <- as.factor(mtcars$cyl)
 m_cylF <- lm(mpg ~ wt * cyl_f, mtcars)
 interplot.default(m_cylF, var2 = "wt", var1 = "cyl_f", adjCI = TRUE)
 
-
+interplot.default(m_cylF, var2 = "wt", var1 = "cyl")
 
 pacman::p_load(ggplot2, interactionTest)
 
@@ -243,9 +245,6 @@ if (factor_v1) {
       return(coef)
     }
   }
-  
-  
-  
 } else {
   ## Correct marginal effect for quadratic terms
   multiplier <- if (var1 == var2) 
