@@ -1,3 +1,11 @@
+# interplot 0.2.0
+## Adding Argument
+* Adding an argument to adjust CIs to control the false discovery rate.
+
+## Vignette Updates
+* Adding a brief review of the methodology of interaction.
+* Adding an example to show how to control the false discovery rate.
+
 # interplot 0.1.5
 ## Adding Argument
 * Adding an argument to adjust the CIs.

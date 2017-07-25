@@ -5,9 +5,9 @@
 \title{Plot Conditional Coefficients in Mixed-Effects Models with Imputed Data and Interaction Terms}
 \usage{
 \method{interplot}{mlmmi}(m, var1, var2, plot = TRUE, steps = NULL,
-  ci = 0.95, hist = FALSE, var2_dt = NA, point = FALSE, sims = 5000,
-  xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5,
-  rfill = "grey70", ...)
+  ci = 0.95, adjCI = FALSE, hist = FALSE, var2_dt = NA, point = FALSE,
+  sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5,
+  ralpha = 0.5, rfill = "grey70", ...)
 }
 \arguments{
 \item{m}{A model object including an interaction term, or, alternately, a data frame recording conditional coefficients.}
@@ -21,6 +21,8 @@
 \item{steps}{Desired length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).}
 
 \item{ci}{A numeric value defining the confidence intervals. The default value is 95\% (0.95).}
+
+\item{adjCI}{Not working for `lmer` outputs yet.}
 
 \item{hist}{A logical value indicating if there is a histogram of `var2` added at the bottom of the conditional effect plot.}
 

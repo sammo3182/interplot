@@ -16,7 +16,8 @@ Depends:
     arm
 Imports:
     stats,
-    dplyr
+    dplyr,
+    interactionTest
 License: MIT + file LICENSE
 LazyData: true
 Suggests:

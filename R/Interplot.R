@@ -8,6 +8,7 @@
 #' @param plot A logical value indicating whether the output is a plot or a dataframe including the conditional coefficient estimates of var1, their upper and lower bounds, and the corresponding values of var2.
 #' @param steps Desired length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).
 #' @param ci A numeric value defining the confidence intervals. The default value is 95\% (0.95).
+#' @param adjCI A logical value indication if applying the adjustment of confidence intervals to control the false discovery rate following the Esarey and Sumner (2017) procedure. (See also Benjamini and Hochberg 1995.) The default is FALSE; the plot presents the confidence internvals suggested by Brambor, Clark, and Golder (2006). The functions dealing with multilevel model ouputs in this package do not equipe with this argument, because there is the controversy on the accurate degrees of freedom for multilevel models, esp. when random effect is engaged and the degrees of freedom is a necessary information to conduct the CI adjustment. See e.g., https://stat.ethz.ch/pipermail/r-help/2006-May/094765.html and https://stat.ethz.ch/pipermail/r-sig-mixed-models/2008q1/000517.html. 
 #' @param hist A logical value indicating if there is a histogram of `var2` added at the bottom of the conditional effect plot.
 #' @param var2_dt A numerical value indicating the frequency distibution of `var2`. It is only used when `hist == TRUE`. When the object is a model, the default is the distribution of `var2` of the model.  
 #' @param point A logical value determining the format of plot. By default, the function produces a line plot when var2 takes on ten or more distinct values and a point (dot-and-whisker) plot otherwise; option TRUE forces a point plot.
@@ -59,12 +60,24 @@
 #' ggtitle('Estimated Coefficient of Automobile Weight \non Mileage by Engine Cylinders') +
 #' theme(plot.title = element_text(face='bold'))
 #' 
+#' @source Benjamini, Yoav, and Yosef Hochberg. 1995. "Controlling the False
+#' Discovery Rate: A Practical and Powerful Approach to Multiple Testing".
+#' Journal of the Royal Statistical Society, Series B 57(1): 289--300.
+#'
+#' Brambor, Thomas, William Roberts Clark, and Matt Golder.
+#' "Understanding interaction models: Improving empirical analyses". Political
+#' Analysis 14.1 (2006): 63-82.
+#'
+#' Esarey, Justin, and Jane Lawrence Sumner. 2015. "Marginal Effects in
+#' Interaction Models: Determining and Controlling the False Positive Rate".
+#' URL: \url{http://jee3.web.rice.edu/interaction-overconfidence.pdf}.
+#' 
 #' @export
 
 
 
 
-interplot <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, 
+interplot <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE,
                       hist = FALSE, var2_dt = NA, point = FALSE, sims = 5000, 
                       xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, 
                       ralpha = 0.5, rfill = "grey70", ...) {

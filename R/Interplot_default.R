@@ -8,6 +8,7 @@
 #' @param plot A logical value indicating whether the output is a plot or a dataframe including the conditional coefficient estimates of var1, their upper and lower bounds, and the corresponding values of var2.
 #' @param steps Desired length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).
 #' @param ci A numeric value defining the confidence intervals. The default value is 95\% (0.95).
+#' @param adjCI A logical value indication if applying the adjustment of confidence intervals to control the false discovery rate following the Esarey and Sumner (2017) procedure. (See also Benjamini and Hochberg 1995.) The default is FALSE; the plot presents the confidence internvals suggested by Brambor, Clark, and Golder (2006). 
 #' @param hist A logical value indicating if there is a histogram of `var2` added at the bottom of the conditional effect plot.
 #' @param var2_dt A numerical value indicating the frequency distibution of `var2`. It is only used when `hist == TRUE`. When the object is a model, the default is the distribution of `var2` of the model. 
 #' @param point A logical value determining the format of plot. By default, the function produces a line plot when var2 takes on ten or more distinct values and a point (dot-and-whisker) plot otherwise; option TRUE forces a point plot.
@@ -32,10 +33,21 @@
 #' 
 #' @importFrom arm sim
 #' @importFrom stats quantile
+#' @importFrom stats qnorm
 #' @importFrom interactionTest fdrInteraction
 #' @import  ggplot2
 #' 
-#' 
+#' @source Benjamini, Yoav, and Yosef Hochberg. 1995. "Controlling the False
+#' Discovery Rate: A Practical and Powerful Approach to Multiple Testing".
+#' Journal of the Royal Statistical Society, Series B 57(1): 289--300.
+#'
+#' Brambor, Thomas, William Roberts Clark, and Matt Golder.
+#' "Understanding interaction models: Improving empirical analyses". Political
+#' Analysis 14.1 (2006): 63-82.
+#'
+#' Esarey, Justin, and Jane Lawrence Sumner. 2015. "Marginal Effects in
+#' Interaction Models: Determining and Controlling the False Positive Rate".
+#' URL: \url{http://jee3.web.rice.edu/interaction-overconfidence.pdf}.
 #' 
 #' @export
 
@@ -157,7 +169,7 @@ interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL,
             coef$lb <- coef$coef1 - tAdj * coef$sd
           }
           
-          # preparing for later ploting
+          # preparing for later plotting
           if (plot == TRUE) {
                 coef$value <- var1[j + 1]
                 coef_df <- rbind(coef_df, coef)
@@ -220,15 +232,15 @@ interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL,
             } 
         }
     
-    if(plot == TRUE){
-      coef_df$value <- as.factor(coef_df$value)
-                interplot.plot(m = coef_df, hist = hist, steps = steps, var2_dt = var2_dt, 
-                    point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, 
-                    rfill = rfill, ...) + facet_grid(. ~ value)
-    } else {
-                names(coef) <- c(var2, "coef", "ub", "lb")
-                return(coef)
-            }
+        if(plot == TRUE){
+          coef_df$value <- as.factor(coef_df$value)
+                    interplot.plot(m = coef_df, hist = hist, steps = steps, var2_dt = var2_dt, 
+                        point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, 
+                        rfill = rfill, ...) + facet_grid(. ~ value)
+        } else {
+                    names(coef) <- c(var2, "coef", "ub", "lb")
+                    return(coef)
+                }
         
     } else {
         ## Correct marginal effect for quadratic terms

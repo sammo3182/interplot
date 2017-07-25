@@ -3,9 +3,22 @@
 \name{interplot.plot}
 \alias{interplot.plot}
 \title{Plot Conditional Coefficients in Models with Interaction Terms}
+\source{
+Benjamini, Yoav, and Yosef Hochberg. 1995. "Controlling the False
+Discovery Rate: A Practical and Powerful Approach to Multiple Testing".
+Journal of the Royal Statistical Society, Series B 57(1): 289--300.
+
+Brambor, Thomas, William Roberts Clark, and Matt Golder.
+"Understanding interaction models: Improving empirical analyses". Political
+Analysis 14.1 (2006): 63-82.
+
+Esarey, Justin, and Jane Lawrence Sumner. 2015. "Marginal Effects in
+Interaction Models: Determining and Controlling the False Positive Rate".
+URL: \url{http://jee3.web.rice.edu/interaction-overconfidence.pdf}.
+}
 \usage{
 \method{interplot}{plot}(m, var1 = NULL, var2 = NULL, plot = TRUE,
-  steps = NULL, ci = 0.95, hist = FALSE, var2_dt = NULL,
+  steps = NULL, ci = 0.95, adjCI = TRUE, hist = FALSE, var2_dt = NULL,
   point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA,
   esize = 0.5, ralpha = 0.5, rfill = "grey70", ...)
 }
@@ -27,6 +40,8 @@
 \item{steps}{Desired length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).}
 
 \item{ci}{is a numeric value inherited from the data wrangling funcitons in this package. Adding it here is just for the method consistency.}
+
+\item{adjCI}{A logical value indication if applying the adjustment of confidence intervals to control the false discovery rate following the Esarey and Sumner (2017) procedure. (See also Benjamini and Hochberg 1995.) The default is FALSE; the plot presents the confidence internvals suggested by Brambor, Clark, and Golder (2006).}
 
 \item{hist}{A logical value indicating if there is a histogram of `var2` added at the bottom of the conditional effect plot.}
 
