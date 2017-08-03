@@ -1,12 +1,20 @@
 pacman::p_load(ggplot2, lme4, dplyr)
-m <- lmer(mpg ~ wt * hp + (1 | cyl), data = mtcars)
-var1 = "wt"
-var2 = "hp"
-var2_vals = c(min(mtcars$hp), max(mtcars$hp))
+
+pew1.w <- read.csv("dev/pew1_w.csv")
+
+m <- glmer(formula=meritocracy~ginicnty+income_i+ginicnty:income_i+income_cnty+black_cnty+
+                perc_bush04+pop_cnty+educ_i+age_i+gender_i+unemp_i+union_i+partyid_i+
+                ideo_i+attend_i+survid2006+survid2007+survid2009+(1+income_i|fips),
+              data=pew1.w,family=binomial(link="logit"))
+summary(m)
+
+# m <- lmer(mpg ~ wt * hp + (1 | cyl), data = mtcars)
+var1 = "ginicnty"
+var2 = "income_i"
+var2_vals = c(min(pew1.w$income_i), max(pew1.w$income_i))
 times = 20
 sims = 1000
 
-pred_probs(m, var1 = "wt", var2 = "hp", var2_vals = c(min(mtcars$hp), max(mtcars$hp)))
 
 pred_probs <- function(m, var1, var2, var2_vals,
                        times = 20, sims = 1000) {
@@ -56,22 +64,25 @@ pred_probs <- function(m, var1, var2, var2_vals,
     q <- drop(q)
     q
   }
-  pp_bounds <- row_quantiles(plogis(data.matrix(fake_data) %*% t(data.matrix(m_sims@fixef))), prob = c(.025, .975))
+  pp_bounds <- row_quantiles(plogis(data.matrix(fake_data) %*% t(data.matrix(m_sims@fixef))), prob = c(qnorm((1 - ci)/2), qnorm(1 - (1 - ci)/2)))
   pp <- cbind(pp, pp_bounds)
   pp <- pp*100
   colnames(pp) <- c("coef1", "lb", "ub")
-  pp <- cbind(fake_data, pp)
+  pp <- cbind(fake_data[, c(var1, var2)], pp)
+  
   
   pp[,var2] <- as.factor(pp[,var2])
   
-  m <- select(pp, c(2, 3, 5, 6, 7)) 
-  names(m)[1] <- "fake"
-  names(m)[2] <- "value"
+  names(pp)[1] <- "fake"
+  names(pp)[2] <- "value"
  
-  return(m)
+  return(pp)
    
   # coef.plot <- ggplot()
   # coef.plot + geom_line(data = m, aes_string(x = "fake", y = "coef1"), color = "black") + 
   #   geom_ribbon(data = m, aes_string(x = "fake", ymin = "lb", ymax = "ub", fill = "value"), alpha = .5) + ylab(NULL) + xlab(NULL)
   
 }
+
+
+interplot.plot(pp, steps = 100, ci = .95, adjCI = FALSE, hist = TRUE, var2_dt = pew1.w$ginicnty, pp = TRUE, sims = 5000)
