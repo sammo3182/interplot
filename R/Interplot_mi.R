@@ -166,7 +166,7 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, a
           
           if(adjCI == TRUE){
             ## FDR correction
-            coef$sd <- (coef$ub - coef$coef1) / qnorm(.975) 
+            coef$sd <- (coef$ub - coef$coef1) / qnorm(1 - (1 - ci)/2) 
             tAdj <- fdrInteraction(coef$coef1, coef$sd, df = m$df, level = .95) # calculate critical t
             coef$ub <- coef$coef1 + tAdj * coef$sd
             coef$lb <- coef$coef1 - tAdj * coef$sd
@@ -214,7 +214,7 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, a
             
           if(adjCI == TRUE){
             ## FDR correction
-            coef$sd <- (coef$ub - coef$coef1) / qnorm(.975) 
+            coef$sd <- (coef$ub - coef$coef1) / qnorm(1 - (1 - ci)/2) 
             tAdj <- fdrInteraction(coef$coef1, coef$sd, df = m$df, level = .95) # calculate critical t
             coef$ub <- coef$coef1 + tAdj * coef$sd
             coef$lb <- coef$coef1 - tAdj * coef$sd
@@ -264,7 +264,7 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, a
         
         if(adjCI == TRUE){
           ## FDR correction
-          coef$sd <- (coef$ub - coef$coef1) / qnorm(.975) 
+          coef$sd <- (coef$ub - coef$coef1) / qnorm(1 - (1 - ci)/2) 
           tAdj <- fdrInteraction(coef$coef1, coef$sd, df = m$df, level = .95) # calculate critical t
           coef$ub <- coef$coef1 + tAdj * coef$sd
           coef$lb <- coef$coef1 - tAdj * coef$sd
@@ -404,7 +404,7 @@ interplot.glmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, 
             
           if(adjCI == TRUE){
             ## FDR correction
-            coef$sd <- (coef$ub - coef$coef1) / qnorm(.975) 
+            coef$sd <- (coef$ub - coef$coef1) / qnorm(1 - (1 - ci)/2) 
             tAdj <- fdrInteraction(coef$coef1, coef$sd, df = m$df, level = .95) # calculate critical t
             coef$ub <- coef$coef1 + tAdj * coef$sd
             coef$lb <- coef$coef1 - tAdj * coef$sd
@@ -452,7 +452,7 @@ interplot.glmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, 
             
           if(adjCI == TRUE){
             ## FDR correction
-            coef$sd <- (coef$ub - coef$coef1) / qnorm(.975) 
+            coef$sd <- (coef$ub - coef$coef1) / qnorm(1 - (1 - ci)/2) 
             tAdj <- fdrInteraction(coef$coef1, coef$sd, df = m$df, level = .95) # calculate critical t
             coef$ub <- coef$coef1 + tAdj * coef$sd
             coef$lb <- coef$coef1 - tAdj * coef$sd
@@ -500,7 +500,7 @@ interplot.glmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, 
         
         if(adjCI == TRUE){
           ## FDR correction
-          coef$sd <- (coef$ub - coef$coef1) / qnorm(.975) 
+          coef$sd <- (coef$ub - coef$coef1) / qnorm(1 - (1 - ci)/2) 
           tAdj <- fdrInteraction(coef$coef1, coef$sd, df = m$df, level = .95) # calculate critical t
           coef$ub <- coef$coef1 + tAdj * coef$sd
           coef$lb <- coef$coef1 - tAdj * coef$sd

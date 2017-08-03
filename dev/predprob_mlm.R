@@ -14,9 +14,13 @@ summary(t1m1)
 
 # predicted probabilities with confidence intervals (see http://glmm.wikidot.com/faq under lme4)
 newdat <- pew1.w %>% summarise_each(funs(mean))
-newdat <- newdat[rep(1, 200), ]
-newdat$ginicnty <- rep(seq(min(pew1.w$ginicnty, na.rm=T), max(pew1.w$ginicnty, na.rm=T), length.out = 100), times = 2) # Full observed range of ginicnty
-newdat$income_i <- c(rep(quantile(pew1.w$income_i, .001), 100), rep(max(pew1.w$income_i), 100)) # One imputed value falls below theoretical range of variable, use actual range instead by taking 0.1 percentile value
+newdat <- newdat[rep(1, 200), ] # two values of var2 * 100
+newdat$ginicnty <- rep(seq(min(pew1.w$ginicnty, na.rm=T), max(pew1.w$ginicnty, na.rm=T), length.out = 100), times = 2) # Full observed range of ginicnty # times =2  from the value picked from var2
+newdat$income_i <- c(rep(quantile(pew1.w$income_i, .001), 100), rep(max(pew1.w$income_i), 100)) 
+
+## quantile -> min; user defined the value they want to pick 
+
+# One imputed value falls below theoretical range of variable, use actual range instead by taking 0.1 percentile value
 newdat$fips <- NULL # mean FIPs meaningless (and causes error); not used anyway with re.form=NA
 newdat$inc[1:100] <- "low"
 newdat$inc[101:200] <- "high"
