@@ -17,6 +17,8 @@
 #' @param adjCI Succeeded from the data management functions in `interplot` package. 
 #' @param hist A logical value indicating if there is a histogram of `var2` added at the bottom of the conditional effect plot.
 #' @param var2_dt A numerical value indicating the frequency distibution of `var2`. It is only used when `hist == TRUE`. When the object is a model, the default is the distribution of `var2` of the model. 
+#' #' @param predPro A logical value with default of `FALSE`. When the `m` is an output of a general linear model (class `glm` or `glmerMod`) and the argument is set to `TRUE`, the function will plot predicted probabilities at the values given by `var2_vals`. 
+#' @param `var2_vals` A numerical value indicating the values the predicted probabilities are estimated, when `predPro` is `TRUE`. 
 #' @param point A logical value determining the format of plot. By default, the function produces a line plot when var2 takes on ten or more distinct values and a point (dot-and-whisker) plot otherwise; option TRUE forces a point plot.
 #' @param sims Number of independent simulation draws used to calculate upper and lower bounds of coefficient estimates: lower values run faster; higher values produce smoother curves.
 #' @param xmin A numerical value indicating the minimum value shown of x shown in the graph. Rarely used.
@@ -41,26 +43,26 @@
 #' @export
 
 ## S3 method for class 'data.frame'
-interplot.plot <- function(m, var1 = NULL, var2 = NULL, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE, hist = FALSE, pp = FALSE, var2_dt = NULL, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", ...) {
+interplot.plot <- function(m, var1 = NULL, var2 = NULL, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE, hist = FALSE, predPro = FALSE, var2_vals = NULL, var2_dt = NULL, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", ...) {
     if(is.null(steps)) steps <- nrow(m)
     levels <- sort(unique(m$fake))
     ymin <- ymax <- vector() # to deal with the "no visible binding for global variable" issue
     xdiff <- vector() # to deal with the "no visible binding for global variable" issue
     
-    if(pp == TRUE){
+    if(predPro == TRUE){
       if(is.null(m$value)) stop("The input data.frame does not include required information.")
     }
     
     if (hist == FALSE) {
       if (steps < 5 | point == T) {
         if (is.na(ercolor)) ercolor <- "black"  # ensure whisker can be drawn
-          if(pp == TRUE){
+          if(predPro == TRUE){
             coef.plot <- ggplot(m, aes_string(x = "fake", y = "coef1", colour = "value")) + geom_point(...) + geom_errorbar(aes_string(ymin = "lb", ymax = "ub", colour = "value"), width = 0, size = esize) + scale_x_continuous(breaks = levels) + ylab(NULL) + xlab(NULL)
           }else{
             coef.plot <- ggplot(m, aes_string(x = "fake", y = "coef1")) + geom_point(...) + geom_errorbar(aes_string(ymin = "lb", ymax = "ub"), width = 0, color = ercolor, size = esize) + scale_x_continuous(breaks = levels) + ylab(NULL) + xlab(NULL)
           }
       } else {
-        if(pp == TRUE){
+        if(predPro == TRUE){
           coef.plot <- ggplot(m, aes_string(x = "fake", y = "coef1", colour = "value")) + geom_line(...) + geom_ribbon(aes_string(ymin = "lb", ymax = "ub", fill = "value"), alpha = ralpha) + ylab(NULL) + xlab(NULL)
         }else{
           coef.plot <- ggplot(m, aes_string(x = "fake", y = "coef1")) + geom_line(...) + geom_ribbon(aes_string(ymin = "lb", ymax = "ub"), alpha = ralpha, color = ercolor, fill = rfill) + ylab(NULL) + xlab(NULL)
@@ -111,7 +113,7 @@ interplot.plot <- function(m, var1 = NULL, var2 = NULL, plot = TRUE, steps = NUL
             coef.plot <- ggplot()
             coef.plot <- coef.plot + geom_rect(data = histX, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), colour = "gray50", alpha = 0, size = 0.5)  #histgram
             
-            if(pp == TRUE){
+            if(predPro == TRUE){
               coef.plot <- coef.plot + geom_errorbar(data = m, aes_string(x = "fake", ymin = "lb", ymax = "ub", colour = "value"), width = 0, size = esize) + scale_x_continuous(breaks = levels) + ylab(NULL) + xlab(NULL) + geom_point(data = m, aes_string(x = "fake", y = "coef1", colour = "value")) 
             }else{
               coef.plot <- coef.plot + geom_errorbar(data = m, aes_string(x = "fake", ymin = "lb", ymax = "ub"), width = 0, color = ercolor, size = esize) + scale_x_continuous(breaks = levels) + ylab(NULL) + xlab(NULL) + geom_point(data = m, aes_string(x = "fake", y = "coef1")) 
@@ -136,7 +138,7 @@ interplot.plot <- function(m, var1 = NULL, var2 = NULL, plot = TRUE, steps = NUL
             coef.plot <- ggplot()
             coef.plot <- coef.plot + geom_rect(data = histX, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), colour = "gray50", alpha = 0, size = 0.5)
             
-            if(pp == TRUE){
+            if(predPro == TRUE){
               coef.plot <- coef.plot + geom_line(data = m, aes_string(x = "fake", y = "coef1", colour = "value")) + geom_ribbon(data = m, aes_string(x = "fake", ymin = "lb", ymax = "ub", fill = "value"), alpha = ralpha) + ylab(NULL) + xlab(NULL)
             }else{
               coef.plot <- coef.plot + geom_line(data = m, aes_string(x = "fake", y = "coef1")) + geom_ribbon(data = m, aes_string(x = "fake", ymin = "lb", ymax = "ub"), alpha = ralpha, color = ercolor, fill = rfill) + ylab(NULL) + xlab(NULL)

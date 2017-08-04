@@ -11,6 +11,8 @@
 #' @param adjCI Not working for `lmer` outputs yet.
 #' @param hist A logical value indicating if there is a histogram of `var2` added at the bottom of the conditional effect plot.
 #' @param var2_dt A numerical value indicating the frequency distibution of `var2`. It is only used when `hist == TRUE`. When the object is a model, the default is the distribution of `var2` of the model. 
+#' @param predPro A logical value with default of `FALSE`. When the `m` is an object of class `glmerMod` and the argument is set to `TRUE`, the function will plot predicted probabilities at the values given by `var2_vals`. 
+#' @param `var2_vals` A numerical value indicating the values the predicted probabilities are estimated, when `predPro` is `TRUE`. 
 #' @param point A logical value determining the format of plot. By default, the function produces a line plot when var2 takes on ten or more distinct values and a point (dot-and-whisker) plot otherwise; option TRUE forces a point plot.
 #' @param sims Number of independent simulation draws used to calculate upper and lower bounds of coefficient estimates: lower values run faster; higher values produce smoother curves.
 #' @param xmin A numerical value indicating the minimum value shown of x shown in the graph. Rarely used.
@@ -30,16 +32,13 @@
 #' @importFrom  arm sim
 #' @importFrom stats quantile
 #' @import  ggplot2
-#' 
+#' @import  dplyr
 #' 
 #' 
 #' @export
 
 # Coding function for non-mi mlm objects
-interplot.lmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE,
-                              hist = FALSE, var2_dt = NA, point = FALSE, sims = 5000,
-                              xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, 
-                              ralpha = 0.5, rfill = "grey70", ...) {
+interplot.lmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE,hist = FALSE, var2_dt = NA, predPro = FALSE, var2_vals = NULL, point = FALSE, sims = 5000,xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", ...) {
     set.seed(324)
     
     m.class <- class(m)
@@ -237,14 +236,13 @@ interplot.lmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95
 }
 
 #' @export
-interplot.glmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE,
-                               hist = FALSE, var2_dt = NA, point = FALSE, sims = 5000,
-                               xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, 
-                               ralpha = 0.5, rfill = "grey70", ...) {
+interplot.glmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE, hist = FALSE, var2_dt = NA, predPro = FALSE, var2_vals = NULL, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", ...) {
     set.seed(324)
     
+  
     m.class <- class(m)
     m.sims <- arm::sim(m, sims)
+    
     
     ### For factor base terms###
     factor_v1 <- factor_v2 <- FALSE
@@ -326,6 +324,10 @@ interplot.glmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .9
         lb = numeric(0), model = character(0))
     
     if (factor_v1) {
+      
+      if(predPro == TRUE) stop("The current version does not support estimating predicted probabilities of factor base terms.")
+      
+      
         for (j in 1:(length(levels(eval(parse(text = paste0("m@frame$", 
             var1_bk))))) - 1)) {
             # only n - 1 interactions; one category is avoided against
@@ -364,6 +366,9 @@ interplot.glmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .9
             ...) + facet_grid(. ~ value)
         
     } else if (factor_v2) {
+      
+      if(predPro == TRUE) stop("The current version does not support estimating predicted probabilities of factor base terms.")
+      
         for (j in 1:(length(levels(eval(parse(text = paste0("m@frame$", 
             var2_bk))))) - 1)) {
             # only n - 1 interactions; one category is avoided against
@@ -402,20 +407,76 @@ interplot.glmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .9
         
         
     } else {
-        ## Correct marginal effect for quadratic terms
-        multiplier <- if (var1 == var2) 
-            2 else 1
-        
-        for (i in 1:steps) {
-            coef$coef1[i] <- mean(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-                multiplier * coef$fake[i] * m.sims@fixef[, match(var12, 
-                  unlist(dimnames(m@pp$X)[2]))])
-            coef$ub[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-                multiplier * coef$fake[i] * m.sims@fixef[, match(var12, 
-                  unlist(dimnames(m@pp$X)[2]))], (1 - ci) / 2)
-            coef$lb[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-                multiplier * coef$fake[i] * m.sims@fixef[, match(var12, 
-                  unlist(dimnames(m@pp$X)[2]))], 1 - (1 - ci) / 2)
+        if(predPro == TRUE){
+          
+          if(is.null(var2_vals)) stop("The predicted probabilities cannot be estimated without defining 'var2_vals'.")
+          
+          df <- data.frame(m@frame)
+          df[[names(m@flist)]] <- NULL # omit L2 var
+          names(df)[1] <- "(Intercept)" # replace DV with intercept
+          df$`(Intercept)` <- 1
+          
+          iv_medians <- summarize_all(df, funs(median(., na.rm = TRUE))) 
+          
+          fake_data <- iv_medians[rep(1:nrow(iv_medians), each=steps*length(var2_vals)), ] 
+          fake_data[[var1]] <- with(df, rep(seq(min(get(var1)), max(get(var1)), length.out=steps),
+                                            steps=length(var2_vals)))
+          fake_data[[var2]] <- rep(var2_vals, each=steps)
+          fake_data[[var12]] <- fake_data[[var1]] * fake_data[[var2]]
+          
+          pp <- rowMeans(plogis(data.matrix(fake_data) %*% t(data.matrix(m.sims@fixef))))
+          row_quantiles <- function (x, probs) {
+            naValue <- NA
+            storage.mode(naValue) <- storage.mode(x)
+            nrow <- nrow(x)
+            q <- matrix(naValue, nrow = nrow, ncol = length(probs))
+            if (nrow > 0L) {
+              t <- quantile(x[1L, ], probs = probs)
+              colnames(q) <- names(t)
+              q[1L, ] <- t
+              if (nrow >= 2L) {
+                for (rr in 2:nrow) {
+                  q[rr, ] <- quantile(x[rr, ], probs = probs)
+                }
+              }
+            }
+            else {
+              t <- quantile(0, probs = probs)
+              colnames(q) <- names(t)
+            }
+            q <- drop(q)
+            q
+          }
+          pp_bounds <- row_quantiles(plogis(data.matrix(fake_data) %*% t(data.matrix(m.sims@fixef))), prob = c((1 - ci)/2, 1 - (1 - ci)/2))
+          pp <- cbind(pp, pp_bounds)
+          pp <- pp*100
+          colnames(pp) <- c("coef1", "lb", "ub")
+          pp <- cbind(fake_data[, c(var1, var2)], pp)
+          
+          
+          pp[,var2] <- as.factor(pp[,var2])
+          
+          names(pp)[1] <- "fake"
+          names(pp)[2] <- "value"
+          
+          coef <- pp
+          
+        } else {
+          ## Correct marginal effect for quadratic terms
+          multiplier <- if (var1 == var2) 
+              2 else 1
+          
+          for (i in 1:steps) {
+              coef$coef1[i] <- mean(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+                  multiplier * coef$fake[i] * m.sims@fixef[, match(var12, 
+                    unlist(dimnames(m@pp$X)[2]))])
+              coef$ub[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+                  multiplier * coef$fake[i] * m.sims@fixef[, match(var12, 
+                    unlist(dimnames(m@pp$X)[2]))], (1 - ci) / 2)
+              coef$lb[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+                  multiplier * coef$fake[i] * m.sims@fixef[, match(var12, 
+                    unlist(dimnames(m@pp$X)[2]))], 1 - (1 - ci) / 2)
+          }
         }
         
         if (plot == TRUE) {
@@ -426,11 +487,14 @@ interplot.glmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .9
                   var2_dt <- var2_dt
                 }
             }
-            interplot.plot(m = coef, steps = steps, hist = hist, var2_dt = var2_dt, point = point, 
-                ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, 
-                ...)
+            interplot.plot(m = coef, steps = steps, hist = hist, predPro = predPro, var2_vals = var2_vals, var2_dt = var2_dt, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ...)
         } else {
-            names(coef) <- c(var2, "coef", "ub", "lb")
+            if(predPro == TRUE){
+              names(coef) <- c(var2, paste0("values_in_", var1), "coef", "ub", "lb")
+            } else {
+              names(coef) <- c(var2, "coef", "ub", "lb")
+            }
+            
             return(coef)
         }
         

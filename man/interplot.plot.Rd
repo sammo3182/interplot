@@ -6,8 +6,9 @@
 \usage{
 \method{interplot}{plot}(m, var1 = NULL, var2 = NULL, plot = TRUE,
   steps = NULL, ci = 0.95, adjCI = FALSE, hist = FALSE,
-  var2_dt = NULL, point = FALSE, sims = 5000, xmin = NA, xmax = NA,
-  ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", ...)
+  predPro = FALSE, var2_vals = NULL, var2_dt = NULL, point = FALSE,
+  sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5,
+  ralpha = 0.5, rfill = "grey70", ...)
 }
 \arguments{
 \item{m}{A model object including an interaction term, or, alternately, a data frame recording conditional coefficients. This data frame should includes four columns:
@@ -32,7 +33,8 @@
 
 \item{hist}{A logical value indicating if there is a histogram of `var2` added at the bottom of the conditional effect plot.}
 
-\item{var2_dt}{A numerical value indicating the frequency distibution of `var2`. It is only used when `hist == TRUE`. When the object is a model, the default is the distribution of `var2` of the model.}
+\item{var2_dt}{A numerical value indicating the frequency distibution of `var2`. It is only used when `hist == TRUE`. When the object is a model, the default is the distribution of `var2` of the model. 
+#' @param predPro A logical value with default of `FALSE`. When the `m` is an output of a general linear model (class `glm` or `glmerMod`) and the argument is set to `TRUE`, the function will plot predicted probabilities at the values given by `var2_vals`.}
 
 \item{point}{A logical value determining the format of plot. By default, the function produces a line plot when var2 takes on ten or more distinct values and a point (dot-and-whisker) plot otherwise; option TRUE forces a point plot.}
 
@@ -51,6 +53,8 @@
 \item{rfill}{A character value indicating the filling color of the ribbon.}
 
 \item{...}{Other ggplot aesthetics arguments for points in the dot-whisker plot or lines in the line-ribbon plots. Not currently used.}
+
+\item{`var2_vals`}{A numerical value indicating the values the predicted probabilities are estimated, when `predPro` is `TRUE`.}
 }
 \value{
 The function returns a \code{ggplot} object.

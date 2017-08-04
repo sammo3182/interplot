@@ -12,18 +12,32 @@ summary(m)
 var1 = "ginicnty"
 var2 = "income_i"
 var2_vals = c(min(pew1.w$income_i), max(pew1.w$income_i))
-times = 20
-sims = 1000
+
+sims = 100
+
+
+plot = TRUE
+steps = NULL
+ci = .95
+adjCI = FALSE
+hist = FALSE
+predictPro = TRUE
+var2_vals = c(min(pew1.w$income_i), max(pew1.w$income_i))
+var2_dt = NA
+point = FALSE
+
+xmin = NA
+xmax = NA
+ercolor = NA
+esize = 0.5
+ralpha = 0.5
+rfill = "grey70"
 
 
 pred_probs <- function(m, var1, var2, var2_vals,
-                       times = 20, sims = 1000) {
-  m_sims <- arm::sim(m, sims)
-  df <- data.frame(m@frame)
-  df[[names(m@flist)]] <- NULL # omit L2 var
-  names(df)[1] <- "(Intercept)" # replace DV with intercept
-  df$`(Intercept)` <- 1
-  
+                       steps = 20, sims = 1000) {
+  m.sims <- arm::sim(m, sims)
+
   # Find name of interaction term
   ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), 
          var12 <- paste0(var2, ":", var1))
@@ -33,15 +47,20 @@ pred_probs <- function(m, var1, var2, var2_vals,
     stop(paste("Model does not include the interaction of", var1, "and", 
                var2, "."))
   
+  df <- data.frame(m@frame)
+  df[[names(m@flist)]] <- NULL # omit L2 var
+  names(df)[1] <- "(Intercept)" # replace DV with intercept
+  df$`(Intercept)` <- 1
+  
   iv_medians <- summarize_all(df, funs(median(., na.rm = TRUE))) 
   
-  fake_data <- iv_medians[rep(1:nrow(iv_medians), each=times*length(var2_vals)), ] 
-  fake_data[[var1]] <- with(df, rep(seq(min(get(var1)), max(get(var1)), length.out=times),
-                                    times=length(var2_vals)))
-  fake_data[[var2]] <- rep(var2_vals, each=times)
+  fake_data <- iv_medians[rep(1:nrow(iv_medians), each=steps*length(var2_vals)), ] 
+  fake_data[[var1]] <- with(df, rep(seq(min(get(var1)), max(get(var1)), length.out=steps),
+                                    steps=length(var2_vals)))
+  fake_data[[var2]] <- rep(var2_vals, each=steps)
   fake_data[[var12]] <- fake_data[[var1]] * fake_data[[var2]]
   
-  pp <- rowMeans(plogis(data.matrix(fake_data) %*% t(data.matrix(m_sims@fixef))))
+  pp <- rowMeans(plogis(data.matrix(fake_data) %*% t(data.matrix(m.sims@fixef))))
   row_quantiles <- function (x, probs) {
     naValue <- NA
     storage.mode(naValue) <- storage.mode(x)
@@ -64,7 +83,7 @@ pred_probs <- function(m, var1, var2, var2_vals,
     q <- drop(q)
     q
   }
-  pp_bounds <- row_quantiles(plogis(data.matrix(fake_data) %*% t(data.matrix(m_sims@fixef))), prob = c(qnorm((1 - ci)/2), qnorm(1 - (1 - ci)/2)))
+  pp_bounds <- row_quantiles(plogis(data.matrix(fake_data) %*% t(data.matrix(m.sims@fixef))), prob = c((1 - ci)/2, 1 - (1 - ci)/2))
   pp <- cbind(pp, pp_bounds)
   pp <- pp*100
   colnames(pp) <- c("coef1", "lb", "ub")
@@ -76,7 +95,7 @@ pred_probs <- function(m, var1, var2, var2_vals,
   names(pp)[1] <- "fake"
   names(pp)[2] <- "value"
  
-  return(pp)
+  # return(pp)
    
   # coef.plot <- ggplot()
   # coef.plot + geom_line(data = m, aes_string(x = "fake", y = "coef1"), color = "black") + 
@@ -85,4 +104,8 @@ pred_probs <- function(m, var1, var2, var2_vals,
 }
 
 
-interplot.plot(pp, steps = 100, ci = .95, adjCI = FALSE, hist = TRUE, var2_dt = pew1.w$ginicnty, pp = TRUE, sims = 5000)
+interplot.plot(m = pp, steps = steps, hist = hist, predictPro = TRUE, var2_dt = pew1.w$ginicnty, sims = 1000)
+
+interplot(m, var1 = "ginicnty",var2 = "income_i", predictPro = TRUE, var2_vals = c(min(pew1.w$income_i), median(pew1.w$income_i), max(pew1.w$income_i)))
+
+interplot.plot(m = coef, steps = steps, hist = hist, predictPro = predictPro, var2_vals = var2_vals, var2_dt = var2_dt, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill)
