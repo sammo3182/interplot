@@ -1,10 +1,12 @@
 # interplot 0.2.0
 ## Adding Argument
 * Adding an argument to adjust CIs to control the false discovery rate.
+* Adding an argument to produce conditional predicted probabilities at given values.
 
 ## Vignette Updates
 * Adding a brief review of the methodology of interaction.
-* Adding an example to show how to control the false discovery rate.
+* Adding an example to show how to control for the false discovery rate.
+* Adding an example to illustrate plotting conditional predicted propbabilities.
 
 # interplot 0.1.5
 ## Adding Argument

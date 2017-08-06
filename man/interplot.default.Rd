@@ -36,11 +36,11 @@ URL: \url{http://jee3.web.rice.edu/interaction-overconfidence.pdf}.
 
 \item{ci}{A numeric value defining the confidence intervals. The default value is 95\% (0.95).}
 
-\item{adjCI}{A logical value indication if applying the adjustment of confidence intervals to control the false discovery rate following the Esarey and Sumner (2017) procedure. (See also Benjamini and Hochberg 1995.) The default is FALSE; the plot presents the confidence internvals suggested by Brambor, Clark, and Golder (2006).}
+\item{adjCI}{A logical value indication if applying the adjustment of confidence intervals to control the false discovery rate following the Esarey and Sumner (2017) procedure. (See also Benjamini and Hochberg 1995.) The default is FALSE; the plot presents the confidence intervals suggested by Brambor, Clark, and Golder (2006).}
 
 \item{hist}{A logical value indicating if there is a histogram of `var2` added at the bottom of the conditional effect plot.}
 
-\item{var2_dt}{A numerical value indicating the frequency distibution of `var2`. It is only used when `hist == TRUE`. When the object is a model, the default is the distribution of `var2` of the model.}
+\item{var2_dt}{A numerical value indicating the frequency distribution of `var2`. It is only used when `hist == TRUE`. When the object is a model, the default is the distribution of `var2` of the model.}
 
 \item{predPro}{A logical value with default of `FALSE`. When the `m` is an object of class `glm` and the argument is set to `TRUE`, the function will plot predicted probabilities at the values given by `var2_vals`.}
 

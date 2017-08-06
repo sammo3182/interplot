@@ -27,13 +27,13 @@
 
 \item{steps}{Desired length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).}
 
-\item{ci}{is a numeric value inherited from the data wrangling funcitons in this package. Adding it here is just for the method consistency.}
+\item{ci}{is a numeric value inherited from the data wrangling functions in this package. Adding it here is just for the method consistency.}
 
 \item{adjCI}{Succeeded from the data management functions in `interplot` package.}
 
 \item{hist}{A logical value indicating if there is a histogram of `var2` added at the bottom of the conditional effect plot.}
 
-\item{var2_dt}{A numerical value indicating the frequency distibution of `var2`. It is only used when `hist == TRUE`. When the object is a model, the default is the distribution of `var2` of the model.}
+\item{var2_dt}{A numerical value indicating the frequency distribution of `var2`. It is only used when `hist == TRUE`. When the object is a model, the default is the distribution of `var2` of the model.}
 
 \item{predPro}{A logical value with default of `FALSE`. When the `m` is an output of a general linear model (class `glm` or `glmerMod`) and the argument is set to `TRUE`, the function will plot predicted probabilities at the values given by `var2_vals`.}
 
@@ -61,7 +61,7 @@
 The function returns a \code{ggplot} object.
 }
 \description{
-Graph based on the data frame of statistics about the conditional effect of an interaciton.
+Graph based on the data frame of statistics about the conditional effect of an interaction.
 }
 \details{
 \code{interplot.plot} is a S3 method from the \code{interplot}. It generates plots of conditional coefficients.

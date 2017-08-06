@@ -1,6 +1,6 @@
 #' Plot Conditional Coefficients in Models with Interaction Terms
 #' 
-#' Graph based on the data frame of statistics about the conditional effect of an interaciton.
+#' Graph based on the data frame of statistics about the conditional effect of an interaction.
 #' 
 #' @param m A model object including an interaction term, or, alternately, a data frame recording conditional coefficients. This data frame should includes four columns:
 #' \itemize{
@@ -13,10 +13,10 @@
 #' @param var2 The name (as a string) of the other variable in the interaction term.
 #' @param plot A logical value indicating whether the output is a plot or a dataframe including the conditional coefficient estimates of var1, their upper and lower bounds, and the corresponding values of var2.
 #' @param steps Desired length of the sequence. A non-negative number, which for seq and seq.int will be rounded up if fractional. The default is 100 or the unique categories in the \code{var2} (when it is less than 100. Also see \code{\link{unique}}).
-#' @param ci is a numeric value inherited from the data wrangling funcitons in this package. Adding it here is just for the method consistency.
+#' @param ci is a numeric value inherited from the data wrangling functions in this package. Adding it here is just for the method consistency.
 #' @param adjCI Succeeded from the data management functions in `interplot` package. 
 #' @param hist A logical value indicating if there is a histogram of `var2` added at the bottom of the conditional effect plot.
-#' @param var2_dt A numerical value indicating the frequency distibution of `var2`. It is only used when `hist == TRUE`. When the object is a model, the default is the distribution of `var2` of the model. 
+#' @param var2_dt A numerical value indicating the frequency distribution of `var2`. It is only used when `hist == TRUE`. When the object is a model, the default is the distribution of `var2` of the model. 
 #' @param predPro A logical value with default of `FALSE`. When the `m` is an output of a general linear model (class `glm` or `glmerMod`) and the argument is set to `TRUE`, the function will plot predicted probabilities at the values given by `var2_vals`. 
 #' @param var2_vals A numerical value indicating the values the predicted probabilities are estimated, when `predPro` is `TRUE`. 
 #' @param point A logical value determining the format of plot. By default, the function produces a line plot when var2 takes on ten or more distinct values and a point (dot-and-whisker) plot otherwise; option TRUE forces a point plot.
