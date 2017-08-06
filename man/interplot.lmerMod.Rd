@@ -31,6 +31,8 @@
 
 \item{predPro}{A logical value with default of `FALSE`. When the `m` is an object of class `glmerMod` and the argument is set to `TRUE`, the function will plot predicted probabilities at the values given by `var2_vals`.}
 
+\item{var2_vals}{A numerical value indicating the values the predicted probabilities are estimated, when `predPro` is `TRUE`.}
+
 \item{point}{A logical value determining the format of plot. By default, the function produces a line plot when var2 takes on ten or more distinct values and a point (dot-and-whisker) plot otherwise; option TRUE forces a point plot.}
 
 \item{sims}{Number of independent simulation draws used to calculate upper and lower bounds of coefficient estimates: lower values run faster; higher values produce smoother curves.}
@@ -48,8 +50,6 @@
 \item{rfill}{A character value indicating the filling color of the ribbon.}
 
 \item{...}{Other ggplot aesthetics arguments for points in the dot-whisker plot or lines in the line-ribbon plots. Not currently used.}
-
-\item{`var2_vals`}{A numerical value indicating the values the predicted probabilities are estimated, when `predPro` is `TRUE`.}
 }
 \value{
 The function returns a \code{ggplot} object.

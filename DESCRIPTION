@@ -17,6 +17,7 @@ Depends:
 Imports:
     stats,
     dplyr,
+    gridExtra,
     interactionTest
 License: MIT + file LICENSE
 LazyData: true

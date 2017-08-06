@@ -1,3 +1,5 @@
+if(getRversion() >= "2.15.1")  utils::globalVariables(".")
+
 #' Plot Conditional Coefficients in Mixed-Effects Models with Interaction Terms 
 #' 
 #' \code{interplot.mlm} is a method to calculate conditional coefficient estimates from the results of multilevel (mixed-effects) regression models with interaction terms. 
@@ -12,7 +14,7 @@
 #' @param hist A logical value indicating if there is a histogram of `var2` added at the bottom of the conditional effect plot.
 #' @param var2_dt A numerical value indicating the frequency distibution of `var2`. It is only used when `hist == TRUE`. When the object is a model, the default is the distribution of `var2` of the model. 
 #' @param predPro A logical value with default of `FALSE`. When the `m` is an object of class `glmerMod` and the argument is set to `TRUE`, the function will plot predicted probabilities at the values given by `var2_vals`. 
-#' @param `var2_vals` A numerical value indicating the values the predicted probabilities are estimated, when `predPro` is `TRUE`. 
+#' @param var2_vals A numerical value indicating the values the predicted probabilities are estimated, when `predPro` is `TRUE`. 
 #' @param point A logical value determining the format of plot. By default, the function produces a line plot when var2 takes on ten or more distinct values and a point (dot-and-whisker) plot otherwise; option TRUE forces a point plot.
 #' @param sims Number of independent simulation draws used to calculate upper and lower bounds of coefficient estimates: lower values run faster; higher values produce smoother curves.
 #' @param xmin A numerical value indicating the minimum value shown of x shown in the graph. Rarely used.
@@ -31,17 +33,24 @@
 #' 
 #' @importFrom  arm sim
 #' @importFrom stats quantile
+#' @importFrom stats median
+#' @importFrom stats plogis
 #' @import  ggplot2
 #' @import  dplyr
 #' 
 #' 
 #' @export
 
+
 # Coding function for non-mi mlm objects
 interplot.lmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE,hist = FALSE, var2_dt = NA, predPro = FALSE, var2_vals = NULL, point = FALSE, sims = 5000,xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", ...) {
     set.seed(324)
     
     m.class <- class(m)
+    
+    if(predPro == TRUE) stop("Predicted probability is estimated only for general linear models.")
+    
+    
     m.sims <- arm::sim(m, sims)
     
     ### For factor base terms###
@@ -239,7 +248,6 @@ interplot.lmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95
 interplot.glmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE, hist = FALSE, var2_dt = NA, predPro = FALSE, var2_vals = NULL, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", ...) {
     set.seed(324)
     
-  
     m.class <- class(m)
     m.sims <- arm::sim(m, sims)
     
@@ -325,7 +333,7 @@ interplot.glmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .9
     
     if (factor_v1) {
       
-      if(predPro == TRUE) stop("The current version does not support estimating predicted probabilities of factor base terms.")
+      if(predPro == TRUE) stop("The current version does not support estimating predicted probabilities for factor base terms.")
       
       
         for (j in 1:(length(levels(eval(parse(text = paste0("m@frame$", 
@@ -367,7 +375,7 @@ interplot.glmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .9
         
     } else if (factor_v2) {
       
-      if(predPro == TRUE) stop("The current version does not support estimating predicted probabilities of factor base terms.")
+      if(predPro == TRUE) stop("The current version does not support estimating predicted probabilities for factor base terms.")
       
         for (j in 1:(length(levels(eval(parse(text = paste0("m@frame$", 
             var2_bk))))) - 1)) {

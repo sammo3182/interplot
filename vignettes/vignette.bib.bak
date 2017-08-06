@@ -89,4 +89,29 @@
   publisher = {Cambridge University Press},
 }
 
+@Article{Benjamini1995,
+  author    = {Benjamini, Yoav and Hochberg, Yosef},
+  title     = {Controlling the False Discovery Rate: A Practical and Powerful Approach to Multiple Testing},
+  journal   = {Journal of the Royal Statistical Society. Series B (Methodological)},
+  year      = {1995},
+  pages     = {289--300},
+  publisher = {JSTOR},
+}
+
+@Article{Hanmer2013,
+  author    = {Hanmer, Michael J. and Ozan Kalkan, Kerem},
+  title     = {Behind the Curve: Clarifying the Best Approach to Calculating Predicted Probabilities and Marginal Effects from Limited Dependent Variable Models},
+  journal   = {American Journal of Political Science},
+  year      = {2013},
+  volume    = {57},
+  number    = {1},
+  pages     = {263--277},
+  issn      = {1540-5907},
+  abstract  = {Models designed for limited dependent variables are increasingly common in political science. Researchers estimating such models often give little attention to the coefficient estimates and instead focus on marginal effects, predicted probabilities, predicted counts, etc. Since the models are nonlinear, the estimated effects are sensitive to how one generates the predictions. The most common approach involves estimating the effect for the “average case.” But this approach creates a weaker connection between the results and the larger goals of the research enterprise and is thus less preferable than the observed-value approach. That is, rather than seeking to understand the effect for the average case, the goal is to obtain an estimate of the average effect in the population. In addition to the theoretical argument in favor of the observed-value approach, we illustrate via an empirical example and Monte Carlo simulations that the two approaches can produce substantively different results.},
+  doi       = {10.1111/j.1540-5907.2012.00602.x},
+  publisher = {Blackwell Publishing Inc},
+  timestamp = {2017-08-06},
+  url       = {http://dx.doi.org/10.1111/j.1540-5907.2012.00602.x},
+}
+
 @Comment{jabref-meta: databaseType:bibtex;}
