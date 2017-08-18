@@ -1,4 +1,4 @@
-if(getRversion() >= "2.15.1")  utils::globalVariables(".")
+if(getRversion() >= "2.15.1") utils::globalVariables(c(".", "X.weights."))
 
 #' Plot Conditional Coefficients in Mixed-Effects Models with Imputed Data and Interaction Terms
 #' 
@@ -36,6 +36,8 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(".")
 #' @importFrom stats quantile
 #' @importFrom stats median
 #' @importFrom stats plogis
+#' @importFrom stats model.matrix
+#' @importFrom purrr map
 #' @import ggplot2
 #' @import dplyr
 #' 
@@ -433,10 +435,42 @@ interplot.gmlmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95,
         
         if(is.null(var2_vals)) stop("The predicted probabilities cannot be estimated without defining 'var2_vals'.")
         
-        df <- data.frame(m@frame)
+        df <- data.frame(m$model)
         df[[names(m@flist)]] <- NULL # omit L2 var
+        if(sum(grep("X.weights.", names(df))) != 0) df <- select(df, -X.weights.) # removed the weights
+        df_temp <- select(df, 1) # save the dependent variable separately
+        df <- df[-1] %>% # get ride of the dv in case it's a factor
+          map(function(var){
+            if(is.factor(var)){
+              model.matrix(~ var - 1)[, -1] %>% 
+                # get rid of the first (reference) group
+                as.data.frame()
+            }else{
+              as.numeric(var) # in case the initial one is a "labelled" class
+            }
+          })
+        
+        
+        for(i in seq(df)){ 
+          # use for loop to avoid the difficulty of flatting list containing vectors and matrices
+          if(!is.data.frame(df[[i]])){
+            # keep track the var names
+            namesUpdate <- c(names(df_temp), names(df)[[i]])
+            df_temp <- cbind(df_temp, df[[i]])
+            names(df_temp) <- namesUpdate
+          }else{
+            df_temp <- cbind(df_temp, df[[i]])
+          }
+        }
+        
+        df <- df_temp
+        
         names(df)[1] <- "(Intercept)" # replace DV with intercept
         df$`(Intercept)` <- 1
+        
+        if(var1 == var2){ # correct the name of squares
+          names(df) <- sub("I\\.(.*)\\.2\\.", "I\\(\\1\\^2\\)", names(df))
+        }
         
         iv_medians <- summarize_all(df, funs(median(., na.rm = TRUE))) 
         

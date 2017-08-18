@@ -17,6 +17,7 @@ Depends:
 Imports:
     stats,
     dplyr,
+    purrr,
     gridExtra,
     interactionTest
 License: MIT + file LICENSE
