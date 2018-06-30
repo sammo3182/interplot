@@ -233,6 +233,19 @@ interplot.mlmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, 
                   unlist(dimnames(m@pp$X)[2]))], 1 - (1 - ci) / 2)
         }
         
+        multiplier <- if (var1 == var2) 
+          2 else 1
+        
+        min_sim <- m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+          multiplier * xmin * m.sims@fixef[, match(var12, unlist(dimnames(m@pp$X)[2]))] # simulation of the value at the minimum value of the conditioning variable
+        max_sim <- m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+          multiplier * xmax * m.sims@fixef[, match(var12, unlist(dimnames(m@pp$X)[2]))] # simulation of the value at the maximum value of the conditioning variable
+        diff <- max_sim - min_sim # calculating the difference
+        ci_diff <- c(
+          quantile(diff, (1 - ci) / 2),
+          quantile(diff, 1 - (1 - ci) / 2)
+        ) # confidence intervals of the difference
+        
         if (plot == TRUE) {
             if (hist == TRUE) {
                 if (is.na(var2_dt)) {
@@ -243,6 +256,7 @@ interplot.mlmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, 
             }
             interplot.plot(m = coef, hist = hist, var2_dt = var2_dt, point = point, 
                 ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, 
+                ci_diff = ci_diff,
                 ...)
         } else {
             names(coef) <- c(var2, "coef", "ub", "lb")
@@ -535,6 +549,19 @@ interplot.gmlmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95,
         }
       }
         
+      multiplier <- if (var1 == var2) 
+        2 else 1
+      
+      min_sim <- m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+        multiplier * xmin * m.sims@fixef[, match(var12, unlist(dimnames(m@pp$X)[2]))] # simulation of the value at the minimum value of the conditioning variable
+      max_sim <- m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+        multiplier * xmax * m.sims@fixef[, match(var12, unlist(dimnames(m@pp$X)[2]))] # simulation of the value at the maximum value of the conditioning variable
+      diff <- max_sim - min_sim # calculating the difference
+      ci_diff <- c(
+        quantile(diff, (1 - ci) / 2),
+        quantile(diff, 1 - (1 - ci) / 2)
+      ) # confidence intervals of the difference
+      
         if (plot == TRUE) {
             if (hist == TRUE) {
                 if (is.na(var2_dt)) {
@@ -543,7 +570,7 @@ interplot.gmlmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95,
                   var2_dt <- var2_dt
                 }
             }
-          interplot.plot(m = coef, steps = steps, hist = hist, predPro = predPro, var2_vals = var2_vals, var2_dt = var2_dt, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ...)
+          interplot.plot(m = coef, steps = steps, hist = hist, predPro = predPro, var2_vals = var2_vals, var2_dt = var2_dt, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ci_diff = ci_diff, ...)
         } else {
           if(predPro == TRUE){
             names(coef) <- c(var2, paste0("values_in_", var1), "coef", "ub", "lb")

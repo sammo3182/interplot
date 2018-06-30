@@ -1,3 +1,10 @@
+# interplot 0.2.1
+## Function Updates
+* Showing the confidence intervals between the conditional effects at the minimum and maximum values of the conditioning variable.
+
+## Error Fixed
+* Avoiding the warning caused by the `class(m) == "polr"`.
+
 # interplot 0.2.0
 ## Adding Argument
 * Adding an argument to adjust CIs to control the false discovery rate.
@@ -14,7 +21,7 @@
 
 # interplot 0.1.4
 ## Error Fixed
-* Fixed the error in plotting `lmer` projects.
+* Fixing the error in plotting `lmer` projects.
 
 
 # interplot 0.1.3

@@ -273,6 +273,17 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, a
                   names(m$coef))], (1 - ci) / 2)
         }
         
+        multiplier <- if (var1 == var2) 
+          2 else 1
+        
+        min_sim <- m.sims@coef[, match(var1, names(m$coef))] + multiplier * xmin * m.sims@coef[, match(var12, names(m$coef))] # simulation of the value at the minimum value of the conditioning variable
+        max_sim <- m.sims@coef[, match(var1, names(m$coef))] + multiplier * xmax * m.sims@coef[, match(var12, names(m$coef))] # simulation of the value at the maximum value of the conditioning variable
+        diff <- max_sim - min_sim # calculating the difference
+        ci_diff <- c(
+          quantile(diff, (1 - ci) / 2),
+          quantile(diff, 1 - (1 - ci) / 2)
+        ) # confidence intervals of the difference
+        
         if(adjCI == TRUE){
           ## FDR correction
           coef$sd <- (coef$ub - coef$coef1) / qnorm(1 - (1 - ci)/2) 
@@ -290,7 +301,9 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, a
                 }
             }
             interplot.plot(m = coef, point = point, ercolor = ercolor, 
-                esize = esize, ralpha = ralpha, rfill = rfill, ...)
+                esize = esize, ralpha = ralpha, rfill = rfill, 
+                ci_diff = ci_diff,
+                ...)
         } else {
             names(coef) <- c(var2, "coef", "ub", "lb")
             return(coef)
@@ -530,7 +543,7 @@ interplot.glmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, 
         df <- df_temp          
         
         
-        if(class(m) == "polr"){ #ordered logit does not have intercept in sim
+        if("polr" %in% class(m)){ #ordered logit does not have intercept in sim
           df <- df[, -1]
         }else{
           names(df)[1] <- "(Intercept)" # replace DV with intercept
@@ -603,6 +616,18 @@ interplot.glmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, 
         }
       }
         
+      
+      multiplier <- if (var1 == var2) 
+        2 else 1
+      
+      min_sim <- m.sims@coef[, match(var1, names(m$coef))] + multiplier * xmin * m.sims@coef[, match(var12, names(m$coef))] # simulation of the value at the minimum value of the conditioning variable
+      max_sim <- m.sims@coef[, match(var1, names(m$coef))] + multiplier * xmax * m.sims@coef[, match(var12, names(m$coef))] # simulation of the value at the maximum value of the conditioning variable
+      diff <- max_sim - min_sim # calculating the difference
+      ci_diff <- c(
+        quantile(diff, (1 - ci) / 2),
+        quantile(diff, 1 - (1 - ci) / 2)
+      ) # confidence intervals of the difference
+      
         if(adjCI == TRUE){
           ## FDR correction
           coef$sd <- (coef$ub - coef$coef1) / qnorm(1 - (1 - ci)/2) 
@@ -619,7 +644,7 @@ interplot.glmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, 
                   var2_dt <- var2_dt
                 }
             }
-          interplot.plot(m = coef, steps = steps, hist = hist, var2_dt = var2_dt, , predPro = predPro, var2_vals = var2_vals, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ...)
+          interplot.plot(m = coef, steps = steps, hist = hist, var2_dt = var2_dt, predPro = predPro, var2_vals = var2_vals, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ci_diff = ci_diff,...)
         } else {
           if(predPro == TRUE){
             names(coef) <- c(var2, paste0("values_in_", var1), "coef", "ub", "lb")

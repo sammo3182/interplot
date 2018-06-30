@@ -151,6 +151,7 @@ interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95
     coef_df <- data.frame(fake = numeric(0), coef1 = numeric(0), ub = numeric(0), 
         lb = numeric(0), model = character(0))
     
+    
     if (factor_v1) {
       
       if(predPro == TRUE) stop("The current version does not support estimating predicted probabilities for factor base terms.")
@@ -171,7 +172,18 @@ interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95
                   names(m$coef))] + coef$fake[i] * m.sims@coef[, match(var12[j], 
                   names(m$coef))], (1 - ci) / 2)
             }
-            
+          
+          # Need working more for factor  
+          # min_sim <- m.sims@coef[, match(var1[j + 1], names(m$coef))] + xmin * m.sims@coef[, match(var12[j], names(m$coef))] # simulation of the value at the minimum value of the conditioning variable
+          # max_sim <- m.sims@coef[, match(var1[j + 1], names(m$coef))] + xmax * m.sims@coef[, match(var12[j], names(m$coef))] # simulation of the value at the maximum value of the conditioning variable
+          # diff <- max_sim - min_sim # calculating the difference
+          # ci_diff <- list()
+          # ci_diff[[j]] <- c(
+          #   quantile(diff, (1 - ci) / 2),
+          #   quantile(diff, 1 - (1 - ci) / 2)
+          # ) # confidence intervals of the difference
+          
+          
           if(adjCI == TRUE){
             ## FDR correction
             coef$sd <- (coef$ub - coef$coef1) / qnorm(1 - (1 - ci)/2) 
@@ -198,7 +210,9 @@ interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95
         coef_df$value <- as.factor(coef_df$value)
         interplot.plot(m = coef_df, hist = hist, var2_dt = var2_dt, steps = steps, 
                        point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, 
-                       rfill = rfill, ...) + facet_grid(. ~ value)
+                       rfill = rfill, 
+                       # ci_diff = ci_diff, 
+                       ...) + facet_grid(. ~ value)
       } else { # return coef not coef_df, since the categorical part doesn't need to be shown
                 names(coef) <- c(var2, "coef", "ub", "lb")
                 return(coef)
@@ -224,6 +238,17 @@ interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95
                   (1 - ci) / 2)
             }
             
+          # Need working more for factor  
+          # min_sim <- m.sims@coef[, match(var1[j + 1], names(m$coef))] + xmin * m.sims@coef[, match(var12[j], names(m$coef))] # simulation of the value at the minimum value of the conditioning variable
+          # max_sim <- m.sims@coef[, match(var1[j + 1], names(m$coef))] + xmax * m.sims@coef[, match(var12[j], names(m$coef))] # simulation of the value at the maximum value of the conditioning variable
+          # diff <- max_sim - min_sim # calculating the difference
+          # ci_diff <- list()
+          # ci_diff[[j]] <- c(
+          #   quantile(diff, (1 - ci) / 2),
+          #   quantile(diff, 1 - (1 - ci) / 2)
+          # ) # confidence intervals of the difference
+          
+          
             if(adjCI == TRUE){
               ## FDR correction
               coef$sd <- (coef$ub - coef$coef1) / qnorm(1 - (1 - ci)/2) 
@@ -248,9 +273,9 @@ interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95
     
         if(plot == TRUE){
           coef_df$value <- as.factor(coef_df$value)
-                    interplot.plot(m = coef_df, hist = hist, steps = steps, var2_dt = var2_dt, 
-                        point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, 
-                        rfill = rfill, ...) + facet_grid(. ~ value)
+                    interplot.plot(m = coef_df, hist = hist, steps = steps, var2_dt = var2_dt, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, 
+                                   # ci_diff = ci_diff,
+                                   ...) + facet_grid(. ~ value)
         } else {
                     names(coef) <- c(var2, "coef", "ub", "lb")
                     return(coef)
@@ -291,7 +316,7 @@ interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95
         df <- df_temp          
         
         
-        if(class(m) == "polr"){ #ordered logit does not have intercept in sim
+        if("polr" %in% class(m)){ #ordered logit does not have intercept in sim
           df <- df[, -1]
         }else{
           names(df)[1] <- "(Intercept)" # replace DV with intercept
@@ -364,6 +389,19 @@ interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95
         }
       }
       
+  
+      multiplier <- if (var1 == var2) 
+        2 else 1
+      
+      min_sim <- m.sims@coef[, match(var1, names(m$coef))] + multiplier * xmin * m.sims@coef[, match(var12, names(m$coef))] # simulation of the value at the minimum value of the conditioning variable
+      max_sim <- m.sims@coef[, match(var1, names(m$coef))] + multiplier * xmax * m.sims@coef[, match(var12, names(m$coef))] # simulation of the value at the maximum value of the conditioning variable
+      diff <- max_sim - min_sim # calculating the difference
+      ci_diff <- c(
+        quantile(diff, (1 - ci) / 2),
+        quantile(diff, 1 - (1 - ci) / 2)
+      ) # confidence intervals of the difference
+      
+      
       if(adjCI == TRUE){
         ## FDR correction
         coef$sd <- (coef$ub - coef$coef1) / qnorm(1 - (1 - ci)/2) 
@@ -381,7 +419,8 @@ interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95
                 var2_dt <- var2_dt
               }
           }
-          interplot.plot(m = coef, steps = steps, hist = hist, var2_dt = var2_dt, , predPro = predPro, var2_vals = var2_vals, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ...)
+          interplot.plot(m = coef, steps = steps, hist = hist, var2_dt = var2_dt,
+                         predPro = predPro, var2_vals = var2_vals, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ci_diff = ci_diff, ...)
       } else {
         if(predPro == TRUE){
           names(coef) <- c(var2, paste0("values_in_", var1), "coef", "ub", "lb")

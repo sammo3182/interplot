@@ -7,7 +7,7 @@ bibliography: vignette.bib
 vignette: >
   %\VignetteIndexEntry{interplot: Plot the Effects of Variables in Interaction Terms}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{ASCII}
+  %\VignetteEncoding{UTF-8}
 ---
 
 Interaction is a powerful tool to test conditional effects of one variable on the contribution of another variable to the dependent variable and has been extensively applied in the empirical research of social science since the 1970s [@WrightJr1976].
@@ -81,6 +81,8 @@ interplot(m = m_cyl, var1 = "cyl", var2 = "wt")
 ```
 
 The plot clearly shows that with increasing automobile weight (along the x axis), the magnitude of the coefficient of the number of cylinders on the mileage also increases (along the y axis).
+The caption at the right bottom corner shows the confidence intervals of the difference between the conditioned effects of the number of cylinders at the minimum and maximum values of the weight. 
+(The interval range can be adjusted by the `ci` option.)
 
 Similarly, to show how the number of cylinders affects the coefficient of automobile weight on mileage, one only needs to switch `var1` and `var2`:
 

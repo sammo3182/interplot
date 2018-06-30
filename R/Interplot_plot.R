@@ -28,6 +28,7 @@
 #' @param ralpha A numerical value indicating the transparency of the ribbon.
 #' @param rfill A character value indicating the filling color of the ribbon.
 #' @param ... Other ggplot aesthetics arguments for points in the dot-whisker plot or lines in the line-ribbon plots. Not currently used.
+#' @param ci_diff A numerical vector with a pair of values indicating the confidence intervals of the difference between the conditional effects at the minimum and maxmum values. The intervas can be use to interpret the significant
 #' 
 #' @details \code{interplot.plot} is a S3 method from the \code{interplot}. It generates plots of conditional coefficients.
 #' 
@@ -43,7 +44,7 @@
 #' @export
 
 ## S3 method for class 'data.frame'
-interplot.plot <- function(m, var1 = NULL, var2 = NULL, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE, hist = FALSE, var2_dt = NULL, predPro = FALSE, var2_vals = NULL, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", ...) {
+interplot.plot <- function(m, var1 = NULL, var2 = NULL, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE, hist = FALSE, var2_dt = NULL, predPro = FALSE, var2_vals = NULL, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", ci_diff = NULL, ...) {
     if(is.null(steps)) steps <- nrow(m)
     levels <- sort(unique(m$fake))
     ymin <- ymax <- vector() # to deal with the "no visible binding for global variable" issue
@@ -68,7 +69,13 @@ interplot.plot <- function(m, var1 = NULL, var2 = NULL, plot = TRUE, steps = NUL
           coef.plot <- ggplot(m, aes_string(x = "fake", y = "coef1")) + geom_line(...) + geom_ribbon(aes_string(ymin = "lb", ymax = "ub"), alpha = ralpha, color = ercolor, fill = rfill) + ylab(NULL) + xlab(NULL)
         }
       }
-        return(coef.plot)
+      
+      if(!is.null(ci_diff)){
+        coef.plot <- coef.plot + 
+          labs(caption = paste0("CI(Max - Min): [", round(ci_diff[1], digits = 3), ", ", round(ci_diff[2], digits = 3), "]"))
+      }
+      
+      return(coef.plot)
     } else {
         if (point == T) {
             if (is.na(ercolor)) ercolor <- "black"  # ensure whisker can be drawn
@@ -144,6 +151,11 @@ interplot.plot <- function(m, var1 = NULL, var2 = NULL, plot = TRUE, steps = NUL
               coef.plot <- coef.plot + geom_line(data = m, aes_string(x = "fake", y = "coef1")) + geom_ribbon(data = m, aes_string(x = "fake", ymin = "lb", ymax = "ub"), alpha = ralpha, color = ercolor, fill = rfill) + ylab(NULL) + xlab(NULL)
             }
         }
+      
+      if(!is.null(ci_diff)){
+        coef.plot <- coef.plot + 
+          labs(caption = paste0("CI(Max - Min): [", round(ci_diff[1], digits = 3), ", ", round(ci_diff[2], digits = 3), "]"))
+      }
       
       return(coef.plot)
     }
