@@ -28,7 +28,7 @@
 #' @param ralpha A numerical value indicating the transparency of the ribbon.
 #' @param rfill A character value indicating the filling color of the ribbon.
 #' @param ... Other ggplot aesthetics arguments for points in the dot-whisker plot or lines in the line-ribbon plots. Not currently used.
-#' @param ci_diff A numerical vector with a pair of values indicating the confidence intervals of the difference between the conditional effects at the minimum and maxmum values. The intervas can be use to interpret the significant
+#' @param ci_diff A numerical vector with a pair of values indicating the confidence intervals of the difference between the conditional effects at the minimum and maximum values. The intervals can be use to interpret the significant
 #' 
 #' @details \code{interplot.plot} is a S3 method from the \code{interplot}. It generates plots of conditional coefficients.
 #' 
