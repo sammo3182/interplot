@@ -201,19 +201,19 @@ grid.arrange(stdCI_plot, adjCI_plot, ncol = 2)
 ## Adnvaced Use: Plot Conditional Predicted Probability
 
 @Hanmer2013 point out (also in the associated [post](https://ajps.org/2014/11/13/translating-statistical-results-into-meaningful-quantities-methods/) in the AJPS website) that it is important to translate statistical results into meaningful quantities. 
-The task not only pushes researchers to interpret the results in a real-life manner---which may lead to substantively different conclusionts---but also provides covenience for a far broader scope of readers (e.g., policy makers, governmental officials, stakeholders, etc.) to understand the implications of the study and their importance.
+The task not only pushes researchers to interpret the results in a real-life manner---which may lead to substantively different conclusions---but also provides convenience for a far broader scope of readers (e.g., policy makers, governmental officials, stakeholders, etc.) to understand the implications of the study and their importance.
 
 To accomplish this task requires researchers to go beyond estimating the effect for the "average case," but focuses more on the values or intervals that are illustratively important and meaningful.
 This could be a time-consuming job, though, especially when researchers work on models with limited dependent variables.
 `interplot` provides a convenient way to achieve the task.
 When researchers are dealing with general linear flat or multilevel models, they have the choice to set the argument `predPro` to `TRUE` and give the critical values they are interested in the argument `var2_vals`.
-Then, `interplot` will automatically estimated the conditional effects of predicted probabilities at these given values of the conditionaled variable.
+Then, `interplot` will automatically estimated the conditional effects of predicted probabilities at these given values of the conditioned variable.
 The following example illustrates how it works.
 
 In this example, we are interested how the economic inequality affect the impact of income on the U.S. citizens' belief in meritocracy, a critical ideology of the "American Dream."
 We estimated this conditional effect based on an interaction model with three years of Pew surveys (2006, 2007, and 2009), in which the income is the conditioned variable and economic inequality (county-level Gini coefficients).^[For the purpose of illustration, we omitted the county level variance in this example. One can see more comprehensive analyses in @Solt2016.]
 We first estimate the average conditional effect for the entire sample and then estimate the conditional predicted probabilities for citizens with the lowest and highest levels of income separately.
-As shown in the following plot, the average case in the left panel only shows a decreasing conditional effect, while the predicted probability plot in the right uncovers conditional effects in opposit directions for the high and low income individuals.
+As shown in the following plot, the average case in the left panel only shows a decreasing conditional effect, while the predicted probability plot in the right uncovers conditional effects in opposite directions for the high and low income individuals.
 
 ```{r fig.width = 7, warning = FALSE, message = FALSE}
 pew1.w <- read.csv("pew1_w.csv")
