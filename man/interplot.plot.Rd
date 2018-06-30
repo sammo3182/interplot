@@ -55,7 +55,7 @@
 
 \item{rfill}{A character value indicating the filling color of the ribbon.}
 
-\item{ci_diff}{A numerical vector with a pair of values indicating the confidence intervals of the difference between the conditional effects at the minimum and maxmum values. The intervas can be use to interpret the significant}
+\item{ci_diff}{A numerical vector with a pair of values indicating the confidence intervals of the difference between the conditional effects at the minimum and maximum values. The intervals can be use to interpret the significant}
 
 \item{...}{Other ggplot aesthetics arguments for points in the dot-whisker plot or lines in the line-ribbon plots. Not currently used.}
 }
