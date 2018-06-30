@@ -1,5 +1,5 @@
 ## Test environments
-* R 3.4.0
+* R development version
 
 
 ## R CMD check results
@@ -66,5 +66,9 @@ There were no ERRORs or WARNINGs.
 R CMD check succeeded.
 
 ### v 0.2.0
+There were no ERRORs or WARNINGs. 
+R CMD check succeeded.
+
+### v 0.2.1
 There were no ERRORs or WARNINGs. 
 R CMD check succeeded.
