@@ -430,5 +430,4 @@ interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95
         return(coef)
       }
     }
-    .Random.seed <- oldseed
 }
