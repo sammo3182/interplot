@@ -1,3 +1,6 @@
+# interplot 0.2.2
+* interplot no longer sets the random seed; to ensure complete reproducibility, users must now set their own seeds using `set.seed()` before calling interplot functions.
+
 # interplot 0.2.1
 ## Function Updates
 * Showing the confidence intervals between the conditional effects at the minimum and maximum values of the conditioning variable.
