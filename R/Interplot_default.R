@@ -63,6 +63,7 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c(".", "X.weights."))
 
 # S3 method for class 'lm' and 'glm'
 interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE, hist = FALSE, var2_dt = NA, predPro = FALSE, var2_vals = NULL, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", ...) {
+    oldseed <- .Random.seed
     set.seed(324)
 
     m.class <- class(m)
@@ -277,9 +278,9 @@ interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95
                                    # ci_diff = ci_diff,
                                    ...) + facet_grid(. ~ value)
         } else {
-                    names(coef) <- c(var2, "coef", "ub", "lb")
-                    return(coef)
-                }
+          names(coef) <- c(var1, "coef", "ub", "lb")
+          return(coef)
+        }
         
     } else {
         
@@ -431,4 +432,5 @@ interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95
         return(coef)
       }
     }
+    .Random.seed <- oldseed
 }
