@@ -176,7 +176,7 @@ interplot.mlmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, 
             }
         }
       if (is.null(facet_labs)) facet_labs <- unique(coef_df$value)
-      coef_df$value <- factor(coef_df$value, label = facet_labs)
+      coef_df$value <- factor(coef_df$value, labels = facet_labs)
         interplot.plot(m = coef_df, hist = hist, steps = steps, var2_dt = var2_dt, point = point, 
             ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, 
             ...) + facet_grid(. ~ value)
@@ -214,7 +214,7 @@ interplot.mlmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, 
             }
         }
       if (is.null(facet_labs)) facet_labs <- unique(coef_df$value)
-      coef_df$value <- factor(coef_df$value, label = facet_labs)
+      coef_df$value <- factor(coef_df$value, labels = facet_labs)
         interplot.plot(m = coef_df, point = point) + facet_grid(. ~ value)
         
         
@@ -401,7 +401,7 @@ interplot.gmlmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95,
             }
         }
       if (is.null(facet_labs)) facet_labs <- unique(coef_df$value)
-      coef_df$value <- factor(coef_df$value, label = facet_labs)
+      coef_df$value <- factor(coef_df$value, labels = facet_labs)
         interplot.plot(m = coef_df, steps = steps, hist = hist, var2_dt = var2_dt, point = point, 
             ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, 
             ...) + facet_grid(. ~ value)
@@ -442,7 +442,7 @@ interplot.gmlmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95,
             }
         }
       if (is.null(facet_labs)) facet_labs <- unique(coef_df$value)
-      coef_df$value <- factor(coef_df$value, label = facet_labs)
+      coef_df$value <- factor(coef_df$value, labels = facet_labs)
         interplot.plot(m = coef_df, steps = steps, hist = hist, var2_dt = var2_dt, point = point, 
             ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, 
             ...) + facet_grid(. ~ value)

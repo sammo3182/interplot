@@ -208,7 +208,7 @@ interplot.default <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95
       
       if(plot == TRUE){
         if (is.null(facet_labs)) facet_labs <- unique(coef_df$value)
-        coef_df$value <- factor(coef_df$value, label = facet_labs)
+        coef_df$value <- factor(coef_df$value, labels = facet_labs)
         interplot.plot(m = coef_df, hist = hist, var2_dt = var2_dt, steps = steps, 
                        point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, 
                        rfill = rfill, 
