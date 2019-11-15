@@ -4,11 +4,29 @@
 \alias{interplot.plot}
 \title{Plot Conditional Coefficients in Models with Interaction Terms}
 \usage{
-\method{interplot}{plot}(m, var1 = NULL, var2 = NULL, plot = TRUE,
-  steps = NULL, ci = 0.95, adjCI = FALSE, hist = FALSE,
-  var2_dt = NULL, predPro = FALSE, var2_vals = NULL, point = FALSE,
-  sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5,
-  ralpha = 0.5, rfill = "grey70", ci_diff = NULL, ...)
+\method{interplot}{plot}(
+  m,
+  var1 = NULL,
+  var2 = NULL,
+  plot = TRUE,
+  steps = NULL,
+  ci = 0.95,
+  adjCI = FALSE,
+  hist = FALSE,
+  var2_dt = NULL,
+  predPro = FALSE,
+  var2_vals = NULL,
+  point = FALSE,
+  sims = 5000,
+  xmin = NA,
+  xmax = NA,
+  ercolor = NA,
+  esize = 0.5,
+  ralpha = 0.5,
+  rfill = "grey70",
+  ci_diff = NULL,
+  ...
+)
 }
 \arguments{
 \item{m}{A model object including an interaction term, or, alternately, a data frame recording conditional coefficients. This data frame should includes four columns:

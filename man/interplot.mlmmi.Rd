@@ -4,11 +4,29 @@
 \alias{interplot.mlmmi}
 \title{Plot Conditional Coefficients in Mixed-Effects Models with Imputed Data and Interaction Terms}
 \usage{
-\method{interplot}{mlmmi}(m, var1, var2, plot = TRUE, steps = NULL,
-  ci = 0.95, adjCI = FALSE, hist = FALSE, var2_dt = NA,
-  predPro = FALSE, var2_vals = NULL, point = FALSE, sims = 5000,
-  xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5,
-  rfill = "grey70", ...)
+\method{interplot}{mlmmi}(
+  m,
+  var1,
+  var2,
+  plot = TRUE,
+  steps = NULL,
+  ci = 0.95,
+  adjCI = FALSE,
+  hist = FALSE,
+  var2_dt = NA,
+  predPro = FALSE,
+  var2_vals = NULL,
+  point = FALSE,
+  sims = 5000,
+  xmin = NA,
+  xmax = NA,
+  ercolor = NA,
+  esize = 0.5,
+  ralpha = 0.5,
+  rfill = "grey70",
+  facet_labs = NULL,
+  ...
+)
 }
 \arguments{
 \item{m}{A model object including an interaction term, or, alternately, a data frame recording conditional coefficients.}
@@ -48,6 +66,8 @@
 \item{ralpha}{A numerical value indicating the transparency of the ribbon.}
 
 \item{rfill}{A character value indicating the filling color of the ribbon.}
+
+\item{facet_labs}{An optional character vector of facet labels to be used when plotting an interaction with a factor variable.}
 
 \item{...}{Other ggplot aesthetics arguments for points in the dot-whisker plot or lines in the line-ribbon plots. Not currently used.}
 }

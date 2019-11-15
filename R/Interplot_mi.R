@@ -23,6 +23,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c(".", "X.weights."))
 #' @param esize A numerical value indicating the size of the whisker or ribbon.
 #' @param ralpha A numerical value indicating the transparency of the ribbon.
 #' @param rfill A character value indicating the filling color of the ribbon.
+#' @param facet_labs An optional character vector of facet labels to be used when plotting an interaction with a factor variable.
 #' @param ... Other ggplot aesthetics arguments for points in the dot-whisker plot or lines in the line-ribbon plots. Not currently used.
 #' 
 #' @details \code{interplot} is a S3 method from the \code{interplot}. It can visualize the changes in the coefficient of one term in a two-way interaction conditioned by the other term. This function can work on interactions from results in the class of \code{list}.
@@ -60,7 +61,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c(".", "X.weights."))
 
 # Coding function for non-mlm mi objects
 interplot.lmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE, hist = FALSE, var2_dt = NA, predPro = FALSE, var2_vals = NULL, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, 
-    ralpha = 0.5, rfill = "grey70", ...) {
+    ralpha = 0.5, rfill = "grey70", facet_labs = NULL, ...) {
     
 
   if(predPro == TRUE & class(m) == "lmmi") stop("Predicted probability is estimated only for general linear models.")
@@ -196,7 +197,8 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, a
         }
         
       if(plot == TRUE){
-        coef_df$value <- as.factor(coef_df$value)
+        if (is.null(facet_labs)) facet_labs <- unique(coef_df$value)
+        coef_df$value <- factor(coef_df$value, label = facet_labs)
         interplot.plot(m = coef_df, hist = hist, var2_dt = var2_dt, steps = steps, 
                        point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, 
                        rfill = rfill, ...) + facet_grid(. ~ value)
@@ -246,7 +248,8 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, a
         interplot.plot(m = coef_df, steps = steps, hist = hist, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ...) + facet_grid(. ~ value)
         
         if(plot == TRUE){
-          coef_df$value <- as.factor(coef_df$value)
+          if (is.null(facet_labs)) facet_labs <- unique(coef_df$value)
+          coef_df$value <- factor(coef_df$value, label = facet_labs)
           interplot.plot(m = coef_df, hist = hist, steps = steps, var2_dt = var2_dt, 
                          point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, 
                          rfill = rfill, ...) + facet_grid(. ~ value)
