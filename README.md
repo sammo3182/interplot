@@ -9,7 +9,7 @@ interplot
 To install:
 
 * the latest released version: `install.packages("interplot")`.
-* the latest developing version: `devtools::install_github("sammo3182/interplot")`.
+* the latest developing version: `remotes::install_github("sammo3182/interplot")`.
 
 
 More details are available at:
