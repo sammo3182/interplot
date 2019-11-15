@@ -1,5 +1,6 @@
 # interplot 0.2.2
 * interplot no longer sets the random seed; to ensure complete reproducibility, users must now set their own seeds using `set.seed()` before calling interplot functions.
+* Adds facet_labs argument, an optional character vector of facet labels to be used when plotting an interaction with a factor variable.
 
 # interplot 0.2.1
 ## Function Updates
