@@ -155,6 +155,12 @@ m_gear <- lm(mpg ~ gear * wt, data = mtcars)
 interplot(m = m_gear, var1 = "wt", var2 = "gear")
 ```
 
+To edit the facet labels, use the `facet_labs` argument to specify a character vector of the desired labels:
+
+```{r fig.width = 5}
+interplot(m = m_gear, var1 = "wt", var2 = "gear", facet_labs = c("4-speed", "5-speed"))
+```
+
 
 ## Include the Distribution of the Conditioning Variable
 
@@ -292,14 +298,14 @@ Yue Hu
 
 Department of Political Science,
 
-University of Iowa, 
+Tsinghua University, 
 
-313 Schaeffer Hall,
+Mingzhai 114,
 
-20 E Washington St, Iowa City, IA, 52242
+Qinghua Yuan, Haidian District, Beijing 100084, China
 
-Email: <yue-hu-1@uiowa.edu>
+Email: <yuehu@tsinghua.edu.cn>
 
-Website: <http://clas.uiowa.edu/polisci/people/yue-hu>
+Website: <https://sammo3182.github.io>
 
 ## Reference
