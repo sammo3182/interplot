@@ -1,6 +1,6 @@
 Package: interplot
 Title: Plot the Effects of Variables in Interaction Terms
-Version: 0.2.2
+Version: 0.2.9999
 Authors@R: c(
     person("Frederick", "Solt", email = "frederick-solt@uiowa.edu", role = c("aut")),
     person("Yue", "Hu", email = "yuehu@tsinghua.edu.cn", role = c("aut", "cre")),
