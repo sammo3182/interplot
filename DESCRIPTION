@@ -3,9 +3,9 @@ Title: Plot the Effects of Variables in Interaction Terms
 Version: 0.2.2
 Authors@R: c(
     person("Frederick", "Solt", email = "frederick-solt@uiowa.edu", role = c("aut")),
-    person("Yue", "Hu", email = "yue-hu-1@uiowa.edu", role = c("aut", "cre")),
+    person("Yue", "Hu", email = "yuehu@tsinghua.edu.cn", role = c("aut", "cre")),
     person("Brenton", "Kenkel", email = "brenton.kenkel@gmail.com", role = "ctb"))
-Maintainer: Yue Hu <yue-hu-1@uiowa.edu>
+Maintainer: Yue Hu <yuehu@tsinghua.edu.cn>
 Description: Plots the conditional coefficients ("marginal effects") of
     variables included in multiplicative interaction terms.
 BugReports: https://github.com/sammo3182/interplot/issues
