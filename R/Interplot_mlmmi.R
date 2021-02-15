@@ -59,7 +59,6 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c(".", "X.weights.", "ks_di
 # Coding function for mlm, mi objects
 interplot.mlmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE,hist = FALSE, var2_dt = NA, predPro = FALSE, var2_vals = NULL, point = FALSE, sims = 5000,xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", stats_cp = "none", txt_caption = NULL, facet_labs = NULL, ...) {
 
-  set.seed(313)
   
   if(predPro == TRUE) stop("Predicted probability is estimated only for general linear models.")
   
@@ -283,8 +282,7 @@ interplot.mlmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, 
 
 #' @export
 interplot.gmlmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE, hist = FALSE, var2_dt = NA, predPro = FALSE, var2_vals = NULL, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", stats_cp = "none", txt_caption = NULL, facet_labs = NULL, ...) {
-  
-    set.seed(324)
+
     
     m.list <- m
     m <- m.list[[1]]

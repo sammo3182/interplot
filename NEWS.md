@@ -1,3 +1,15 @@
+# interplot 0.2.3
+
+## New features
+
+1. Adding new statistics for testing the statistical significance of the conditional effect (by `stats_cp`).
+1. Adding an argument to modify the plot caption (by `txt_caption`).
+
+## Bug fix
+
+1. Adding example of models based on multiple imputations.
+1. Modifying the vignette to include new functions.
+
 # interplot 0.2.2
 * interplot no longer sets the random seed; to ensure complete reproducibility, users must now set their own seeds using `set.seed()` before calling interplot functions.
 * Adds facet_labs argument, an optional character vector of facet labels to be used when plotting an interaction with a factor variable.
