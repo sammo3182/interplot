@@ -28,11 +28,22 @@
 #' @param ralpha A numerical value indicating the transparency of the ribbon.
 #' @param rfill A character value indicating the filling color of the ribbon.
 #' @param ... Other ggplot aesthetics arguments for points in the dot-whisker plot or lines in the line-ribbon plots. Not currently used.
-#' @param ci_diff A numerical vector with a pair of values indicating the confidence intervals of the difference between the conditional effects at the minimum and maximum values. The intervals can be use to interpret the significant
+#' @param stats_cp A character value indicating what statistics to present as the plot note. Three options are available: "none", "ci", and "ks". The default is "none". See the Details for more information.
+#' @param txt_caption A character string to add a note for the plot, a value will sending to \code{ggplot2::labs(caption = txt_caption))}.
+#' @param ci_diff A numerical vector with a pair of values indicating the confidence intervals of the difference between \code{var1} and \code{var2}.
+#' @param ks_diff A \code{ks.test} object of the effect of \code{var1} conditioned on \code{var2}.
 #' 
 #' @details \code{interplot.plot} is a S3 method from the \code{interplot}. It generates plots of conditional coefficients.
 #' 
 #' Because the output function is based on \code{\link[ggplot2]{ggplot}}, any additional arguments and layers supported by \code{ggplot2} can be added with the \code{+}. 
+#' 
+#' \code{interplot} visualizes the conditional effect based on simulated marginal effects. The simulation provides a probabilistic distribution of moderation effect of the conditioning variable (\code{var2}) at every preset values (including the minimum and maximum values) of the conditioned variable (\code{var1}), denoted as \eqn{E_{var1}_{min}} and \eqn{E_{var1}_{max}}. This output allows the function to further examine the conditional effect statistically in two ways. One is to examine if the distribution of \eqn{E_{var1}_{max} - E_{var1}_{min}} covers zero. The other is to directly compare \eqn{E_{var1}_{min}} and \eqn{E_{var1}_{max}} through statistical tools for distributional comparisons. Users can choose either method by setting the argument \code{stats_cp} to "ci" or "ks".
+#' \itemize{
+#'   \item "ci" provides the confidence interval of the difference of \eqn{E_{var1}_{max} - E_{var1}_{min}}. An interval including 0 suggests no statistical difference before and after the conditional effect is applied, and vise versa.
+#'   \item "ks" presents the result of a two-sample Kolmogorov-Smirnov test of the simulated distributions of \eqn{E_{var1}_{min}} and \eqn{E_{var1}_{max}}. The output includes a D statistics and a p-value of the null hypothesis that the two distributions come from the same distribution at the 0.05 level.
+#' }
+#' 
+#' See an illustration in the package vignette.
 #' 
 #' @return The function returns a \code{ggplot} object.
 #' 
@@ -44,11 +55,14 @@
 #' @export
 
 ## S3 method for class 'data.frame'
-interplot.plot <- function(m, var1 = NULL, var2 = NULL, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE, hist = FALSE, var2_dt = NULL, predPro = FALSE, var2_vals = NULL, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", ci_diff = NULL, ...) {
+interplot.plot <- function(m, var1 = NULL, var2 = NULL, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE, hist = FALSE, var2_dt = NULL, predPro = FALSE, var2_vals = NULL, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", stats_cp = "none", txt_caption = NULL, ci_diff = NULL, ks_diff = NULL, ...) {
+  
+  
     if(is.null(steps)) steps <- nrow(m)
     levels <- sort(unique(m$fake))
     ymin <- ymax <- vector() # to deal with the "no visible binding for global variable" issue
     xdiff <- vector() # to deal with the "no visible binding for global variable" issue
+    test_cp <- vector() # to deal with the "no visible binding for global variable" issue
     
     if(predPro == TRUE){
       if(is.null(m$value)) stop("The input data.frame does not include required information.")
@@ -70,10 +84,15 @@ interplot.plot <- function(m, var1 = NULL, var2 = NULL, plot = TRUE, steps = NUL
         }
       }
       
-      if(!is.null(ci_diff)){
-        coef.plot <- coef.plot + 
-          labs(caption = paste0("CI(Max - Min): [", round(ci_diff[1], digits = 3), ", ", round(ci_diff[2], digits = 3), "]"))
+      
+      if(stats_cp == "ci"){
+        test_cp <- paste0("CI(Max - Min): [", round(ci_diff[1], digits = 3), ", ", round(ci_diff[2], digits = 3), "]")
+      }else if(stats_cp == "ks"){
+        test_cp <- paste0("D(KS): ", ks_diff$statistic, "(p-value = ", format(round(ks_diff$p.value, digits = 3), nsmall = 3), ")")
       }
+      
+      coef.plot <- coef.plot + 
+        labs(caption = paste0(test_cp, txt_caption))
       
       return(coef.plot)
     } else {
@@ -152,10 +171,14 @@ interplot.plot <- function(m, var1 = NULL, var2 = NULL, plot = TRUE, steps = NUL
             }
         }
       
-      if(!is.null(ci_diff)){
-        coef.plot <- coef.plot + 
-          labs(caption = paste0("CI(Max - Min): [", round(ci_diff[1], digits = 3), ", ", round(ci_diff[2], digits = 3), "]"))
+      if(stats_cp == "ci"){
+        test_cp <- paste0("CI(Max - Min): [", round(ci_diff[1], digits = 3), ", ", round(ci_diff[2], digits = 3), "]")
+      }else if(stats_cp == "ks"){
+        test_cp <- paste0("D(KS): ", ks_diff$statistic, "(p-value = ", format(round(ks_diff$p.value, digits = 3), nsmall = 3), ")")
       }
+      
+      coef.plot <- coef.plot + 
+        labs(caption = paste0(test_cp, txt_caption))
       
       return(coef.plot)
     }

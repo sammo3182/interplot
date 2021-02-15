@@ -289,3 +289,29 @@ interplot.plot(m = pp, steps = steps, hist = hist, predPro = TRUE, var2_dt = pew
 interplot(m, var1 = "ginicnty",var2 = "income_i", predPro = TRUE, var2_vals = c(min(pew1.w$income_i), median(pew1.w$income_i), max(pew1.w$income_i)))
 
 interplot.plot(m = coef, steps = steps, hist = hist, predictPro = predictPro, var2_vals = var2_vals, var2_dt = var2_dt, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill)
+
+
+m <- lm(mpg ~ wt * cyl, data = mtcars)
+var2 <- "wt"
+var1 <- "cyl"
+plot = TRUE
+steps = NULL
+ci = .95
+adjCI = FALSE
+hist = FALSE
+var2_dt = NA
+predPro = FALSE
+var2_vals = NULL
+point = FALSE
+sims = 1000
+xmin = NA
+xmax = NA
+ercolor = NA
+esize = 0.5
+ralpha = 0.5
+rfill = "grey70"
+stats_cp = "none"
+txt_caption = NULL
+facet_labs = NULL
+
+interplot(m = m, var1 = var1, var2 = var2)

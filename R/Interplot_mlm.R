@@ -23,12 +23,22 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c(".", "X.weights."))
 #' @param esize A numerical value indicating the size of the whisker or ribbon.
 #' @param ralpha A numerical value indicating the transparency of the ribbon.
 #' @param rfill A character value indicating the filling color of the ribbon.
+#' @param stats_cp A character value indicating what statistics to present as the plot note. Three options are available: "none", "ci", and "ks". The default is "none". See the Details for more information.
+#' @param txt_caption A character string to add a note for the plot, a value will sending to \code{ggplot2::labs(caption = txt_caption))}.
 #' @param facet_labs An optional character vector of facet labels to be used when plotting an interaction with a factor variable.
 #' @param ... Other ggplot aesthetics arguments for points in the dot-whisker plot or lines in the line-ribbon plots. Not currently used.
 #' 
 #' @details \code{interplot.mlm} is a S3 method from the \code{interplot}. It works on mixed-effects objects with class \code{lmerMod} and \code{glmerMod}.
 #' 
 #' Because the output function is based on \code{\link[ggplot2]{ggplot}}, any additional arguments and layers supported by \code{ggplot2} can be added with the \code{+}. 
+#' 
+#' \code{interplot} visualizes the conditional effect based on simulated marginal effects. The simulation provides a probabilistic distribution of moderation effect of the conditioning variable (\code{var2}) at every preset values (including the minimum and maximum values) of the conditioned variable (\code{var1}), denoted as \eqn{E_{var1}_{min}} and \eqn{E_{var1}_{max}}. This output allows the function to further examine the conditional effect statistically in two ways. One is to examine if the distribution of \eqn{E_{var1}_{max} - E_{var1}_{min}} covers zero. The other is to directly compare \eqn{E_{var1}_{min}} and \eqn{E_{var1}_{max}} through statistical tools for distributional comparisons. Users can choose either method by setting the argument \code{stats_cp} to "ci" or "ks".
+#' \itemize{
+#'   \item "ci" provides the confidence interval of the difference of \eqn{E_{var1}_{max} - E_{var1}_{min}}. An interval including 0 suggests no statistical difference before and after the conditional effect is applied, and vise versa.
+#'   \item "ks" presents the result of a two-sample Kolmogorov-Smirnov test of the simulated distributions of \eqn{E_{var1}_{min}} and \eqn{E_{var1}_{max}}. The output includes a D statistics and a p-value of the null hypothesis that the two distributions come from the same distribution at the 0.05 level.
+#' }
+#' 
+#' See an illustration in the package vignette.
 #' 
 #' @return The function returns a \code{ggplot} object.
 #' 
@@ -46,7 +56,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c(".", "X.weights."))
 
 
 # Coding function for non-mi mlm objects
-interplot.lmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE,hist = FALSE, var2_dt = NA, predPro = FALSE, var2_vals = NULL, point = FALSE, sims = 5000,xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", facet_labs = NULL, ...) {
+interplot.lmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE,hist = FALSE, var2_dt = NA, predPro = FALSE, var2_vals = NULL, point = FALSE, sims = 5000,xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", stats_cp = "none", txt_caption = NULL, facet_labs = NULL, ...) {
     
     m.class <- class(m)
     
@@ -55,7 +65,7 @@ interplot.lmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95
     
     m.sims <- arm::sim(m, sims)
     
-    ### For factor base terms###
+    ## For factor base terms####
     factor_v1 <- factor_v2 <- FALSE
     
     if (is.factor(eval(parse(text = paste0("m@frame$", var1)))) & is.factor(eval(parse(text = paste0("m@frame$", 
@@ -170,7 +180,7 @@ interplot.lmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95
       if (is.null(facet_labs)) facet_labs <- unique(coef_df$value)
       coef_df$value <- factor(coef_df$value, labels = facet_labs)
         interplot.plot(m = coef_df, hist = hist, var2_dt = var2_dt, point = point, 
-            ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, 
+            ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ci_diff = ci_diff, ks_diff = ks_diff, stats_cp = stats_cp, txt_caption = txt_caption, 
             ...) + facet_grid(. ~ value)
         
     } else if (factor_v2) {
@@ -208,7 +218,7 @@ interplot.lmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95
       if (is.null(facet_labs)) facet_labs <- unique(coef_df$value)
       coef_df$value <- factor(coef_df$value, labels = facet_labs)
         interplot.plot(m = coef_df, hist = hist, var2_dt = var2_dt, point = point, 
-            ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, 
+            ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ci_diff = ci_diff, ks_diff = ks_diff, stats_cp = stats_cp, txt_caption = txt_caption, 
             ...) + facet_grid(. ~ value)
         
         
@@ -251,7 +261,7 @@ interplot.lmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95
                 }
             }
             interplot.plot(m = coef, hist = hist, var2_dt = var2_dt, point = point, 
-                ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ci_diff = ci_diff, ...)
+                ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ci_diff = ci_diff, ks_diff = ks_diff, stats_cp = stats_cp, txt_caption = txt_caption, ci_diff = ci_diff, ...)
         } else {
             names(coef) <- c(var2, "coef", "ub", "lb")
             return(coef)
@@ -261,7 +271,9 @@ interplot.lmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95
 }
 
 #' @export
-interplot.glmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE, hist = FALSE, var2_dt = NA, predPro = FALSE, var2_vals = NULL, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", facet_labs = NULL, ...) {
+#' 
+
+interplot.glmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE, hist = FALSE, var2_dt = NA, predPro = FALSE, var2_vals = NULL, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", stats_cp = "none", txt_caption = NULL, facet_labs = NULL, ...) {
     set.seed(324)
     
     m.class <- class(m)
@@ -387,7 +399,7 @@ interplot.glmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .9
       if (is.null(facet_labs)) facet_labs <- unique(coef_df$value)
       coef_df$value <- factor(coef_df$value, labels = facet_labs)
         interplot.plot(m = coef_df, hist = hist, steps = steps, var2_dt = var2_dt, point = point, 
-            ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, 
+            ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, stats_cp = "none", txt_caption = NULL, 
             ...) + facet_grid(. ~ value)
         
     } else if (factor_v2) {
@@ -428,7 +440,7 @@ interplot.glmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .9
       if (is.null(facet_labs)) facet_labs <- unique(coef_df$value)
       coef_df$value <- factor(coef_df$value, labels = facet_labs)
         interplot.plot(m = coef_df, steps = steps, hist = hist, var2_dt = var2_dt, point = point, 
-            ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, 
+            ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, stats_cp = "none", txt_caption = NULL, 
             ...) + facet_grid(. ~ value)
         
         
@@ -558,7 +570,7 @@ interplot.glmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .9
                   var2_dt <- var2_dt
                 }
             }
-            interplot.plot(m = coef, steps = steps, hist = hist, predPro = predPro, var2_vals = var2_vals, var2_dt = var2_dt, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ci_diff = ci_diff, ...)
+            interplot.plot(m = coef, steps = steps, hist = hist, predPro = predPro, var2_vals = var2_vals, var2_dt = var2_dt, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, stats_cp = "none", txt_caption = NULL, ...)
         } else {
             if(predPro == TRUE){
               names(coef) <- c(var2, paste0("values_in_", var1), "coef", "ub", "lb")
