@@ -314,4 +314,15 @@ stats_cp = "none"
 txt_caption = NULL
 facet_labs = NULL
 
-interplot(m = m, var1 = var1, var2 = var2)
+interplot(m = m, var1 = var1, var2 = var2, plot = FALSE)
+
+library(mitools)
+
+data(smi)
+with(smi, table(sex, drkfre))
+model1 <- with(smi, glm(drinkreg ~ wave * sex, family = binomial()))
+
+interplot(model1, var1 = "sex", var2 = "wave")
+
+MIcombine(model1)
+summary(MIcombine(model1))

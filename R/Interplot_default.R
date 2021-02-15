@@ -1,4 +1,4 @@
-if(getRversion() >= "2.15.1")  utils::globalVariables(c(".", "X.weights."))
+if(getRversion() >= "2.15.1") utils::globalVariables(c(".", "X.weights.", "ks_diff", "ks.test"))
 
 #' Plot Conditional Coefficients in (Generalized) Linear Models with Interaction Terms
 #' 

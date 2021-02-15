@@ -1,4 +1,4 @@
-if(getRversion() >= "2.15.1") utils::globalVariables(c(".", "X.weights."))
+if(getRversion() >= "2.15.1") utils::globalVariables(c(".", "X.weights.", "ks_diff", "ks.test"))
 
 #' Plot Conditional Coefficients in Mixed-Effects Models with Interaction Terms 
 #' 
@@ -261,7 +261,7 @@ interplot.lmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95
                 }
             }
             interplot.plot(m = coef, hist = hist, var2_dt = var2_dt, point = point, 
-                ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ci_diff = ci_diff, ks_diff = ks_diff, stats_cp = stats_cp, txt_caption = txt_caption, ci_diff = ci_diff, ...)
+                ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ci_diff = ci_diff, ks_diff = ks_diff, stats_cp = stats_cp, txt_caption = txt_caption, ...)
         } else {
             names(coef) <- c(var2, "coef", "ub", "lb")
             return(coef)
