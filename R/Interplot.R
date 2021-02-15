@@ -82,7 +82,7 @@
 #'
 #' Esarey, Justin, and Jane Lawrence Sumner. 2015. "Marginal Effects in
 #' Interaction Models: Determining and Controlling the False Positive Rate".
-#' URL: \url{http://jee3.web.rice.edu/interaction-overconfidence.pdf}.
+#' URL: \url{https://jee3.web.rice.edu/interaction-overconfidence.pdf}.
 #' 
 #' @export
 
