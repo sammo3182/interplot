@@ -188,10 +188,10 @@ interplot(m = m_cyl, var1 = "cyl", var2 = "wt", hist = TRUE) +
 # Advanced Use and Customization
 ## Statistical Test of the Conditional Effect
 
-`interplot` visualizes the conditional effect based on simulated marginal effects. The simulation provides a probabilistic distribution of moderation effect of the conditioning variable (`var2`) at every preset values (including the minimum and maximum values) of the conditioned variable (`var1`), denoted as E<sub>var1<sub>min</sub></sub> and E<sub>var1<sub>max</sub></sub>. This output allows the function to further examine the conditional effect statistically in two ways. One is to examine if the distribution of (E<sub>var1<sub>max</sub></sub> - E<sub>var1<sub>min</sub></sub>) covers zero. The other is to directly compare E<sub>var1<sub>min</sub></sub> and E<sub>var1<sub>max</sub></sub> through statistical tools for distributional comparisons. Users can choose either method by setting the argument `stats_cp` to "ci" or "ks".
+`interplot` visualizes the conditional effect based on simulated marginal effects. The simulation provides a probabilistic distribution of moderation effect of the conditioning variable (`var2`) at every preset values (including the minimum and maximum values) of the conditioned variable (`var1`), denoted as E<sub>min</sub> and E<sub>max</sub>. This output allows the function to further examine the conditional effect statistically in two ways. One is to examine if the distribution of (E<sub>max</sub> - E<sub>min</sub>) covers zero. The other is to directly compare E<sub>min</sub> and E<sub>max</sub> through statistical tools for distributional comparisons. Users can choose either method by setting the argument `stats_cp` to "ci" or "ks".
 
-+ "ci" provides the confidence interval of the difference of (E<sub>var1<sub>max</sub></sub> - E<sub>var1<sub>min</sub></sub>). An interval including 0 suggests no statistical difference before and after the conditional effect is applied, and vise versa.
-+ "ks" presents the result of a two-sample Kolmogorov-Smirnov test of the simulated distributions of E<sub>var1<sub>min</sub></sub> and E<sub>var1<sub>max</sub></sub>. The output includes a D statistics and a p-value of the null hypothesis that the two distributions come from the same distribution at the 0.05 level.
++ "ci" provides the confidence interval of the difference of (E<sub>max</sub> - E<sub>min</sub>). An interval including 0 suggests no statistical difference before and after the conditional effect is applied, and vise versa.
++ "ks" presents the result of a two-sample Kolmogorov-Smirnov test of the simulated distributions of E<sub>min</sub> and E<sub>max</sub>. The output includes a D statistics and a p-value of the null hypothesis that the two distributions come from the same distribution at the 0.05 level.
 
 ```{r out.width="80%"}
 set.seed(313)
@@ -318,7 +318,7 @@ University of Iowa,
 
 Email: <frederick-solt@uiowa.edu>
 
-Website: <https://myweb.uiowa.edu/fsolt>
+Website: <https://fsolt.org>
 
 <br></br>
 
