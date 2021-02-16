@@ -109,3 +109,14 @@ Because the output function is based on \code{\link[ggplot2]{ggplot}}, any addit
 
 See an illustration in the package vignette.
 }
+\examples{
+
+library(interplot)
+library(mitools)
+
+data(smi)
+model1 <- with(smi, glm(drinkreg ~ wave * sex, family = binomial()))
+
+interplot(model1, var1 = "sex", var2 = "wave")
+
+}

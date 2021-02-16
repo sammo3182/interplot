@@ -40,11 +40,12 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c(".", "X.weights.", "ks_di
 #' 
 #' See an illustration in the package vignette.
 #' 
-#' @example 
+#' @examples 
 #' 
 #' library(interplot)
 #' library(mitools)
 #' 
+#' data(smi)
 #' model1 <- with(smi, glm(drinkreg ~ wave * sex, family = binomial()))
 #' 
 #' interplot(model1, var1 = "sex", var2 = "wave")
