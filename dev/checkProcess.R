@@ -8,4 +8,4 @@ library(devtools)
 library(roxygen2)
 
 spell_check()
-1check_rhub()
+check_rhub()

@@ -19,13 +19,13 @@ Imports:
     stats,
     dplyr,
     purrr,
-    gridExtra,
     interactionTest
 License: MIT + file LICENSE
 LazyData: true
 Suggests:
     knitr,
     rmarkdown,
-    mitools
+    mitools,
+    gridExtra
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1
