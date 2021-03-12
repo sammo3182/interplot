@@ -1,3 +1,7 @@
+# interplot 0.2.9999
+
+1. Only showing the p-value of the Kolmogorov-Smirnov test, removing the D statistics for no useful information added.
+
 # interplot 0.2.3
 
 ## New features
