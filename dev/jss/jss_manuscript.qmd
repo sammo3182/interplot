@@ -15,6 +15,7 @@ author:
         country: America
         postal-code: 52242
     email:  frederick-solt@uiowa.edu
+    Website: https://fsolt.org
   - name: Yue Hu
     affiliations:
       - Tsinghua University
@@ -25,6 +26,7 @@ author:
         country: China
         postal-code: 100084
     email:  yuehu@tsinghua.edu.cn
+    Website: https://sammo3182.github.io
  
 abstract: |
   The interplot package provides a flexible and convenient way to visualize conditional coefficients of variables in multiplicative interaction terms. Comparing to established alternatives such as effects::plot and sjplot::sjp.int, interplot provides a more user-friendly way to quickly produce plots that are easy to interpret. 
@@ -36,18 +38,18 @@ editor:
     wrap: 72
 ---
 
-## Introduction: Count data regression in R {#sec-intro}
+## Introduction: A powerful tool to test conditional effects {#sec-introduction-apowerful-tool-to-test-conditional-effects}
 
 Interaction is a powerful tool to test conditional effects of one
 variable on the contribution of another variable to the dependent
 variable and has been extensively applied in the empirical research of
-social science since the 1970s. Unfortunately, the nonlinear nature
-determines that the statistical estimate of an interactive effect cannot
-be interpreted as straightforward as the coefficient of a regular
-regression parameter. Let's use a simple example to illustrate this
-point: The following model use an interaction term to test the
-conditional effect of Z on X's contribution (or the conditional effect
-of X on Z's contribution) to the variance of Y.
+social science since the 1970s[@Wright1976]. Unfortunately, the
+nonlinear nature determines that the statistical estimate of an
+interactive effect cannot be interpreted as straightforward as the
+coefficient of a regular regression parameter. Let's use a simple
+example to illustrate this point: The following model use an interaction
+term to test the conditional effect of Z on X's contribution (or the
+conditional effect of X on Z's contribution) to the variance of Y.
 
 $$
 Y = \beta_0 + \beta_1X + \beta_2Z + \beta_3X\times Z + \varepsilon.
@@ -58,9 +60,9 @@ effect: $$
 \frac{\partial Y}{\partial X} = \beta_1 + \beta_3Z.
 $$ The standard error of this estimate is thus: $$
 \hat{\sigma}_{\frac{\partial Y}{\partial X}} = \sqrt{var(\hat{\beta_1}) + Z^2var(\hat{\beta_3}) + 2Zcov(\hat{\beta_1}, \hat{\beta_3})}.
-$$ As [@BramborClarkGolder2006] indicates, the above equation suggests
-that its perfectly possible for the contribution of X on Y to be
-statistically significant for certain values of Z "even if all of the
+$$ As [@BramborClarkGolder2006]\[p.70\] indicates, the above equation
+suggests that its perfectly possible for the contribution of X on Y to
+be statistically significant for certain values of Z "even if all of the
 model parameters are insignificant." In other words, one cannot infer
 whether X has a meaningful conditional effect on Y simply from the
 magnitude and significance of either β1 or β3 (Ibid., 74). Instead, the
@@ -119,7 +121,7 @@ To install:
 
 ## Basic Use {#sec-basic-use}
 
-### Run a Model
+### Run a Model {#sec-run-a-model}
 
 This example is based on the `mtcars` dataset, which is drawn from the
 1974 volume of the US magazine *Motor Trend*. The dependent variable is
@@ -144,21 +146,21 @@ summary(m_cyl)
 
 The coefficient of the interactive term (`wt:cyl`) is positive and
 statistically significant at .05 level. This tells us that the
-coefficient of `wt` depends on the value of `cyl` and vice versa; these
+coefficient of `wt` depends on the value of `cyl` and vice versa; these
 estimated coefficients are conditional. It does not indicate anything,
 however, about the magnitude or statistical significance of these
-conditional coefficients. A plot produced by `interplot` easily and
+conditional coefficients. A plot produced by `interplot` easily and
 clearly answers these latter questions.
 
-### Create a Basic Graph of the Conditional Coefficients
+### Create a Basic Graph of the Conditional Coefficients {#sec-create-a-basic-graph-of-the-conditional-coefficients}
 
 To plot conditional coefficients, a user needs to provide only three
 basic pieces of information: the object of a regression result (`m`),
 the variable whose coefficient is to be plotted (`var1`), and the
 variable on which the coefficient is conditional (`var2`). Taking the
 previous example, if we intend to know how the weight of a car can
-affect the coefficient for number of cylinders on the
-mileage, `var1` is `cyl`, and `var2` is `wt`.
+affect the coefficient for number of cylinders on the mileage, `var1` is
+`cyl`, and `var2` is `wt`.
 
 ```{R}
 library(interplot)
@@ -178,43 +180,48 @@ of automobile weight on mileage, one only needs to switch `var1` and
 interplot(m = m_cyl, var1 = "wt", var2 = "cyl")
 ```
 
-Users can adjust the CI level by setting the `ci` option. The default
+Users can adjust the CI level by setting the `ci` option. The default
 value is 95% CIs. The following example resets the the CIs to 90%.
 
 ```{R}
 interplot(m = m_cyl, var1 = "wt", var2 = "cyl", ci = .9, point = T)
 ```
 
-The format of the plot also changes
-when `wt` is `var1` and `cyl` is `var2`. This is because `cyl` is not a
-continuous variable but a categorical one with just three values: 4, 6,
-and 8. `interplot` automatically detects the number of values taken on
-by `var2` and chooses the appropriate plot format. If there are fewer
-than 10 values, the function will produce a "dot-and-whisker" plot;
-otherwise, by default, it will generate a "line-and-ribbon" plot. Users
-may override this default by setting the argument `point` to `TRUE`.
+The format of the plot also changes when `wt` is `var1` and `cyl` is
+`var2`. This is because `cyl` is not a continuous variable but a
+categorical one with just three values: 4, 6, and 8. `interplot`
+automatically detects the number of values taken on by `var2` and
+chooses the appropriate plot format. If there are fewer than 10 values,
+the function will produce a "dot-and-whisker" plot; otherwise, by
+default, it will generate a "line-and-ribbon" plot. Users may override
+this default by setting the argument `point` to `TRUE`.
 
 ```{R}
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt", point = T) +
+
   # changing the angle of x labels for a clearer vision
   theme(axis.text.x  = element_text(angle=90))
 ```
 
-### Change the Appearance of the Plot
+### Change the Appearance of the Plot {#sec-change-the-appearance-of-the-plot}
 
-Plots generated by `interplot` are, by design, very basic. They are,
-however, `ggplot` objects and so may be easily modified further.
+Plots generated by `interplot` are, by design, very basic. They are,
+however, `ggplot` objects and so may be easily modified further.
 
 ```{R}
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt") + 
+
   # Add labels for X and Y axes
     xlab("Automobile Weight (thousands lbs)") +
     ylab("Estimated Coefficient for\nNumber of Cylinders") +
+    
   # Change the background
     theme_bw() +
+    
   # Add the title
     ggtitle("Estimated Coefficient of Engine Cylinders \non Mileage by Automobile Weight") +
     theme(plot.title = element_text(face="bold")) +
+    
   # Add a horizontal line at y = 0
     geom_hline(yintercept = 0, linetype = "dashed")
 ```
@@ -228,11 +235,11 @@ interplot(m = m_cyl, var1 = "wt", var2 = "cyl", ercolor = "blue", esize = 1.5) +
   geom_point(size = 2, color = "red")
 ```
 
-### Plot the Effect of a Variable with a Quadratic Term
+### Plot the Effect of a Variable with a Quadratic Term {#sec-plot-the-effect-of-a-variable-with-a-quadratic-term}
 
 The simplest type of interaction is quadratic term, which can be
-regarded as a variable interact with itself. `interplot` can visualize
-this case when the variable names of `var1` and `var2` are the same.
+regarded as a variable interact with itself. `interplot` can visualize
+this case when the variable names of `var1` and `var2` are the same.
 
 ```{R}
 m_wt <- lm(mpg ~ wt + I(wt^2), data = mtcars)
@@ -254,22 +261,22 @@ m_gear <- lm(mpg ~ gear * wt, data = mtcars)
 interplot(m = m_gear, var1 = "wt", var2 = "gear")
 ```
 
-To edit the facet labels, use the `facet_labs` argument to specify a
+To edit the facet labels, use the `facet_labs` argument to specify a
 character vector of the desired labels:
 
 ```{R}
 interplot(m = m_gear, var1 = "wt", var2 = "gear", facet_labs = c("4-speed", "5-speed"))
 ```
 
-### Include the Distribution of the Conditioning Variable
+### Include the Distribution of the Conditioning Variable {#sec-include-the-distribution-of-the-conditioning-variable}
 
-[@BerryGolderMilton2012] points out that, when a variable's conditional
+[@BerryGolderMilton2012] points out that, when a variable's conditional
 effect reaches statistical significance over only part of the range of
 the conditioning variable, it can be helpful to the evaluation of the
 substantive significance of the conditional effect to know the
-distribution of the conditioning variable. For this
-purpose, `interplot` has the `hist` argument for users to choose to
-superimpose a histogram at the bottom of the conditional effect plot.
+distribution of the conditioning variable. For this purpose, `interplot`
+has the `hist` argument for users to choose to superimpose a histogram
+at the bottom of the conditional effect plot.
 
 ```{R}
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt", hist = TRUE) +
@@ -279,19 +286,21 @@ interplot(m = m_cyl, var1 = "cyl", var2 = "wt", hist = TRUE) +
 Our implementation of this option was inspired by the excellent work
 of Hainmueller, Mummolo, and Xu (2016). A tip is that when presenting
 the histogram, some default setting would not be directly modified by
-the build-in arguments or the `geom` functions. Instead, one can change
-these settings by the `aes` function---as illustrated by the following
+the build-in arguments or the `geom` functions. Instead, one can change
+these settings by the `aes` function---as illustrated by the following
 example.
 
 ```{R}
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt", hist = TRUE) +
+
   aes(color = "pink") + theme(legend.position="none") +  # geom_line(color = "pink") + 
+  
   geom_hline(yintercept = 0, linetype = "dashed")
 ```
 
-## Advanced Use and Customization
+## Advanced Use and Customization {#sec-advanced-use-and-customization}
 
-### Statistical Test of the Conditional Effect
+### Statistical Test of the Conditional Effect {#sec-statistical-test-of-the-conditional-effect}
 
 `interplot` visualizes the conditional effect based on simulated
 marginal effects. The simulation provides a probabilistic distribution
@@ -325,10 +334,10 @@ interplot(m = m_cyl, var1 = "cyl", var2 = "wt", stats_cp = "ci")
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt", stats_cp = "ks")
 ```
 
-since the statistical results are presented as a `ggplot` caption, one
-cannot using `+ lab(caption = ...)` to specify it as for a
-regular `ggplot` object. Instead, users can modify the plot's caption by
-specify the argument `txt_caption` of the `dwplot` function.
+since the statistical results are presented as a `ggplot` caption, one
+cannot using `+ lab(caption = ...)` to specify it as for a regular
+`ggplot` object. Instead, users can modify the plot's caption by specify
+the argument `txt_caption` of the `dwplot` function.
 
 ```{R}
 set.seed(313)
@@ -336,7 +345,7 @@ set.seed(313)
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt", stats_cp = "ci", txt_caption = "\n Source: Motor Trend Car Road Tests 1973.")
 ```
 
-### Adjust the Overconfidence in Confidence Interval Estimations
+### Adjust the Overconfidence in Confidence Interval Estimations {#sec-adjust-the-overconfidence-in-confidence-interval-estimations}
 
 [@BerryDeMerittEsarey2016] emphasized the importance to estimate the
 uncertainty in studying conditional effects. The most common way to do
@@ -360,6 +369,7 @@ in the middle and at the extreme values of x.
 ```{R}
 stdCI_plot <- interplot(m = m_wt, var1 = "wt", var2 = "wt", adjCI = FALSE) +
 ggtitle("Marginal Effects with Standard CIs")
+
 adjCI_plot <- interplot(m = m_wt, var1 = "wt", var2 = "wt", adjCI = TRUE) +
 ggtitle("Marginal Effects with Adjusted CIs")
 
@@ -407,19 +417,22 @@ the right uncovers conditional effects in opposite directions for the
 high and low income individuals.
 
 [^1]: For the purpose of illustration, we omitted the county level
-    variance in this example. One can see more comprehensive analyses
-    in Solt et al. (2017).
+    variance in this example. One can see more comprehensive analyses in
+    [@solt2017].
 
 ```{R}
 pew1.w <- read.csv("pew1_w.csv")
+
 
 m <- glm(formula=meritocracy~ginicnty+income_i+ginicnty:income_i+income_cnty+black_cnty+
                 perc_bush04+pop_cnty+educ_i+age_i+gender_i+unemp_i+union_i+partyid_i+
                 ideo_i+attend_i+survid2006+survid2007+survid2009,
               data=pew1.w,family=binomial(link="logit"))
+ 
               
 plot_avg <- interplot(m, var1 = "ginicnty",var2 = "income_i", predPro = FALSE) + 
 ggtitle("Average Conditional Effects")
+
 
 plot_3val <- interplot(m, var1 = "ginicnty",var2 = "income_i", predPro = TRUE, var2_vals = c(min(pew1.w$income_i), max(pew1.w$income_i))) +
 ggtitle("Conditional Predicted Probabilities for \nCitizens with Low and High Incomes") +
@@ -427,10 +440,11 @@ scale_colour_discrete(guide = guide_legend(title = "Income"), labels = c("Low", 
 scale_fill_discrete(guide = guide_legend(title = "Income"), labels = c("Low", "High")) +
 theme(legend.position = c(0, .8), legend.justification = c(0, .5))
 
+
 grid.arrange(plot_avg, plot_3val, ncol = 2)
 ```
 
-### Plot Conditional Effects Without a Model
+### Plot Conditional Effects Without a Model {#sec-plot-conditional-effects-without-a-model}
 
 In some cases, one may analyze some complicated or self-made regression
 functions which are not supported by the current version of `interplot`.
@@ -452,20 +466,22 @@ ub <- coef1 + .5
 
 df_fake <- data.frame(cbind(fake, coef1, lb, ub))
 
+
 # Use interplot directly with the dataset
 interplot(df_fake)
 ```
 
-If one also has the data of the `var2`, she can also draw a histogram
-under it by the argument `var_dt`.
+If one also has the data of the `var2`, she can also draw a histogram
+under it by the argument `var_dt`.
 
 ```{R}
 var2_fake <- fake
+
 # Set `hist` to TRUE is required to superimpose a histogram.
 interplot(df_fake, hist = TRUE, var2_dt = var2_fake)
 ```
 
-## Conclusion
+## Conclusion {#sec-conclusion}
 
 The `interplot` package provides a flexible and convenient way to
 visualize conditional coefficients of variables in multiplicative
