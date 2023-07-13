@@ -212,18 +212,26 @@ Y = \beta_0 + \beta_1X + \beta_2Z + \beta_3X\times Z + \varepsilon.
 \]
 
 The contribution of X on Y is typically represented by the marginal
-effect: \[
+effect:
+
+\[
 \frac{\partial Y}{\partial X} = \beta_1 + \beta_3Z.
-\] The standard error of this estimate is thus: \[
+\]
+
+The standard error of this estimate is thus:
+
+\[
 \hat{\sigma}_{\frac{\partial Y}{\partial X}} = \sqrt{var(\hat{\beta_1}) + Z^2var(\hat{\beta_3}) + 2Zcov(\hat{\beta_1}, \hat{\beta_3})}.
-\] As \citep{BramborClarkGolder2006}{[}p.70{]} indicates, the above
-equation suggests that its perfectly possible for the contribution of X
-on Y to be statistically significant for certain values of Z ``even if
-all of the model parameters are insignificant.'' In other words, one
-cannot infer whether X has a meaningful conditional effect on Y simply
-from the magnitude and significance of either β1 or β3 (Ibid., 74).
-Instead, the conditional effect should be examined based on the marginal
-effect at every observed value of Z
+\]
+
+As \citet[p.70]{BramborClarkGolder2006} indicates, the above equation
+suggests that its perfectly possible for the contribution of X on Y to
+be statistically significant for certain values of Z ``even if all of
+the model parameters are insignificant.'' In other words, one cannot
+infer whether X has a meaningful conditional effect on Y simply from the
+magnitude and significance of either β1 or β3 (Ibid., 74). Instead, the
+conditional effect should be examined based on the marginal effect at
+every observed value of Z
 \citep{BerryGolderMilton2012, BramborClarkGolder2006, Braumoeller2004}.
 
 Furthermore, scholars have noticed that the point estimations of some
@@ -355,42 +363,7 @@ cylinders on the mileage, \texttt{var1} is \texttt{cyl}, and
 
 \begin{verbatim}
 library(interplot)
-\end{verbatim}
 
-\begin{verbatim}
-Loading required package: ggplot2
-\end{verbatim}
-
-\begin{verbatim}
-Loading required package: abind
-\end{verbatim}
-
-\begin{verbatim}
-Loading required package: arm
-\end{verbatim}
-
-\begin{verbatim}
-Loading required package: MASS
-\end{verbatim}
-
-\begin{verbatim}
-Loading required package: Matrix
-\end{verbatim}
-
-\begin{verbatim}
-Loading required package: lme4
-\end{verbatim}
-
-\begin{verbatim}
-
-arm (Version 1.13-1, built: 2022-8-25)
-\end{verbatim}
-
-\begin{verbatim}
-Working directory is C:/Users/amand/Documents/GitHub/interplot/dev/jss
-\end{verbatim}
-
-\begin{verbatim}
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt")
 \end{verbatim}
 
@@ -738,13 +711,6 @@ adjCI_plot <- interplot(m = m_wt, var1 = "wt", var2 = "wt", adjCI = TRUE) +
 ggtitle("Marginal Effects with \nAdjusted CIs")
 
 library(gridExtra)
-\end{verbatim}
-
-\begin{verbatim}
-Warning: package 'gridExtra' was built under R version 4.3.1
-\end{verbatim}
-
-\begin{verbatim}
 grid.arrange(stdCI_plot, adjCI_plot, ncol = 2)
 \end{verbatim}
 
@@ -824,22 +790,8 @@ scale_colour_discrete(guide = guide_legend(title = "Income"),
 scale_fill_discrete(guide = guide_legend(title = "Income"), 
                     labels = c("Low", "High")) +
 theme(legend.position = c(0, .8), legend.justification = c(0, .5))
-\end{verbatim}
 
-\begin{verbatim}
-Warning: `funs()` was deprecated in dplyr 0.8.0.
-i Please use a list of either functions or lambdas:
 
-# Simple named list: list(mean = mean, median = median)
-
-# Auto named with `tibble::lst()`: tibble::lst(mean, median)
-
-# Using lambdas list(~ mean(., trim = .2), ~ median(., na.rm = TRUE))
-i The deprecated feature was likely used in the interplot package.
-  Please report the issue at <https://github.com/sammo3182/interplot/issues>.
-\end{verbatim}
-
-\begin{verbatim}
 grid.arrange(plot_avg, plot_3val, ncol = 2)
 \end{verbatim}
 
