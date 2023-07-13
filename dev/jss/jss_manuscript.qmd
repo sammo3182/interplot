@@ -32,11 +32,21 @@ abstract: |
   The interplot package provides a flexible and convenient way to visualize conditional coefficients of variables in multiplicative interaction terms. Comparing to established alternatives such as effects::plot and sjplot::sjp.int, interplot provides a more user-friendly way to quickly produce plots that are easy to interpret. 
 keywords: [interplot, interaction effect, ordinary linear regression models, generalized linear models,multilevel regressions, ggplot]
 keywords-formatted: [interplot, interaction effect, ordinary linear regression models, generalized linear models,multilevel regressions, ggplot]
+
 bibliography: jss_interplot.bib
 editor: 
   markdown: 
     wrap: 72
 ---
+
+```{R setup, include = FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+
 
 ## Introduction: A powerful tool to test conditional effects {#sec-introduction-apowerful-tool-to-test-conditional-effects}
 
@@ -56,11 +66,19 @@ Y = \beta_0 + \beta_1X + \beta_2Z + \beta_3X\times Z + \varepsilon.
 $$
 
 The contribution of X on Y is typically represented by the marginal
-effect: $$
+effect: 
+
+$$
 \frac{\partial Y}{\partial X} = \beta_1 + \beta_3Z.
-$$ The standard error of this estimate is thus: $$
+$$ 
+
+The standard error of this estimate is thus: 
+
+$$
 \hat{\sigma}_{\frac{\partial Y}{\partial X}} = \sqrt{var(\hat{\beta_1}) + Z^2var(\hat{\beta_3}) + 2Zcov(\hat{\beta_1}, \hat{\beta_3})}.
-$$ As [@BramborClarkGolder2006]\[p.70\] indicates, the above equation
+$$ 
+
+As @BramborClarkGolder2006[p.70] indicates, the above equation
 suggests that its perfectly possible for the contribution of X on Y to
 be statistically significant for certain values of Z "even if all of the
 model parameters are insignificant." In other words, one cannot infer
