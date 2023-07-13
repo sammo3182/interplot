@@ -2,8 +2,7 @@
 title: "Interplot: Plot the Effects of Variables in Interaction Terms"
 format:
     jss-pdf:
-        keep-tex: true
-    jss-html: default
+        keep-tex: false
 author:
   - name: Frederick Solt
     affiliations:
