@@ -55,8 +55,7 @@
 #' @export
 
 ## S3 method for class 'data.frame'
-interplot.plot <-
-  function(m,
+interplot.plot <- function(m,
            var1 = NULL,
            var2 = NULL,
            plot = TRUE,

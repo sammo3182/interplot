@@ -149,8 +149,8 @@ interplot.default <-
       factor_v2 <- TRUE
       ifelse(
         var1 == var2,
-        var12 = paste0("I(", var1, "^2)"),
-        var12 = paste0(var2, ":", var1)[-1]
+        var12 <- paste0("I(", var1, "^2)"),
+        var12 <- paste0(var2, ":", var1)[-1]
       )
       
       # the first category is censored to avoid multicolinarity
@@ -169,9 +169,8 @@ interplot.default <-
       
     } else {
       ifelse(var1 == var2,
-             var12 = paste0("I(", var1, "^2)"),
-             var12 = paste0(var2,
-                             ":", var1))
+             var12 <- paste0("I(", var1, "^2)"),
+             var12 <- paste0(var2, ":", var1))
       
       # the first category is censored to avoid multicolinarity
       for (i in seq(var12)) {
