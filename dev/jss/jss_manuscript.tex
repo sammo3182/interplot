@@ -361,6 +361,7 @@ cylinders on the mileage, \texttt{var1} is \texttt{cyl}, and
 \texttt{var2} is \texttt{wt}.
 
 \begin{verbatim}
+set.seed(313)
 library(interplot)
 \end{verbatim}
 
@@ -646,30 +647,18 @@ of moderation effect of the conditioning variable (\texttt{var2}) at
 every preset values (including the minimum and maximum values) of the
 conditioned variable (\texttt{var1}), denoted as E\textsubscript{min}
 and E\textsubscript{max}. This output allows the function to further
-examine the conditional effect statistically in two ways. One is to
+examine the conditional effect statistically. \texttt{interplot} can
 examine if the distribution of (E\textsubscript{max} -
-E\textsubscript{min}) covers zero. The other is to directly compare
-E\textsubscript{min} and E\textsubscript{max} through statistical tools
-for distributional comparisons. Users can choose either method by
-setting the argument \texttt{stats\_cp} to ``ci'' or ``ks.''
-
-\begin{itemize}
-\item
-  ``ci'' provides the confidence interval of the difference of
-  (E\textsubscript{max} - E\textsubscript{min}). An interval including 0
-  suggests no statistical difference before and after the conditional
-  effect is applied, and vise versa.
-\item
-  ``ks'' presents the result of a two-sample Kolmogorov-Smirnov test of
-  the simulated distributions of E\textsubscript{min} and
-  E\textsubscript{max}. The output includes a D statistics and a p-value
-  of the null hypothesis that the two distributions come from the same
-  distribution at the 0.05 level.
-\end{itemize}
+E\textsubscript{min}) covers zero.\footnote{ An alternative way may be
+  compare the models with and without interactions as the same through
+  model comparison tests, such as Wald, likelihood ratio, or Hausman
+  tests. But since they are not as straightforward and intuitive as
+  comparing the changed outcomes as the above method and requires
+  re-regress the model, \texttt{interplot} applies the above methods.}
+Users can choose either method by setting the argument
+\texttt{stats\_cp} to ``ci''. The default is ``none.''
 
 \begin{verbatim}
-set.seed(313)
-
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt", stats_cp = "ci")
 \end{verbatim}
 
@@ -681,34 +670,20 @@ interplot(m = m_cyl, var1 = "cyl", var2 = "wt", stats_cp = "ci")
 
 \end{figure}
 
-\begin{verbatim}
-interplot(m = m_cyl, var1 = "cyl", var2 = "wt", stats_cp = "ks")
-\end{verbatim}
-
-\begin{figure}[H]
-
-{\centering \includegraphics{jss_manuscript_files/figure-pdf/unnamed-chunk-15-1.pdf}
-
-}
-
-\end{figure}
-
-since the statistical results are presented as a \texttt{ggplot}
+Since the statistical results are presented as a \texttt{ggplot}
 caption, one cannot using \texttt{+\ lab(caption\ =\ ...)} to specify it
 as for a regular \texttt{ggplot} object. Instead, users can modify the
 plot's caption by specify the argument \texttt{txt\_caption} of the
 \texttt{dwplot} function.
 
 \begin{verbatim}
-set.seed(313)
-
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt", stats_cp = "ci", 
           txt_caption = "\n Source: Motor Trend Car Road Tests 1973.")
 \end{verbatim}
 
 \begin{figure}[H]
 
-{\centering \includegraphics{jss_manuscript_files/figure-pdf/unnamed-chunk-16-1.pdf}
+{\centering \includegraphics{jss_manuscript_files/figure-pdf/unnamed-chunk-15-1.pdf}
 
 }
 
@@ -751,7 +726,7 @@ grid.arrange(stdCI_plot, adjCI_plot, ncol = 2)
 
 \begin{figure}[H]
 
-{\centering \includegraphics{jss_manuscript_files/figure-pdf/unnamed-chunk-17-1.pdf}
+{\centering \includegraphics{jss_manuscript_files/figure-pdf/unnamed-chunk-16-1.pdf}
 
 }
 
@@ -846,7 +821,7 @@ grid.arrange(plot_avg, plot_3val, ncol = 2)
 
 \begin{figure}[H]
 
-{\centering \includegraphics{jss_manuscript_files/figure-pdf/unnamed-chunk-18-1.pdf}
+{\centering \includegraphics{jss_manuscript_files/figure-pdf/unnamed-chunk-17-1.pdf}
 
 }
 
@@ -884,7 +859,7 @@ interplot(df_fake)
 
 \begin{figure}[H]
 
-{\centering \includegraphics{jss_manuscript_files/figure-pdf/unnamed-chunk-19-1.pdf}
+{\centering \includegraphics{jss_manuscript_files/figure-pdf/unnamed-chunk-18-1.pdf}
 
 }
 
@@ -902,7 +877,7 @@ interplot(df_fake, hist = TRUE, var2_dt = var2_fake)
 
 \begin{figure}[H]
 
-{\centering \includegraphics{jss_manuscript_files/figure-pdf/unnamed-chunk-20-1.pdf}
+{\centering \includegraphics{jss_manuscript_files/figure-pdf/unnamed-chunk-19-1.pdf}
 
 }
 

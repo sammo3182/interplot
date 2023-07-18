@@ -186,28 +186,32 @@ interplot(m = m_cyl, var1 = "cyl", var2 = "wt", hist = TRUE) +
 
 
 # Advanced Use and Customization
-## Statistical Test of the Conditional Effect
+`interplot` visualizes the conditional effect based on simulated marginal effects.
+The simulation provides a probabilistic distribution of moderation effect of the conditioning variable (`var2`) at every preset values (including the minimum and maximum values) of the conditioned variable (`var1`), denoted as E~min~ and E~max~.
+This output allows the function to further examine the conditional effect
+statistically. 
+`interplot` can examine if the distribution of (E~max~ - E~min~) covers zero.^[
+An alternative way may be compare the models with and without interactions as the same through model comparison tests, such as Wald, likelihood ratio, or Hausman tests.
+But since they are not as straightforward and intuitive as comparing the changed outcomes as the above method and requires re-regress the model, `interplot` applies the above methods. 
+]
+Users can choose either method by setting the argument `stats_cp` to "ci".
+The default is "none."
 
-`interplot` visualizes the conditional effect based on simulated marginal effects. The simulation provides a probabilistic distribution of moderation effect of the conditioning variable (`var2`) at every preset values (including the minimum and maximum values) of the conditioned variable (`var1`), denoted as E<sub>min</sub> and E<sub>max</sub>. This output allows the function to further examine the conditional effect statistically in two ways. One is to examine if the distribution of (E<sub>max</sub> - E<sub>min</sub>) covers zero. The other is to directly compare E<sub>min</sub> and E<sub>max</sub> through statistical tools for distributional comparisons. Users can choose either method by setting the argument `stats_cp` to "ci" or "ks".
 
-+ "ci" provides the confidence interval of the difference of (E<sub>max</sub> - E<sub>min</sub>). An interval including 0 suggests no statistical difference before and after the conditional effect is applied, and vise versa.
-+ "ks" presents the result of a two-sample Kolmogorov-Smirnov test of the simulated distributions of E<sub>min</sub> and E<sub>max</sub>. The output includes a D statistics and a p-value of the null hypothesis that the two distributions come from the same distribution at the 0.05 level.
-
-```{r out.width="80%"}
+```{R}
 set.seed(313)
 
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt", stats_cp = "ci")
-interplot(m = m_cyl, var1 = "cyl", var2 = "wt", stats_cp = "ks")
 ```
 
-
-since the statistical results are presented as a `ggplot` caption, one cannot using `+ lab(caption = ...)` to specify it as for a regular `ggplot` object.
+since the statistical results are presented as a `ggplot` caption, one cannot using `+ lab(caption = ...)` to specify it as for a regular `ggplot` object. 
 Instead, users can modify the plot's caption by specify the argument `txt_caption` of the `dwplot` function.
 
-```{r out.width="80%"}
+```{R}
 set.seed(313)
 
-interplot(m = m_cyl, var1 = "cyl", var2 = "wt", stats_cp = "ci", txt_caption = "\n Source: Motor Trend Car Road Tests 1973.")
+interplot(m = m_cyl, var1 = "cyl", var2 = "wt", stats_cp = "ci", 
+          txt_caption = "\n Source: Motor Trend Car Road Tests 1973.")
 ```
 
 
