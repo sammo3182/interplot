@@ -137,7 +137,7 @@ interplot.plot <- function(m,
             ymax = "ub",
             fill = "value"
           ), alpha = ralpha) + ylab(NULL) + xlab(NULL)
-      } else{
+      } else {
         coef.plot <-
           ggplot(m, aes_string(x = "fake", y = "coef1")) + geom_line(...) + geom_ribbon(
             aes_string(ymin = "lb", ymax = "ub"),

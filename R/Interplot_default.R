@@ -170,6 +170,7 @@ interplot.default <- function(m,
       hist = hist,
       steps = steps,
       var2_dt = var2_dt,
+      predPro = predPro,
       point = point,
       ercolor = ercolor,
       esize = esize,
@@ -179,6 +180,7 @@ interplot.default <- function(m,
       txt_caption = txt_caption,
       ci_diff = ci_diff,
       ks_diff = ks_diff,
+      ...
     )
     
     if (factor_v1 | factor_v2) {
