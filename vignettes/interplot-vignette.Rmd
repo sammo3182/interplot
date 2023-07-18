@@ -46,7 +46,10 @@ They thus recommended to adjust the CIs with a critical t-statistics following t
 
 The `interplot` package provides a convenient way to operate and visualize above points with one or a series of plots produced by a single function. The function visualizes the changes in the coefficient of one variable in a two-way interaction term conditional on the value of the other included variable. The plot also includes simulated 95% confidential intervals of these coefficients.  In the current version, the function works with ordinary linear regression models, generalized linear models (e.g., logit, probit, ordered logit, etc.), and multilevel (mixed-effects) regressions, all with complete or multiply imputed data. 
 
-Comparing to established alternatives such as `effects::plot` and `sjplot::sjp.int`, `interplot` provides a more user-friendly way to quickly produce plots that are easy to interpret. `interplot` plots the changes in the *conditional coefficient* of one variable in the interaction, rather than changes in the dependent variable itself as in the aforementioned functions. This approach avoids displaying interaction effects across multiple panels or multiple lines in favor of a single plot containing all the relevant information. Moreover, by outputting `ggplot` objects, `interplot` allows users to easily further customize their graphs.
+Comparing to established alternatives such as `effects::plot` and `sjplot::sjp.int`, `interplot` provides a more user-friendly way to quickly produce plots that are easy to interpret. 
+Moreover, it works on multilevel models and outcomes from multiple imputations.
+`interplot` plots the changes in the *conditional coefficient* of one variable in the interaction, rather than changes in the dependent variable itself as in the aforementioned functions. 
+This approach avoids displaying interaction effects across multiple panels or multiple lines in favor of a single plot containing all the relevant information. Moreover, by outputting `ggplot` objects, `interplot` allows users to easily further customize their graphs.
 
 This vignette purposes to illustrate how users can apply these functions to improve the presentation of the interactions in their models. 
 

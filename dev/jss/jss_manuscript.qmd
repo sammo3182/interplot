@@ -80,6 +80,7 @@ The function visualizes the changes in the coefficient of one variable in a two-
 In the current version, the function works with ordinary linear regression models, generalized linear models (e.g., logit, probit, ordered logit, etc.), and multilevel (mixed-effects) regressions, all with complete or multiply imputed data.
 
 Comparing to established alternatives, such as `effects::plot`, `sjplot::sjp.int`, and `interflex`, `interplot` provides a more user-friendly way to quickly produce plots that are easy to interpret. 
+Moreover, it works on multilevel models and outcomes from multiple imputations.
 `interplot` plots the changes in the *conditional coefficient* of one variable in the interaction, rather than changes in the dependent variable itself as in the aforementioned functions. 
 This approach avoids displaying interaction effects across multiple panels or multiple lines in favor of a single plot containing all the relevant information. Moreover, by outputting `ggplot` objects, `interplot` allows users to easily further customize their graphs.
 
