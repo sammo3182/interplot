@@ -421,8 +421,7 @@ interplot.default <-
         df <- data.frame(m$model)
         if (sum(grep("X.weights.", names(df))) != 0)
           df <- select(df, -X.weights.) # removed the weights
-        df_temp <-
-          select(df, 1) # save the dependent variable separately
+        df_temp <- select(df, 1) # save the dependent variable separately
         df <- df[-1] %>% # get ride of the dv in case it's a factor
           map(function(var) {
             if (is.factor(var)) {

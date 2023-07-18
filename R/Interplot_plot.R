@@ -101,9 +101,10 @@ interplot.plot <- function(m,
         coef.plot <- ggplot(m, aes_string(
             x = "fake",
             y = "coef1",
+            group = "value",
             colour = "value"
           )) + 
-          geom_point(...) + 
+          geom_point(position = position_dodge(width = .3),...) + 
           geom_errorbar(
             aes_string(
               ymin = "lb",
@@ -111,6 +112,7 @@ interplot.plot <- function(m,
               colour = "value"
             ),
             width = 0,
+            position = position_dodge(width = .3),
             linewidth = esize
           ) + 
           scale_x_continuous(breaks = levels) + ylab(NULL) + xlab(NULL)
