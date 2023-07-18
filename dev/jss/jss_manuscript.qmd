@@ -73,7 +73,7 @@ test of conditional effect.
 They thus recommend researchers to present the frequency distribution of the conditioning variable together with the marginal effects (especially when the effect trend goes across the zero point).
 
 More recently, @Esarey2018 uncovered that the estimation of the marginal effects suggested by @Brambor2006 might cause a "multiple comparison problem" and result over- or underconfidence of the confidential intervals. 
-They thus recommended to adjust the CIs with a critical t-statistics following the Benjamini1995 procedure.
+They thus recommended to adjust the CIs with a critical t-statistics following the @Benjamini1995 procedure.
 
 The `interplot` package provides a convenient way to operate and visualize above points with one or a series of plots produced by a single function. 
 The function visualizes the changes in the coefficient of one variable in a two-way interaction term conditional on the value of the other included variable. The plot also includes simulated 95% confidential intervals of these coefficients. 
@@ -294,7 +294,7 @@ grid.arrange(stdCI_plot, adjCI_plot, ncol = 2)
 
 ### Plot Conditional Predicted Probability
 
-@Hanmer2013 point out (also in the associated [post](https://ajps.org/2014/11/13/translating-statistical-results-into-meaningful-quantities-methods/) in the AJPS website) that it is important to translate statistical results into meaningful quantities. 
+@Hanmer2013 point out (also in the [associated post](https://ajps.org/2014/11/13/translating-statistical-results-into-meaningful-quantities-methods/) on the AJPS website) that it is important to translate statistical results into meaningful quantities. 
 The task not only pushes researchers to interpret the results in a real-life manner---which may lead to substantively different conclusions---but also provides convenience for a far broader scope of readers (e.g., policy makers, governmental officials, stakeholders, etc.) to understand the implications of the study and their importance.
 
 To accomplish this task requires researchers to go beyond estimating the effect for the "average case," but focuses more on the values or intervals that are illustratively important and meaningful.
@@ -304,8 +304,8 @@ When researchers are dealing with general linear flat or multilevel models, they
 Then, `interplot` will automatically estimated the conditional effects of predicted probabilities at these given values of the conditioned variable.
 The following example illustrates how it works.
 
-In this example, we are interested how the economic inequality affect the impact of income on the U.S. citizens' belief in meritocracy, a critical ideology of the "American Dream."
-We estimated this conditional effect based on an interaction model with three years of Pew surveys (2006, 2007, and 2009), in which the income is the conditioned variable and economic inequality (county-level Gini coefficients).^[
+In this example, we are interested how economic inequality affects the impact of income on U.S. citizens' belief in meritocracy, a critical component of the ideology of the "American Dream."
+We estimated this conditional effect based on an interaction model with three years of Pew surveys (2006, 2007, and 2009), in which the income is the conditioned variable and economic inequality (county-level Gini coefficients) is the conditioning variable.^[
 For the purpose of illustration, we omitted the county level variance in this example. 
 One can see more comprehensive analyses in @Solt2016.
 ]
