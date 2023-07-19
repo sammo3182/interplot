@@ -151,11 +151,15 @@ interplot.plot <- function(m,
     
     if (stats_cp == "ci") {
       test_cp <-
-        paste0("CI(Max - Min): [",
-               round(ci_diff[1], digits = 3),
-               ", ",
-               round(ci_diff[2], digits = 3),
-               "]")
+        if (is.list(ci_diff)) {
+          test_cp <- "" # not paste ci_diff here but in `facet_grid` in `interplot_default`
+        } else {
+          paste0("CI(Max - Min): [",
+                 round(ci_diff[1], digits = 3),
+                 ", ",
+                 round(ci_diff[2], digits = 3),
+                 "]")
+        }
     } else if (stats_cp == "ks") {
       test_cp <-
         paste0("(p-ks = ", format(round(ks_diff$p.value, digits = 3), nsmall = 3), ")")
@@ -335,12 +339,15 @@ interplot.plot <- function(m,
     }
     
     if (stats_cp == "ci") {
-      test_cp <-
+      if (is.list(ci_diff)) {
+        test_cp <- "" # not paste ci_diff here but in `facet_grid` in `interplot_default`
+      } else {
         paste0("CI(Max - Min): [",
                round(ci_diff[1], digits = 3),
                ", ",
                round(ci_diff[2], digits = 3),
                "]")
+      }
     } else if (stats_cp == "ks") {
       test_cp <-
         paste0("D(KS): ",

@@ -104,7 +104,7 @@ interplot.default <- function(m,
   if (predPro == TRUE & all(m.class == "lm"))
     stop("Predicted probability is estimated only for general linear models.")
   
-  # Coefficient data frame
+  # Coefficient data frame ####
   ## Factorial base terms
   factor_v1 <- is.factor(eval(parse(text = paste0("m$model$", var1))))
   factor_v2 <- is.factor(eval(parse(text = paste0("m$model$", var2))))
@@ -164,9 +164,23 @@ interplot.default <- function(m,
   # Replace the labels
   if (factor_v1 | factor_v2) {
     if (is.null(facet_labs)) facet_labs <- unique(coef_df$value)
+    
+    if(stats_cp == "ci"){
+      facet_labs <- map2(ci_diff, facet_labs, \(aCI, aLevel){
+        paste0(aLevel,
+               "\n CI(Max - Min): [",
+               round(aCI[1], digits = 3),
+               ", ",
+               round(aCI[2], digits = 3),
+               "]")
+      }) |> 
+        list_c()
+    }
+    
     coef_df$value <- factor(coef_df$value, labels = facet_labs)
   }
   
+  # Plotting the general plot
   if (plot == FALSE) {
     names(coef_df)[1:4] <- c(var1, "coef", "ub", "lb") # just rename the first four cols; the factorial results have a fifth column "value"
     return(coef_df)
@@ -188,7 +202,9 @@ interplot.default <- function(m,
       ks_diff = ks_diff,
       ...
     )
+  
     
+  # Facet for factors
   if (factor_v1 | factor_v2) {
     aPlot <- aPlot + facet_grid(. ~ value)
   }

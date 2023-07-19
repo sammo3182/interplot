@@ -1,4 +1,6 @@
-interplot(m = m_factor, var2 = "gear", var1 = "wt")
+interplot(m = m_factor, 
+          var1 = "gear", var2 = "wt", 
+          facet_labs = c("try", "out"))
 
 pacman::p_load(ggplot2, lme4, dplyr, purrr)
 
@@ -24,9 +26,29 @@ ercolor = NA
 esize = 0.5
 ralpha = 0.5
 rfill = "grey70"
-stats_cp = "none"
+stats_cp = "ci"
 txt_caption = NULL
-facet_labs = c("4-speed", "5-speed")
+facet_labs = NULL
+
+test_cp <-
+  if (is.list(ci_diff)) {
+  map2(ci_diff, levels(coef_df$value), \(aCI, aLevel){
+    paste0(aLevel,
+           ", CI(Max - Min): [",
+           round(aCI[1], digits = 3),
+           ", ",
+           round(aCI[2], digits = 3),
+           "]")
+  }) |> 
+  list_c()
+} else {
+  paste0("CI(Max - Min): [",
+         round(ci_diff[1], digits = 3),
+         ", ",
+         round(ci_diff[2], digits = 3),
+         "]")
+}
+
 
 aPlot <- interplot.plot(
   m = coef_df,
@@ -46,11 +68,21 @@ aPlot <- interplot.plot(
 )
 
 if (factor_v1 | factor_v2) {
-  if (is.null(facet_labs)) facet_labs <- unique(coef_df$value)
-  
-  coef_df$value <- factor(coef_df$value, labels = facet_labs)
-  
   aPlot <- aPlot + facet_grid(. ~ value)
 }
 
 aPlot
+
+test_cp <- map2(ci_diff, levels(coef_df$value), \(aCI, aLevel){
+  paste0(aLevel,
+         "\n CI(Max - Min): [",
+         round(aCI[1], digits = 3),
+         ", ",
+         round(aCI[2], digits = 3),
+         "]")
+}) |> 
+  list_c()
+
+aPlot + 
+  facet_grid(. ~ value, 
+             labeller = labeller(test_cp))
