@@ -1,6 +1,11 @@
-# interplot 0.2.9999
+# interplot 1.0.0
 
-1. Only showing the p-value of the Kolmogorov-Smirnov test, removing the D statistics for no useful information added.
+In this version, the structure of the primary function is rewritten.
+The function treats factor and numeric base terms with separate side functions leaving room for more distinguished actions on the models with the two types of terms.
+
+## New features
+
+- `stats_cp = "ci"` works for factor base-term models.
 
 # interplot 0.2.3
 
