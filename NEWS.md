@@ -6,6 +6,7 @@ The function treats factor and numeric base terms with separate side functions l
 ## New features
 
 - `stats_cp = "ci"` works for factor base-term models.
+- Allow to output confidence intervals of the difference between the minimum and maximum values of the conditioning variable when `plot = FALSE`.
 
 # interplot 0.2.3
 

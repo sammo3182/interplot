@@ -1,6 +1,7 @@
 interplot(m = m_factor, 
           var1 = "gear", var2 = "wt", 
-          facet_labs = c("try", "out"))
+          facet_labs = c("try", "out"),
+          stats_cp = "ci")
 
 pacman::p_load(ggplot2, lme4, dplyr, purrr)
 

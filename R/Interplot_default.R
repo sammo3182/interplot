@@ -183,7 +183,7 @@ interplot.default <- function(m,
   # Plotting the general plot
   if (plot == FALSE) {
     names(coef_df)[1:4] <- c(var1, "coef", "ub", "lb") # just rename the first four cols; the factorial results have a fifth column "value"
-    return(coef_df)
+    return(list(coef_df, ci_diff))
   } else {
     aPlot <- interplot.plot(
       m = coef_df,
