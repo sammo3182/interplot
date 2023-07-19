@@ -161,6 +161,12 @@ interplot.default <- function(m,
     var2_dt <- eval(parse(text = paste0("m$model$", var2)))
   } 
   
+  # Replace the labels
+  if (factor_v1 | factor_v2) {
+    if (is.null(facet_labs)) facet_labs <- unique(coef_df$value)
+    coef_df$value <- factor(coef_df$value, labels = facet_labs)
+  }
+  
   if (plot == FALSE) {
     names(coef_df)[1:4] <- c(var1, "coef", "ub", "lb") # just rename the first four cols; the factorial results have a fifth column "value"
     return(coef_df)
@@ -183,14 +189,11 @@ interplot.default <- function(m,
       ...
     )
     
-    if (factor_v1 | factor_v2) {
-      if (is.null(facet_labs)) facet_labs <- unique(coef_df$value)
-      
-      coef_df$value <- factor(coef_df$value, labels = facet_labs)
-      
-      aPlot <- aPlot + facet_grid(. ~ value)
-    }
-    return(aPlot)
+  if (factor_v1 | factor_v2) {
+    aPlot <- aPlot + facet_grid(. ~ value)
+  }
+
+  return(aPlot)
   }
 }
 
@@ -245,16 +248,9 @@ extract_coef_num <- function(
     lb = NA
   )
   
-  coef_df <-
-    data.frame(
-      fake = numeric(0),
-      coef1 = numeric(0),
-      ub = numeric(0),
-      lb = numeric(0),
-      model = character(0)
-    )
-  
   # Calculate the effects ####
+  
+  ci_diff <- vector(mode = "numeric")
   
   multiplier <- if (var1 == var2) 2 else 1
   
@@ -367,10 +363,10 @@ extract_coef_num <- function(
     ## Correct marginal effect for quadratic terms
     
     for (i in 1:steps) {
-      coef$coef1[i] <- mean(m.sims@coef[, match(var1, names(m$coef))] + multiplier * coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))])
-      coef$ub[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + multiplier * coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))],
+      coef$coef1[i] <- mean(m.sims@coef[, var1] + multiplier * coef$fake[i] * m.sims@coef[, var12])
+      coef$ub[i] <- quantile(m.sims@coef[, var1] + multiplier * coef$fake[i] * m.sims@coef[, var12],
                  1 - (1 - ci) / 2)
-      coef$lb[i] <- quantile(m.sims@coef[, match(var1, names(m$coef))] + multiplier * coef$fake[i] * m.sims@coef[, match(var12, names(m$coef))], (1 - ci) / 2)
+      coef$lb[i] <- quantile(m.sims@coef[, var1] + multiplier * coef$fake[i] * m.sims@coef[, var12], (1 - ci) / 2)
     }
     
     # Calculate the difference between the effect at the minmum and maxmum value of var2
@@ -462,13 +458,6 @@ extract_coef_fac <- function(
   
   # Setup the result vectors ####
   
-  coef <- data.frame(
-    fake = seq(xmin, xmax, length.out = steps),
-    coef1 = NA,
-    ub = NA,
-    lb = NA
-  )
-  
   coef_df <-
     data.frame(
       fake = numeric(0),
@@ -480,8 +469,18 @@ extract_coef_fac <- function(
   
   # Calculate the effects ####
   
+  ci_diff <- vector(mode = "list")
+  
   if (factor_v1) {
+    
     for (j in seq(var1)[-length(var1)]) { # remember one category is removed to prevent multicollinearity
+      
+      coef <- data.frame(
+        fake = seq(xmin, xmax, length.out = steps),
+        coef1 = NA,
+        ub = NA,
+        lb = NA
+      )
       
       for (i in 1:steps) {
         coef$coef1[i] <- mean(m.sims@coef[, var1[j + 1]] + coef$fake[i] * m.sims@coef[, var12[j]])
@@ -518,6 +517,13 @@ extract_coef_fac <- function(
     
     for (j in seq(var2)[-length(var2)]) { # remember one category is removed to prevent multicollinearity
       
+      coef <- data.frame(
+        fake = seq(xmin, xmax, length.out = steps),
+        coef1 = NA,
+        ub = NA,
+        lb = NA
+      )
+      
       for (i in 1:steps) {
         coef$coef1[i] <- mean(m.sims@coef[, match(var1, names(m$coef))] + coef$fake[i] * m.sims@coef[, match(var12[j], names(m$coef))])
         
@@ -553,6 +559,6 @@ extract_coef_fac <- function(
   
   names(ci_diff) <- var12
   
-  return(list(coef, ci_diff, steps))
+  return(list(coef_df, ci_diff, steps))
 } 
 

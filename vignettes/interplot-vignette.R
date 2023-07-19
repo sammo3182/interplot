@@ -68,16 +68,16 @@ interplot(m = m_cyl, var1 = "cyl", var2 = "wt", hist = TRUE) +
   aes(color = "pink") + theme(legend.position="none") +  # geom_line(color = "pink") + 
   geom_hline(yintercept = 0, linetype = "dashed")
 
-## ----out.width="80%"----------------------------------------------------------
+## -----------------------------------------------------------------------------
 set.seed(313)
 
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt", stats_cp = "ci")
-interplot(m = m_cyl, var1 = "cyl", var2 = "wt", stats_cp = "ks")
 
-## ----out.width="80%"----------------------------------------------------------
+## -----------------------------------------------------------------------------
 set.seed(313)
 
-interplot(m = m_cyl, var1 = "cyl", var2 = "wt", stats_cp = "ci", txt_caption = "\n Source: Motor Trend Car Road Tests 1973.")
+interplot(m = m_cyl, var1 = "cyl", var2 = "wt", stats_cp = "ci", 
+          txt_caption = "\n Source: Motor Trend Car Road Tests 1973.")
 
 ## ----out.width="80%"----------------------------------------------------------
 stdCI_plot <- interplot(m = m_wt, var1 = "wt", var2 = "wt", adjCI = FALSE) +
