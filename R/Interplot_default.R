@@ -157,7 +157,7 @@ interplot.default <- function(m,
   
   # Plotting ####
   
-  if (hist == TRUE & sum(is.na(var2_dt))) { # when var2_dt has values, is.na returns multiple values
+  if (hist == TRUE & all(is.na(var2_dt))) { # when var2_dt has values, is.na returns multiple values
     var2_dt <- eval(parse(text = paste0("m$model$", var2)))
   } 
   
@@ -183,7 +183,8 @@ interplot.default <- function(m,
   # Plotting the general plot
   if (plot == FALSE) {
     names(coef_df)[1:4] <- c(var1, "coef", "ub", "lb") # just rename the first four cols; the factorial results have a fifth column "value"
-    return(list(coef_df, ci_diff))
+    
+    return(list(df_coef = coef_df, stats_ci = ci_diff))
   } else {
     aPlot <- interplot.plot(
       m = coef_df,

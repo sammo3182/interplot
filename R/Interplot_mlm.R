@@ -56,531 +56,448 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c(".", "X.weights.", "ks_di
 
 
 # Coding function for non-mi mlm objects
-interplot.lmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE,hist = FALSE, var2_dt = NA, predPro = FALSE, var2_vals = NULL, point = FALSE, sims = 5000,xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", stats_cp = "none", txt_caption = NULL, facet_labs = NULL, ...) {
+interplot.lmerMod <- function(m,
+           var1,
+           var2,
+           plot = TRUE,
+           steps = NULL,
+           ci = .95,
+           adjCI = FALSE,
+           hist = FALSE,
+           var2_dt = NA,
+           predPro = FALSE,
+           var2_vals = NULL,
+           point = FALSE,
+           sims = 5000,
+           xmin = NA,
+           xmax = NA,
+           ercolor = NA,
+           esize = 0.5,
+           ralpha = 0.5,
+           rfill = "grey70",
+           stats_cp = "none",
+           txt_caption = NULL,
+           facet_labs = NULL,
+           ...)
+  {
     
     m.class <- class(m)
-    
-    if(predPro == TRUE) stop("Predicted probability is estimated only for general linear models.")
-    
-    
     m.sims <- arm::sim(m, sims)
     
-    ## For factor base terms####
-    factor_v1 <- factor_v2 <- FALSE
+    # Coefficient data frame ####
+    ## Factorial base terms
+    factor_v1 <- is.factor(eval(parse(text = paste0("m@frame$", var1))))
+    factor_v2 <- is.factor(eval(parse(text = paste0("m@frame$", var2))))
     
-    if (is.factor(eval(parse(text = paste0("m@frame$", var1)))) & is.factor(eval(parse(text = paste0("m@frame$", 
-        var2))))) 
-        stop("The function does not support interactions between two factors.")
+    if (factor_v1 & factor_v2)
+      stop("The function does not support interactions between two factors.")
     
-    if (is.factor(eval(parse(text = paste0("m@frame$", var1))))) {
-        var1_bk <- var1
-        var1 <- paste0(var1, levels(eval(parse(text = paste0("m@frame$", 
-            var1)))))
-        factor_v1 <- TRUE
-        ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, 
-            ":", var1)[-1])
-        
-        # the first category is censored to avoid multicolinarity
-        for (i in seq(var12)) {
-            if (!var12[i] %in% unlist(dimnames(m@pp$X)[2])) 
-                var12[i] <- paste0(var1, ":", var2)[-1][i]
-            if (!var12[i] %in% unlist(dimnames(m@pp$X)[2])) 
-                stop(paste("Model does not include the interaction of", 
-                  var1, "and", var2, "."))
-        }
-    } else if (is.factor(eval(parse(text = paste0("m@frame$", var2))))) {
-        var2_bk <- var2
-        var2 <- paste0(var2, levels(eval(parse(text = paste0("m@frame$", 
-            var2)))))
-        factor_v2 <- TRUE
-        ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, 
-            ":", var1)[-1])
-        
-        # the first category is censored to avoid multicolinarity
-        for (i in seq(var12)) {
-            if (!var12[i] %in% unlist(dimnames(m@pp$X)[2])) 
-                var12[i] <- paste0(var1, ":", var2)[-1][i]
-            if (!var12[i] %in% unlist(dimnames(m@pp$X)[2])) 
-                stop(paste("Model does not include the interaction of", 
-                  var1, "and", var2, "."))
-        }
+    if ((factor_v1 | factor_v2) & predPro == TRUE)
+      stop("The current version does not support estimating predicted probabilities for factor base terms.")
+    
+    if (factor_v1 | factor_v2) {
+      ls_results <- extract_coef_fac(
+        factor_v1 = factor_v1,
+        factor_v2 = factor_v2,
+        m = m,
+        m.sims = m.sims,
+        var1 = var1,
+        var2 = var2, 
+        plot = plot,
+        steps = steps,
+        ci = ci,
+        adjCI = adjCI,
+        predPro = predPro,
+        var2_vals = var2_vals,
+        point = point,
+        xmin = xmin,
+        xmax = xmax
+      )
     } else {
-        ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, 
-            ":", var1))
-        
-        # the first category is censored to avoid multicolinarity
-        for (i in seq(var12)) {
-            if (!var12[i] %in% unlist(dimnames(m@pp$X)[2])) 
-                var12[i] <- paste0(var1, ":", var2)[i]
-            if (!var12[i] %in% unlist(dimnames(m@pp$X)[2])) 
-                stop(paste("Model does not include the interaction of", 
-                  var1, "and", var2, "."))
-        }
+      ls_results <- extract_coef_num(
+        m = m,
+        m.sims = m.sims,
+        var1 = var1,
+        var2 = var2, 
+        plot = plot,
+        steps = steps,
+        ci = ci,
+        sims = sims,
+        adjCI = adjCI,
+        predPro = predPro,
+        var2_vals = var2_vals,
+        point = point,
+        xmin = xmin,
+        xmax = xmax
+      )
     }
     
-    ################### 
+    coef_df <- ls_results[[1]]
+    ci_diff <- ls_results[[2]]
+    steps <- ls_results[[3]]
     
-    if (factor_v2) {
-        xmin <- 0
-        xmax <- 1
-        steps <- 2
-    } else {
-        if (is.na(xmin)) 
-            xmin <- min(m@frame[var2], na.rm = T)
-        if (is.na(xmax)) 
-            xmax <- max(m@frame[var2], na.rm = T)
-        
-        if (is.null(steps)) {
-          steps <- eval(parse(text = paste0("length(unique(na.omit(m@frame$", 
-                                            var2, ")))")))
-        }
-        
-        if (steps > 100) 
-            steps <- 100  # avoid redundant calculation
-    }
+    # Plotting ####
     
-    coef <- data.frame(fake = seq(xmin, xmax, length.out = steps), coef1 = NA, 
-        ub = NA, lb = NA)
-    coef_df <- data.frame(fake = numeric(0), coef1 = numeric(0), ub = numeric(0), 
-        lb = numeric(0), model = character(0))
+    if (hist == TRUE & all(is.na(var2_dt))) { # when var2_dt has values, is.na returns multiple values
+      var2_dt <- m@frame[[var2]]
+    } 
     
-    if (factor_v1) {
-        for (j in 1:(length(levels(eval(parse(text = paste0("m@frame$", 
-            var1_bk))))) - 1)) {
-            # only n - 1 interactions; one category is avoided against
-            # multicolinarity
-            
-            for (i in 1:steps) {
-                coef$coef1[i] <- mean(m.sims@fixef[, match(var1[j + 1], 
-                  unlist(dimnames(m@pp$X)[2]))] + coef$fake[i] * m.sims@fixef[, 
-                  match(var12[j], unlist(dimnames(m@pp$X)[2]))])
-                coef$ub[i] <- quantile(m.sims@fixef[, match(var1[j + 1], 
-                  unlist(dimnames(m@pp$X)[2]))] + coef$fake[i] * m.sims@fixef[, 
-                  match(var12[j], unlist(dimnames(m@pp$X)[2]))], (1 - ci) / 2)
-                coef$lb[i] <- quantile(m.sims@fixef[, match(var1[j + 1], 
-                  unlist(dimnames(m@pp$X)[2]))] + coef$fake[i] * m.sims@fixef[, 
-                  match(var12[j], unlist(dimnames(m@pp$X)[2]))], 1 - (1 - ci) / 2)
-            }
-            
-            if (plot == TRUE) {
-                coef$value <- var1[j + 1]
-                coef_df <- rbind(coef_df, coef)
-                if (hist == TRUE) {
-                  if (is.na(var2_dt)) {
-                    var2_dt <- eval(parse(text = paste0("m@frame$", var2)))
-                  } else {
-                    var2_dt <- var2_dt
-                  }
-                }
-            } else {
-                names(coef) <- c(var2, "coef", "ub", "lb")
-                return(coef)
-            }
-        }
+    # Replace the labels
+    if (factor_v1 | factor_v2) {
       if (is.null(facet_labs)) facet_labs <- unique(coef_df$value)
+      
+      if(stats_cp == "ci"){
+        facet_labs <- map2(ci_diff, facet_labs, \(aCI, aLevel){
+          paste0(aLevel,
+                 "\n CI(Max - Min): [",
+                 round(aCI[1], digits = 3),
+                 ", ",
+                 round(aCI[2], digits = 3),
+                 "]")
+        }) |> 
+          list_c()
+      }
+      
       coef_df$value <- factor(coef_df$value, labels = facet_labs)
-        interplot.plot(m = coef_df, hist = hist, var2_dt = var2_dt, point = point, 
-            ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ci_diff = ci_diff, ks_diff = ks_diff, stats_cp = stats_cp, txt_caption = txt_caption, 
-            ...) + facet_grid(. ~ value)
-        
-    } else if (factor_v2) {
-        for (j in 1:(length(levels(eval(parse(text = paste0("m@frame$", 
-            var2_bk))))) - 1)) {
-            # only n - 1 interactions; one category is avoided against
-            # multicolinarity
-            
-            for (i in 1:steps) {
-                coef$coef1[i] <- mean(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-                  coef$fake[i] * m.sims@fixef[, match(var12[j], unlist(dimnames(m@pp$X)[2]))])
-                coef$ub[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-                  coef$fake[i] * m.sims@fixef[, match(var12[j], unlist(dimnames(m@pp$X)[2]))], 
-                  (1 - ci) / 2)
-                coef$lb[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-                  coef$fake[i] * m.sims@fixef[, match(var12[j], unlist(dimnames(m@pp$X)[2]))], 
-                  1 - (1 - ci) / 2)
-            }
-            
-            if (plot == TRUE) {
-                coef$value <- var2[j + 1]
-                coef_df <- rbind(coef_df, coef)
-                if (hist == TRUE) {
-                  if (is.na(var2_dt)) {
-                    var2_dt <- eval(parse(text = paste0("m@frame$", var2)))
-                  } else {
-                    var2_dt <- var2_dt
-                  }
-                }
-            } else {
-                names(coef) <- c(var2, "coef", "ub", "lb")
-                return(coef)
-            }
-        }
-      if (is.null(facet_labs)) facet_labs <- unique(coef_df$value)
-      coef_df$value <- factor(coef_df$value, labels = facet_labs)
-        interplot.plot(m = coef_df, hist = hist, var2_dt = var2_dt, point = point, 
-            ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ci_diff = ci_diff, ks_diff = ks_diff, stats_cp = stats_cp, txt_caption = txt_caption, 
-            ...) + facet_grid(. ~ value)
-        
-        
-    } else {
-        ## Correct marginal effect for quadratic terms
-        multiplier <- if (var1 == var2) 
-            2 else 1
-        
-        for (i in 1:steps) {
-            coef$coef1[i] <- mean(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-                multiplier * coef$fake[i] * m.sims@fixef[, match(var12, 
-                  unlist(dimnames(m@pp$X)[2]))])
-            coef$ub[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-                multiplier * coef$fake[i] * m.sims@fixef[, match(var12, 
-                  unlist(dimnames(m@pp$X)[2]))], (1 - ci) / 2)
-            coef$lb[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-                multiplier * coef$fake[i] * m.sims@fixef[, match(var12, 
-                  unlist(dimnames(m@pp$X)[2]))], 1 - (1 - ci) / 2)
-        }
-        
-        multiplier <- if (var1 == var2) 
-          2 else 1
-        
-        min_sim <- m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-          multiplier * xmin * m.sims@fixef[, match(var12, unlist(dimnames(m@pp$X)[2]))] # simulation of the value at the minimum value of the conditioning variable
-        max_sim <- m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-          multiplier * xmax * m.sims@fixef[, match(var12, unlist(dimnames(m@pp$X)[2]))] # simulation of the value at the maximum value of the conditioning variable
-        diff <- max_sim - min_sim # calculating the difference
-        ci_diff <- c(
-          quantile(diff, (1 - ci) / 2),
-          quantile(diff, 1 - (1 - ci) / 2)
-        ) # confidence intervals of the difference
-        
-        if (plot == TRUE) {
-            if (hist == TRUE) {
-                if (is.na(var2_dt)) {
-                  var2_dt <- eval(parse(text = paste0("m@frame$", var2)))
-                } else {
-                  var2_dt <- var2_dt
-                }
-            }
-            interplot.plot(m = coef, hist = hist, var2_dt = var2_dt, point = point, 
-                ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, ci_diff = ci_diff, ks_diff = ks_diff, stats_cp = stats_cp, txt_caption = txt_caption, ...)
-        } else {
-            names(coef) <- c(var2, "coef", "ub", "lb")
-            return(coef)
-        }
-        
     }
+    
+    # Plotting the general plot
+    if (plot == FALSE) {
+      names(coef_df)[1:4] <- c(var1, "coef", "ub", "lb") # just rename the first four cols; the factorial results have a fifth column "value"
+      
+      return(list(df_coef = coef_df, stats_ci = ci_diff))
+      
+    } else {
+      aPlot <- interplot.plot(
+        m = coef_df,
+        hist = hist,
+        steps = steps,
+        var2_dt = var2_dt,
+        predPro = predPro,
+        point = point,
+        ercolor = ercolor,
+        esize = esize,
+        ralpha = ralpha,
+        rfill = rfill,
+        stats_cp = stats_cp,
+        txt_caption = txt_caption,
+        ci_diff = ci_diff,
+        ks_diff = ks_diff,
+        ...
+      )
+      
+      # Facet for factors
+      if (factor_v1 | factor_v2) {
+        aPlot <- aPlot + facet_grid(. ~ value)
+      }
+      
+      return(aPlot)
+    }
+  }
+
+
+extract_coef_num <- function(
+    m,
+    m.sims,
+    var1,
+    var2,
+    plot,
+    steps,
+    ci,
+    sims,
+    adjCI,
+    predPro,
+    var2_vals,
+    point,
+    xmin,
+    xmax
+){
+  
+  # Detect if it is a quadratic model
+  if (var1 == var2) {
+    var12 <- paste0("I(", var1, "^2)")
+  } else {var12 <- paste0(var2, ":", var1)}
+  
+  # Check if the interaction term is correctly specified ####
+  if (!var12 %in% names(fixef(m)))
+    var12 <- paste0(var1, ":", var2)
+  # detect the case when the coefficents are named var1:var2 instead of var2:var1
+  
+  if (!var12 %in% names(fixef(m)))
+    stop(paste(
+      "Model does not include the interaction of",
+      var1,
+      "and",
+      var2,
+      "."
+    ))
+  
+  # Set the min, max, and steps ####
+  if (is.na(xmin)) xmin <- min(m@frame[var2], na.rm = T)
+  if (is.na(xmax)) xmax <- max(m@frame[var2], na.rm = T)
+  
+  if (is.null(steps)) {
+    steps <- eval(parse(text = paste0("length(unique(na.omit(m@frame$",var2, ")))")))
+  }
+  if (steps > 100) steps <- 100  # avoid redundant calculation
+  
+  coef <- data.frame(
+    fake = seq(xmin, xmax, length.out = steps),
+    coef1 = NA,
+    ub = NA,
+    lb = NA
+  )
+  
+  # Calculate the effects ####
+  
+  ci_diff <- vector(mode = "numeric")
+  
+  multiplier <- if (var1 == var2) 2 else 1
+  
+  if (predPro == TRUE) {
+    if (is.null(var2_vals))
+      stop("The predicted probabilities cannot be estimated without defining 'var2_vals'.")
+    
+    df <- data.frame(m@frame)
+    coef <- map(var2_vals, \(bound){
+      fake_data <- mutate(df, var2 = bound)
+      df_ci <- merTools::predictInterval(m, 
+                                         newdata = fake_data,
+                                         level = ci,
+                                         n.sims = sims,
+                                         type = "probability") |> 
+        mutate(value = bound,
+               fake = df[[var1]]) # create new simulation when var2 is in different values
+    }) |> 
+      list_rbind() |> 
+      mutate(value = as.factor(value)) |> 
+      setNames(c("coef1", "lb", "ub", "value", "fake"))
+    
+  } else {
+    ## Correct marginal effect for quadratic terms
+    
+    for (i in 1:steps) {
+      coef$coef1[i] <- mean(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + multiplier * coef$fake[i] * m.sims@fixef[, match(var12, unlist(dimnames(m@pp$X)[2]))])
+      
+      coef$ub[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + multiplier * coef$fake[i] * m.sims@fixef[, match(var12, unlist(dimnames(m@pp$X)[2]))], (1 - ci) / 2)
+      
+      coef$lb[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + multiplier * coef$fake[i] * m.sims@fixef[, match(var12, unlist(dimnames(m@pp$X)[2]))], 1 - (1 - ci) / 2)
+    }
+    
+    # Calculate the difference between the effect at the minmum and maxmum value of var2
+    
+    min_sim <- m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+      multiplier * xmin * m.sims@fixef[, match(var12, unlist(dimnames(m@pp$X)[2]))] # simulation of the value at the minimum value of the conditioning variable
+    max_sim <- m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+      multiplier * xmax * m.sims@fixef[, match(var12, unlist(dimnames(m@pp$X)[2]))] # simulation of the value at the maximum value of the conditioning variable
+    diff <- max_sim - min_sim # calculating the difference
+    ci_diff <- c(
+      quantile(diff, (1 - ci) / 2),
+      quantile(diff, 1 - (1 - ci) / 2)
+    ) # confidence intervals of the difference
+    
+    ks_diff <- ks.test(min_sim, max_sim)
+    
+    # Correct the standard errors
+    if (adjCI == TRUE) {
+      n <- nrow(model.frame(m))
+      p <- length(fixef(m)) 
+      q <- length(ranef(m)$groups)
+      resid_df <- n - p - q
+      
+      Sigma <- diag(getME(m, "theta")) 
+      satterth_df <- resid_df - sum(2*Sigma^2/Sigma^2)
+      warning("For `lme4` objects, the degree of freedom is calculated by the the Satterthwaite approximation.")
+      
+      ## FDR correction
+      coef$sd <- (coef$ub - coef$coef1) / qnorm(1 - (1 - ci) / 2)
+      tAdj <-
+        interactionTest::fdrInteraction(coef$coef1, coef$sd, df = satterth_df, level = ci) # calculate critical t
+      coef$ub <- coef$coef1 + tAdj * coef$sd
+      coef$lb <- coef$coef1 - tAdj * coef$sd
+    }  
+  }
+  
+  return(list(coef, ci_diff, steps))
 }
 
-#' @export
-#' 
 
-interplot.glmerMod <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE, hist = FALSE, var2_dt = NA, predPro = FALSE, var2_vals = NULL, point = FALSE, sims = 5000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", stats_cp = "none", txt_caption = NULL, facet_labs = NULL, ...) {
-
+extract_coef_fac <- function(
+    factor_v1,
+    factor_v2,
+    m,
+    m.sims,
+    var1,
+    var2,
+    plot,
+    steps,
+    ci,
+    adjCI,
+    predPro,
+    var2_vals,
+    point,
+    xmin,
+    xmax
+){
+  # Generate the name of the coefficients ####
+  if (factor_v1) {
+    # var1_bk <- var1
+    var1 <- paste0(var1, levels(m@frame[[var1]]))
+  } else if (factor_v2) {
+    # var2_bk <- var2
+    var2 <- paste0(var2, levels(m@frame[[var2]]))
+  } 
+  
+  var12 <- paste0(var2, ":", var1)[-1] # the first category is censored to avoid multicolinarity; which is also the rule for lm to deal with factor covariates
+  
+  # Check if the interaction terms are correctly specified ####
+  for (i in seq(var12)) {
+    if (!var12[i] %in% unlist(dimnames(m@pp$X)[2]))
+      var12[i] <- paste0(var1, ":", var2)[-1][i] 
+    # detect the case when the coefficents are named var1:var2 instead of var2:var1
     
-    m.class <- class(m)
-    m.sims <- arm::sim(m, sims)
+    if (!var12[i] %in% unlist(dimnames(m@pp$X)[2]))
+      stop(paste(
+        "Model does not include the interaction of",
+        var1,
+        "and",
+        var2,
+        "."
+      ))
+  }
+  
+  # Set the min, max, and steps ####
+  
+  if (factor_v2) {
+    xmin <- 0
+    xmax <- 1
+    steps <- 2
+  } else {
+    if (is.na(xmin)) xmin <- min(m@frame[[var2]], na.rm = T)
+    if (is.na(xmax)) xmax <- max(m@frame[[var2]], na.rm = T)
     
-    
-    ### For factor base terms###
-    factor_v1 <- factor_v2 <- FALSE
-    
-    if (is.factor(eval(parse(text = paste0("m@frame$", var1)))) & is.factor(eval(parse(text = paste0("m@frame$", 
-        var2))))) 
-        stop("The function does not support interactions between two factors.")
-    
-    if (is.factor(eval(parse(text = paste0("m@frame$", var1))))) {
-        var1_bk <- var1
-        var1 <- paste0(var1, levels(eval(parse(text = paste0("m@frame$", 
-            var1)))))
-        factor_v1 <- TRUE
-        ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, 
-            ":", var1)[-1])
-        
-        # the first category is censored to avoid multicolinarity
-        for (i in seq(var12)) {
-            if (!var12[i] %in% unlist(dimnames(m@pp$X)[2])) 
-                var12[i] <- paste0(var1, ":", var2)[-1][i]
-            if (!var12[i] %in% unlist(dimnames(m@pp$X)[2])) 
-                stop(paste("Model does not include the interaction of", 
-                  var1, "and", var2, "."))
-        }
-    } else if (is.factor(eval(parse(text = paste0("m@frame$", var2))))) {
-        var2_bk <- var2
-        var2 <- paste0(var2, levels(eval(parse(text = paste0("m@frame$", 
-            var2)))))
-        factor_v2 <- TRUE
-        ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, 
-            ":", var1)[-1])
-        
-        # the first category is censored to avoid multicolinarity
-        for (i in seq(var12)) {
-            if (!var12[i] %in% unlist(dimnames(m@pp$X)[2])) 
-                var12[i] <- paste0(var1, ":", var2)[-1][i]
-            if (!var12[i] %in% unlist(dimnames(m@pp$X)[2])) 
-                stop(paste("Model does not include the interaction of", 
-                  var1, "and", var2, "."))
-        }
-    } else {
-        ifelse(var1 == var2, var12 <- paste0("I(", var1, "^2)"), var12 <- paste0(var2, 
-            ":", var1))
-        
-        # the first category is censored to avoid multicolinarity
-        for (i in seq(var12)) {
-            if (!var12[i] %in% unlist(dimnames(m@pp$X)[2])) 
-                var12[i] <- paste0(var1, ":", var2)[i]
-            if (!var12[i] %in% unlist(dimnames(m@pp$X)[2])) 
-                stop(paste("Model does not include the interaction of", 
-                  var1, "and", var2, "."))
-        }
+    if (is.null(steps)) {
+      steps <- length(unique(m@frame[[var2]]))
     }
+    if (steps > 100) steps <- 100  # avoid redundant calculation
+  }
+  
+  # Setup the result vectors ####
+  
+  coef_df <-
+    data.frame(
+      fake = numeric(0),
+      coef1 = numeric(0),
+      ub = numeric(0),
+      lb = numeric(0),
+      model = character(0)
+    )
+  
+  # Calculate the effects ####
+  
+  ci_diff <- vector(mode = "list")
+  
+  if (factor_v1) {
     
-    ################### 
-    
-    if (factor_v2) {
-        xmin <- 0
-        xmax <- 1
-        steps <- 2
-    } else {
-        if (is.na(xmin)) 
-            xmin <- min(m@frame[var2], na.rm = T)
-        if (is.na(xmax)) 
-            xmax <- max(m@frame[var2], na.rm = T)
-        
-        if (is.null(steps)) {
-          steps <- eval(parse(text = paste0("length(unique(na.omit(m@frame$", 
-                                            var2, ")))")))
-        }
-        
-        if (steps > 100) 
-            steps <- 100  # avoid redundant calculation
-    }
-    
-    coef <- data.frame(fake = seq(xmin, xmax, length.out = steps), coef1 = NA, 
-        ub = NA, lb = NA)
-    coef_df <- data.frame(fake = numeric(0), coef1 = numeric(0), ub = numeric(0), 
-        lb = numeric(0), model = character(0))
-    
-    if (factor_v1) {
+    for (j in seq(var1)[-length(var1)]) { # remember one category is removed to prevent multicollinearity
       
-      if(predPro == TRUE) stop("The current version does not support estimating predicted probabilities for factor base terms.")
+      coef <- data.frame(
+        fake = seq(xmin, xmax, length.out = steps),
+        coef1 = NA,
+        ub = NA,
+        lb = NA
+      )
       
-      
-        for (j in 1:(length(levels(eval(parse(text = paste0("m@frame$", 
-            var1_bk))))) - 1)) {
-            # only n - 1 interactions; one category is avoided against
-            # multicolinarity
-            
-            for (i in 1:steps) {
-                coef$coef1[i] <- mean(m.sims@fixef[, match(var1[j + 1], 
-                  unlist(dimnames(m@pp$X)[2]))] + coef$fake[i] * m.sims@fixef[, 
-                  match(var12[j], unlist(dimnames(m@pp$X)[2]))])
-                coef$ub[i] <- quantile(m.sims@fixef[, match(var1[j + 1], 
-                  unlist(dimnames(m@pp$X)[2]))] + coef$fake[i] * m.sims@fixef[, 
-                  match(var12[j], unlist(dimnames(m@pp$X)[2]))], (1 - ci) / 2)
-                coef$lb[i] <- quantile(m.sims@fixef[, match(var1[j + 1], 
-                  unlist(dimnames(m@pp$X)[2]))] + coef$fake[i] * m.sims@fixef[, 
-                  match(var12[j], unlist(dimnames(m@pp$X)[2]))], 1 - (1 - ci) / 2)
-            }
-            
-            if (plot == TRUE) {
-                coef$value <- var1[j + 1]
-                coef_df <- rbind(coef_df, coef)
-                if (hist == TRUE) {
-                  if (is.na(var2_dt)) {
-                    var2_dt <- eval(parse(text = paste0("m@frame$", var2)))
-                  } else {
-                    var2_dt <- var2_dt
-                  }
-                }
-            } else {
-                names(coef) <- c(var2, "coef", "ub", "lb")
-                return(coef)
-            }
-        }
-      if (is.null(facet_labs)) facet_labs <- unique(coef_df$value)
-      coef_df$value <- factor(coef_df$value, labels = facet_labs)
-        interplot.plot(m = coef_df, hist = hist, steps = steps, var2_dt = var2_dt, point = point, 
-            ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, stats_cp = "none", txt_caption = NULL, 
-            ...) + facet_grid(. ~ value)
+      for (i in 1:steps) {
+        coef$coef1[i] <- mean(m.sims@fixef[, var1[j + 1]] + coef$fake[i] * m.sims@fixef[, var12[j]])
         
-    } else if (factor_v2) {
-      
-      if(predPro == TRUE) stop("The current version does not support estimating predicted probabilities for factor base terms.")
-      
-        for (j in 1:(length(levels(eval(parse(text = paste0("m@frame$", 
-            var2_bk))))) - 1)) {
-            # only n - 1 interactions; one category is avoided against
-            # multicolinarity
-            
-            for (i in 1:steps) {
-                coef$coef1[i] <- mean(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-                  coef$fake[i] * m.sims@fixef[, match(var12[j], unlist(dimnames(m@pp$X)[2]))])
-                coef$ub[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-                  coef$fake[i] * m.sims@fixef[, match(var12[j], unlist(dimnames(m@pp$X)[2]))], 
-                  (1 - ci) / 2)
-                coef$lb[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-                  coef$fake[i] * m.sims@fixef[, match(var12[j], unlist(dimnames(m@pp$X)[2]))], 
-                  1 - (1 - ci) / 2)
-            }
-            
-            if (plot == TRUE) {
-                coef$value <- var2[j + 1]
-                coef_df <- rbind(coef_df, coef)
-                if (hist == TRUE) {
-                  if (is.na(var2_dt)) {
-                    var2_dt <- eval(parse(text = paste0("m@frame$", var2)))
-                  } else {
-                    var2_dt <- var2_dt
-                  }
-                }
-            } else {
-                names(coef) <- c(var2, "coef", "ub", "lb")
-                return(coef)
-            }
-        }
-      if (is.null(facet_labs)) facet_labs <- unique(coef_df$value)
-      coef_df$value <- factor(coef_df$value, labels = facet_labs)
-        interplot.plot(m = coef_df, steps = steps, hist = hist, var2_dt = var2_dt, point = point, 
-            ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, stats_cp = "none", txt_caption = NULL, 
-            ...) + facet_grid(. ~ value)
+        coef$ub[i] <- quantile(m.sims@fixef[, var1[j + 1]] + coef$fake[i] * m.sims@fixef[, var12[j]], 1 - (1 - ci) / 2)
         
-        
-    } else {
-        if(predPro == TRUE){
-          
-          if(is.null(var2_vals)) stop("The predicted probabilities cannot be estimated without defining 'var2_vals'.")
-          
-          df <- data.frame(m$model)
-          df[[names(m@flist)]] <- NULL # omit L2 var
-          if(sum(grep("X.weights.", names(df))) != 0) df <- select(df, -X.weights.) # removed the weights
-          df_temp <- select(df, 1) # save the dependent variable separately
-          df <- df[-1] %>% # get ride of the dv in case it's a factor
-            map(function(var){
-              if(is.factor(var)){
-                model.matrix(~ var - 1)[, -1] %>% 
-                  # get rid of the first (reference) group
-                  as.data.frame()
-              }else{
-                as.numeric(var) # in case the initial one is a "labelled" class
-              }
-            })
-          
-          
-          for(i in seq(df)){ 
-            # use for loop to avoid the difficulty of flatting list containing vectors and matrices
-            if(!is.data.frame(df[[i]])){
-              # keep track the var names
-              namesUpdate <- c(names(df_temp), names(df)[[i]])
-              df_temp <- cbind(df_temp, df[[i]])
-              names(df_temp) <- namesUpdate
-            }else{
-              df_temp <- cbind(df_temp, df[[i]])
-            }
-          }
-          
-          df <- df_temp
-          
-          names(df)[1] <- "(Intercept)" # replace DV with intercept
-          df$`(Intercept)` <- 1
-          
-          if(var1 == var2){ # correct the name of squares
-            names(df) <- sub("I\\.(.*)\\.2\\.", "I\\(\\1\\^2\\)", names(df))
-          }
-          
-          iv_medians <- summarize_all(df, funs(median(., na.rm = TRUE))) 
-          
-          fake_data <- iv_medians[rep(1:nrow(iv_medians), each=steps*length(var2_vals)), ] 
-          fake_data[[var1]] <- with(df, rep(seq(min(get(var1)), max(get(var1)), length.out=steps),
-                                            steps=length(var2_vals)))
-          fake_data[[var2]] <- rep(var2_vals, each=steps)
-          fake_data[[var12]] <- fake_data[[var1]] * fake_data[[var2]]
-          
-          pp <- rowMeans(plogis(data.matrix(fake_data) %*% t(data.matrix(m.sims@fixef))))
-          row_quantiles <- function (x, probs) {
-            naValue <- NA
-            storage.mode(naValue) <- storage.mode(x)
-            nrow <- nrow(x)
-            q <- matrix(naValue, nrow = nrow, ncol = length(probs))
-            if (nrow > 0L) {
-              t <- quantile(x[1L, ], probs = probs)
-              colnames(q) <- names(t)
-              q[1L, ] <- t
-              if (nrow >= 2L) {
-                for (rr in 2:nrow) {
-                  q[rr, ] <- quantile(x[rr, ], probs = probs)
-                }
-              }
-            }
-            else {
-              t <- quantile(0, probs = probs)
-              colnames(q) <- names(t)
-            }
-            q <- drop(q)
-            q
-          }
-          pp_bounds <- row_quantiles(plogis(data.matrix(fake_data) %*% t(data.matrix(m.sims@fixef))), prob = c((1 - ci)/2, 1 - (1 - ci)/2))
-          pp <- cbind(pp, pp_bounds)
-          pp <- pp*100
-          colnames(pp) <- c("coef1", "lb", "ub")
-          pp <- cbind(fake_data[, c(var1, var2)], pp)
-          
-          
-          pp[,var2] <- as.factor(pp[,var2])
-          
-          names(pp)[1] <- "fake"
-          names(pp)[2] <- "value"
-          
-          coef <- pp
-          
-        } else {
-          ## Correct marginal effect for quadratic terms
-          multiplier <- if (var1 == var2) 
-              2 else 1
-          
-          for (i in 1:steps) {
-              coef$coef1[i] <- mean(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-                  multiplier * coef$fake[i] * m.sims@fixef[, match(var12, 
-                    unlist(dimnames(m@pp$X)[2]))])
-              coef$ub[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-                  multiplier * coef$fake[i] * m.sims@fixef[, match(var12, 
-                    unlist(dimnames(m@pp$X)[2]))], (1 - ci) / 2)
-              coef$lb[i] <- quantile(m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-                  multiplier * coef$fake[i] * m.sims@fixef[, match(var12, 
-                    unlist(dimnames(m@pp$X)[2]))], 1 - (1 - ci) / 2)
-          }
-        }
-        
-      multiplier <- if (var1 == var2) 
-        2 else 1
+        coef$lb[i] <- quantile(m.sims@fixef[, var1[j + 1]] + coef$fake[i] * m.sims@fixef[, var12[j]], (1 - ci) / 2)
+      }
       
-      min_sim <- m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-        multiplier * xmin * m.sims@fixef[, match(var12, unlist(dimnames(m@pp$X)[2]))] # simulation of the value at the minimum value of the conditioning variable
-      max_sim <- m.sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
-        multiplier * xmax * m.sims@fixef[, match(var12, unlist(dimnames(m@pp$X)[2]))] # simulation of the value at the maximum value of the conditioning variable
+      # Calculate the difference between the effect at the minmum and maxmum value of var2
+      min_sim <- m.sims@fixef[, var1[j + 1]] + xmin * m.sims@fixef[, var12[j]] # simulation of the value at the minimum value of the conditioning variable
+      max_sim <- m.sims@fixef[, var1[j + 1]] + xmax * m.sims@fixef[, var12[j]] # simulation of the value at the maximum value of the conditioning variable
       diff <- max_sim - min_sim # calculating the difference
-      ci_diff <- c(
+      
+      ci_diff[[j]] <- c(
         quantile(diff, (1 - ci) / 2),
         quantile(diff, 1 - (1 - ci) / 2)
       ) # confidence intervals of the difference
       
-        if (plot == TRUE) {
-            if (hist == TRUE) {
-                if (is.na(var2_dt)) {
-                  var2_dt <- eval(parse(text = paste0("m@frame$", var2)))
-                } else {
-                  var2_dt <- var2_dt
-                }
-            }
-            interplot.plot(m = coef, steps = steps, hist = hist, predPro = predPro, var2_vals = var2_vals, var2_dt = var2_dt, point = point, ercolor = ercolor, esize = esize, ralpha = ralpha, rfill = rfill, stats_cp = "none", txt_caption = NULL, ...)
-        } else {
-            if(predPro == TRUE){
-              names(coef) <- c(var2, paste0("values_in_", var1), "coef", "ub", "lb")
-            } else {
-              names(coef) <- c(var2, "coef", "ub", "lb")
-            }
-            
-            return(coef)
-        }
+      # Correct the standard errors
+      if (adjCI == TRUE) {
+        n <- nrow(model.frame(m))
+        p <- length(fixef(m)) 
+        q <- length(ranef(m)$groups)
+        resid_df <- n - p - q
         
+        Sigma <- diag(getME(m, "theta")) 
+        satterth_df <- resid_df - sum(2*Sigma^2/Sigma^2)
+        warning("For `lme4` objects, the degree of freedom is calculated by the the Satterthwaite approximation.")
+        
+        ## FDR correction
+        coef$sd <- (coef$ub - coef$coef1) / qnorm(1 - (1 - ci) / 2)
+        tAdj <- interactionTestfdrInteraction(coef$coef1, coef$sd, df = satterth_df, level = .95) # calculate critical t
+        coef$ub <- coef$coef1 + tAdj * coef$sd
+        coef$lb <- coef$coef1 - tAdj * coef$sd
+      }
+      
+      # preparing for later plotting
+      coef$value <- var1[j + 1]
+      coef_df <- rbind(coef_df, coef)
     }
+  } else if (factor_v2) {
+    
+    for (j in seq(var2)[-length(var2)]) { # remember one category is removed to prevent multicollinearity
+      
+      coef <- data.frame(
+        fake = seq(xmin, xmax, length.out = steps),
+        coef1 = NA,
+        ub = NA,
+        lb = NA
+      )
+      
+      for (i in 1:steps) {
+        coef$coef1[i] <- mean(m.sims@fixef[, var1] + coef$fake[i] * m.sims@fixef[, var12[j]])
+        
+        coef$ub[i] <- quantile(m.sims@fixef[, var1] + coef$fake[i] * m.sims@fixef[, var12[j]], 1 - (1 - ci) / 2)
+        
+        coef$lb[i] <- quantile(m.sims@fixef[, var1] + coef$fake[i] * m.sims@fixef[, var12[j]], (1 - ci) / 2)
+      }
+      
+      # Calculate the difference between the effect at the minmum and maxmum value of var2
+      min_sim <- m.sims@fixef[, var1] + xmin * m.sims@fixef[, var12[j]] # simulation of the value at the minimum value of the conditioning variable
+      max_sim <- m.sims@fixef[, var1] + xmax * m.sims@fixef[, var12[j]] # simulation of the value at the maximum value of the conditioning variable
+      diff <- max_sim - min_sim # calculating the difference
+      
+      ci_diff[[j]] <- c(
+        quantile(diff, (1 - ci) / 2),
+        quantile(diff, 1 - (1 - ci) / 2)
+      ) # confidence intervals of the difference
+      
+      # Correct the standard errors
+      if (adjCI == TRUE) {
+        ## FDR correction
+        coef$sd <- (coef$ub - coef$coef1) / qnorm(1 - (1 - ci) / 2)
+        tAdj <- fdrInteraction(coef$coef1, coef$sd, df = m$df, level = .95) # calculate critical t
+        coef$ub <- coef$coef1 + tAdj * coef$sd
+        coef$lb <- coef$coef1 - tAdj * coef$sd
+      }
+      
+      coef$value <- var2[j + 1] #name of the level2 in var2
+      coef_df <- rbind(coef_df, coef)
+      
+    }
+  }
+  
+  names(ci_diff) <- var12
+  
+  return(list(coef_df, ci_diff, steps))
+} 
 
-}
+#' @export
+#' 
+
+interplot.glmerMod <- interplot.lmerMod
