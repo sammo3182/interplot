@@ -1,4 +1,4 @@
-# interplot 1.0.0
+# interplot 1.0.9999
 
 In this version, the structure of the primary function is rewritten.
 The function treats factor and numeric base terms with separate side functions leaving room for more distinguished actions on the models with the two types of terms.
@@ -7,6 +7,12 @@ The function treats factor and numeric base terms with separate side functions l
 
 - `stats_cp = "ci"` works for factor base-term models.
 - Allow to output confidence intervals of the difference between the minimum and maximum values of the conditioning variable when `plot = FALSE`.
+- `prePro` can be used on multilevel models
+
+## Bug fix
+
+- Update `interplot.plot` for the latest version of `ggplot`
+
 
 # interplot 0.2.3
 

@@ -96,7 +96,7 @@ interplot.lmerMod <- function(m,
       stop("The current version does not support estimating predicted probabilities for factor base terms.")
     
     if (factor_v1 | factor_v2) {
-      ls_results <- extract_coef_fac(
+      ls_results <- extract_coef_facM(
         factor_v1 = factor_v1,
         factor_v2 = factor_v2,
         m = m,
@@ -114,7 +114,7 @@ interplot.lmerMod <- function(m,
         xmax = xmax
       )
     } else {
-      ls_results <- extract_coef_num(
+      ls_results <- extract_coef_numM(
         m = m,
         m.sims = m.sims,
         var1 = var1,
@@ -196,7 +196,7 @@ interplot.lmerMod <- function(m,
   }
 
 
-extract_coef_num <- function(
+extract_coef_numM <- function(
     m,
     m.sims,
     var1,
@@ -322,7 +322,7 @@ extract_coef_num <- function(
 }
 
 
-extract_coef_fac <- function(
+extract_coef_facM <- function(
     factor_v1,
     factor_v2,
     m,

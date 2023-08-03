@@ -6,10 +6,7 @@
 ^lit$
 ^CONDUCT\.md$
 ^CRAN-RELEASE$
-<<<<<<< HEAD
 ^jss_manuscript.*
-=======
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
->>>>>>> 4f04b886745116649a91eb9b2ca95fba4d5f539e

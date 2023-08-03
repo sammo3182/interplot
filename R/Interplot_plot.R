@@ -98,18 +98,18 @@ interplot.plot <- function(m,
     if (steps < 5 | point == T) {
       if (is.na(ercolor)) ercolor <- "black"  # ensure whisker can be drawn
       if (predPro == TRUE) {
-        coef.plot <- ggplot(m, aes_string(
-            x = "fake",
-            y = "coef1",
-            group = "value",
-            colour = "value"
+        coef.plot <- ggplot(m, aes(
+            x = fake,
+            y = coef1,
+            group = value,
+            colour = value
           )) + 
           geom_point(position = position_dodge(width = .3),...) + 
           geom_errorbar(
-            aes_string(
-              ymin = "lb",
-              ymax = "ub",
-              colour = "value"
+            aes(
+              ymin = lb,
+              ymax = ub,
+              colour = value
             ),
             width = 0,
             position = position_dodge(width = .3),
@@ -118,33 +118,46 @@ interplot.plot <- function(m,
           scale_x_continuous(breaks = levels) + ylab(NULL) + xlab(NULL)
       } else{
         coef.plot <-
-          ggplot(m, aes_string(x = "fake", y = "coef1")) + geom_point(...) + geom_errorbar(
-            aes_string(ymin = "lb", ymax = "ub"),
+          ggplot(m, aes(x = fake, 
+                               y = coef1)) + geom_point(...) +
+          geom_errorbar(
+            aes(ymin = lb, 
+                       ymax = ub),
             width = 0,
             color = ercolor,
             size = esize
-          ) + scale_x_continuous(breaks = levels) + ylab(NULL) + xlab(NULL)
+          ) + 
+          scale_x_continuous(breaks = levels) + 
+          ylab(NULL) + xlab(NULL)
       }
     } else {
       if (predPro == TRUE) {
         coef.plot <-
-          ggplot(m, aes_string(
-            x = "fake",
-            y = "coef1",
-            colour = "value"
-          )) + geom_line(...) + geom_ribbon(aes_string(
-            ymin = "lb",
-            ymax = "ub",
-            fill = "value"
-          ), alpha = ralpha) + ylab(NULL) + xlab(NULL)
+          ggplot(m, aes(
+            x = fake,
+            y = coef1,
+            colour = value
+          )) + 
+          geom_line(...) + 
+          geom_ribbon(aes(
+            ymin = lb,
+            ymax = ub,
+            fill = value
+          ), alpha = ralpha) + 
+          ylab(NULL) + xlab(NULL)
       } else {
         coef.plot <-
-          ggplot(m, aes_string(x = "fake", y = "coef1")) + geom_line(...) + geom_ribbon(
-            aes_string(ymin = "lb", ymax = "ub"),
+          ggplot(m, aes(x = fake, 
+                        y = coef1)) + 
+          geom_line(...) + 
+          geom_ribbon(
+            aes(ymin = lb, 
+                ymax = ub),
             alpha = ralpha,
             color = ercolor,
             fill = rfill
-          ) + ylab(NULL) + xlab(NULL)
+          ) + 
+          ylab(NULL) + xlab(NULL)
       }
     }
     
@@ -240,32 +253,38 @@ interplot.plot <- function(m,
         coef.plot <-
           coef.plot + geom_errorbar(
             data = m,
-            aes_string(
-              x = "fake",
-              ymin = "lb",
-              ymax = "ub",
-              colour = "value"
+            aes(
+              x = fake,
+              ymin = lb,
+              ymax = ub,
+              colour = value
             ),
             width = 0,
             size = esize
-          ) + scale_x_continuous(breaks = levels) + ylab(NULL) + xlab(NULL) + geom_point(data = m, aes_string(
-            x = "fake",
-            y = "coef1",
-            colour = "value"
-          ))
+          ) + scale_x_continuous(breaks = levels) + 
+          ylab(NULL) + xlab(NULL) + 
+          geom_point(data = m,
+                     aes(x = fake,
+                         y = coef1,
+                         colour = value))
       } else{
         coef.plot <-
           coef.plot + geom_errorbar(
             data = m,
-            aes_string(
-              x = "fake",
-              ymin = "lb",
-              ymax = "ub"
+            aes(
+              x = fake,
+              ymin = lb,
+              ymax = ub
             ),
             width = 0,
             color = ercolor,
             size = esize
-          ) + scale_x_continuous(breaks = levels) + ylab(NULL) + xlab(NULL) + geom_point(data = m, aes_string(x = "fake", y = "coef1"))
+          ) + 
+          scale_x_continuous(breaks = levels) + 
+          ylab(NULL) + xlab(NULL) + 
+          geom_point(data = m, 
+                     aes(x = fake, 
+                         y = coef1))
       }
     } else {
       yrange <- c(m$ub, m$lb)
@@ -308,33 +327,38 @@ interplot.plot <- function(m,
       
       if (predPro == TRUE) {
         coef.plot <-
-          coef.plot + geom_line(data = m, aes_string(
-            x = "fake",
-            y = "coef1",
-            colour = "value"
-          )) + geom_ribbon(
-            data = m,
-            aes_string(
-              x = "fake",
-              ymin = "lb",
-              ymax = "ub",
-              fill = "value"
-            ),
+          coef.plot + 
+          geom_line(data = m,
+                    aes(x = fake,
+                        y = coef1,
+                        colour = value)) +
+          geom_ribbon(data = m,
+                      aes(
+                        x = fake,
+                        ymin = lb,
+                        ymax = ub,
+                        fill = value
+                      ), 
             alpha = ralpha
           ) + ylab(NULL) + xlab(NULL)
       } else{
         coef.plot <-
-          coef.plot + geom_line(data = m, aes_string(x = "fake", y = "coef1")) + geom_ribbon(
+          coef.plot + 
+          geom_line(data = m,
+                    aes(x = fake,
+                        y = coef1)) + 
+          geom_ribbon(
             data = m,
-            aes_string(
-              x = "fake",
-              ymin = "lb",
-              ymax = "ub"
+            aes(
+              x = fake,
+              ymin = lb,
+              ymax = ub
             ),
             alpha = ralpha,
             color = ercolor,
             fill = rfill
-          ) + ylab(NULL) + xlab(NULL)
+          ) + 
+          ylab(NULL) + xlab(NULL)
       }
     }
     
