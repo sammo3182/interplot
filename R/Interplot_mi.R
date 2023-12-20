@@ -85,7 +85,7 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, a
     ralpha = 0.5, rfill = "grey70", stats_cp = "none", txt_caption = NULL, facet_labs = NULL, ...) {
     
 
-  if(predPro == TRUE & class(m) == "lmmi") stop("Predicted probability is estimated only for general linear models.")
+  if(predPro == TRUE & inherits(m, "lmmi")) stop("Predicted probability is estimated only for general linear models.")
   
     m.list <- m
     m <- m.list[[1]]
