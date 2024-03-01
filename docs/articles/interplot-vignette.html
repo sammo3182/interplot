@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,23 +33,17 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">interplot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.9999</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.9999</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -64,7 +60,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/sammo3182/interplot/">
+  <a href="https://github.com/sammo3182/interplot/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -79,273 +75,478 @@
 
       
 
-      </header><script src="interplot-vignette_files/header-attrs-2.7/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>interplot: Plot the Effects of Variables in Interaction Terms</h1>
-                        <h4 class="author">Frederick Solt and Yue Hu</h4>
+      <h1 data-toc-skip>interplot: Plot the Effects of Variables in
+Interaction Terms</h1>
+                        <h4 data-toc-skip class="author">Frederick Solt
+and Yue Hu</h4>
             
-            <h4 class="date">2021-03-23</h4>
+            <h4 data-toc-skip class="date">2024-03-01</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/sammo3182/interplot/blob/master/vignettes/interplot-vignette.Rmd"><code>vignettes/interplot-vignette.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sammo3182/interplot/blob/HEAD/vignettes/interplot-vignette.Rmd" class="external-link"><code>vignettes/interplot-vignette.Rmd</code></a></small>
       <div class="hidden name"><code>interplot-vignette.Rmd</code></div>
 
     </div>
 
     
     
-<p>Interaction is a powerful tool to test conditional effects of one variable on the contribution of another variable to the dependent variable and has been extensively applied in the empirical research of social science since the 1970s <span class="citation">(Wright Jr 1976)</span>. Unfortunately, the nonlinear nature determines that the statistical estimate of an interactive effect cannot be interpreted as straightforward as the coefficient of a regular regression parameter. Let’s use a simple example to illustrate this point: The following model use an interaction term to test the conditional effect of Z on X’s contribution (or the conditional effect of X on Z’s contribution) to the variance of Y.</p>
-<p><span class="math display">\[Y = \beta_0 + \beta_1X + \beta_2Z + \beta_3X\times Z + \varepsilon.\]</span> The contribution of X on Y is typically represented by the marginal effect:</p>
-<p><span class="math display">\[\frac{\partial Y}{\partial X} = \beta_1 + \beta_3Z.\]</span></p>
+<p>Interaction is a powerful tool to test conditional effects of one
+variable on the contribution of another variable to the dependent
+variable and has been extensively applied in the empirical research of
+social science since the 1970s <span class="citation">(Wright Jr
+1976)</span>. Unfortunately, the nonlinear nature determines that the
+statistical estimate of an interactive effect cannot be interpreted as
+straightforward as the coefficient of a regular regression parameter.
+Let’s use a simple example to illustrate this point: The following model
+use an interaction term to test the conditional effect of Z on X’s
+contribution (or the conditional effect of X on Z’s contribution) to the
+variance of Y.</p>
+<p><span class="math display">\[Y = \beta_0 + \beta_1X + \beta_2Z +
+\beta_3X\times Z + \varepsilon.\]</span> The contribution of X on Y is
+typically represented by the marginal effect:</p>
+<p><span class="math display">\[\frac{\partial Y}{\partial X} = \beta_1
++ \beta_3Z.\]</span></p>
 <p>The standard error of this estimate is thus:</p>
-<p><span class="math display">\[\hat{\sigma}_{\frac{\partial Y}{\partial X}} = \sqrt{var(\hat{\beta_1}) + Z^2var(\hat{\beta_3}) + 2Zcov(\hat{\beta_1}, \hat{\beta_3})}.\]</span></p>
-<p>As <span class="citation">Brambor, Clark, and Golder (2006, 70)</span> indicates, the above equation suggests that its perfectly possible for the contribution of X on Y to be statistically significant for certain values of Z “even if all of the model parameters are insignificant.” In other words, one cannot infer whether X has a meaningful conditional effect on Y simply from the magnitude and significance of either <span class="math inline">\(\beta_1\)</span> or <span class="math inline">\(\beta_3\)</span> (Ibid., 74). Instead, the conditional effect should be examined based on the marginal effect at every observed value of Z <span class="citation">(Berry, Golder, and Milton 2012; Brambor, Clark, and Golder 2006; Braumoeller 2004)</span>.</p>
-<p>Furthermore, scholars have noticed that the point estimations of some interaction models, especially those depending on link functions (e.g., logit and probit) may not be as reliable as the estimates of the confidence intervals <span class="citation">(Berry, DeMeritt, and Esarey 2016)</span>. Therefore, it is even more important to accurately present and examine the boundaries established by the confidence intervals than the point estimates in the test of conditional effect. <span class="citation">Berry, Golder, and Milton (2012)</span> also pointed out that the substantive significance of the conditional effect highly relates to the distribution of the conditioning variable (viz., Z in the above example). They thus recommend researchers to present the frequency distribution of the conditioning variable together with the marginal effects (especially when the effect trend goes across the zero point).</p>
-<p>More recently, <span class="citation">Esarey and Sumner (2017)</span> uncovered that the estimation of the marginal effects suggested by <span class="citation">Brambor, Clark, and Golder (2006)</span> might cause a “multiple comparison problem” and result over- or underconfidence of the confidential intervals. They thus recommended to adjust the CIs with a critical t-statistics following the Benjamini1995 procedure.</p>
-<p>The <code>interplot</code> package provides a convenient way to operate and visualize above points with one or a series of plots produced by a single function. The function visualizes the changes in the coefficient of one variable in a two-way interaction term conditional on the value of the other included variable. The plot also includes simulated 95% confidential intervals of these coefficients. In the current version, the function works with ordinary linear regression models, generalized linear models (e.g., logit, probit, ordered logit, etc.), and multilevel (mixed-effects) regressions, all with complete or multiply imputed data.</p>
-<p>Comparing to established alternatives such as <code>effects::plot</code> and <code>sjplot::sjp.int</code>, <code>interplot</code> provides a more user-friendly way to quickly produce plots that are easy to interpret. <code>interplot</code> plots the changes in the <em>conditional coefficient</em> of one variable in the interaction, rather than changes in the dependent variable itself as in the aforementioned functions. This approach avoids displaying interaction effects across multiple panels or multiple lines in favor of a single plot containing all the relevant information. Moreover, by outputting <code>ggplot</code> objects, <code>interplot</code> allows users to easily further customize their graphs.</p>
-<p>This vignette purposes to illustrate how users can apply these functions to improve the presentation of the interactions in their models.</p>
-<div id="installation" class="section level1">
-<h1 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h1>
+<p><span class="math display">\[\hat{\sigma}_{\frac{\partial Y}{\partial
+X}} = \sqrt{var(\hat{\beta_1}) + Z^2var(\hat{\beta_3}) +
+2Zcov(\hat{\beta_1}, \hat{\beta_3})}.\]</span></p>
+<p>As <span class="citation">Brambor, Clark, and Golder (2006,
+70)</span> indicates, the above equation suggests that its perfectly
+possible for the contribution of X on Y to be statistically significant
+for certain values of Z “even if all of the model parameters are
+insignificant.” In other words, one cannot infer whether X has a
+meaningful conditional effect on Y simply from the magnitude and
+significance of either <span class="math inline">\(\beta_1\)</span> or
+<span class="math inline">\(\beta_3\)</span> (Ibid., 74). Instead, the
+conditional effect should be examined based on the marginal effect at
+every observed value of Z <span class="citation">(Berry, Golder, and
+Milton 2012; Brambor, Clark, and Golder 2006; Braumoeller
+2004)</span>.</p>
+<p>Furthermore, scholars have noticed that the point estimations of some
+interaction models, especially those depending on link functions (e.g.,
+logit and probit) may not be as reliable as the estimates of the
+confidence intervals <span class="citation">(Berry, DeMeritt, and Esarey
+2016)</span>. Therefore, it is even more important to accurately present
+and examine the boundaries established by the confidence intervals than
+the point estimates in the test of conditional effect. <span class="citation">Berry, Golder, and Milton (2012)</span> also pointed
+out that the substantive significance of the conditional effect highly
+relates to the distribution of the conditioning variable (viz., Z in the
+above example). They thus recommend researchers to present the frequency
+distribution of the conditioning variable together with the marginal
+effects (especially when the effect trend goes across the zero
+point).</p>
+<p>More recently, <span class="citation">Esarey and Sumner (2017)</span>
+uncovered that the estimation of the marginal effects suggested by <span class="citation">Brambor, Clark, and Golder (2006)</span> might cause a
+“multiple comparison problem” and result over- or underconfidence of the
+confidential intervals. They thus recommended to adjust the CIs with a
+critical t-statistics following the Benjamini1995 procedure.</p>
+<p>The <code>interplot</code> package provides a convenient way to
+operate and visualize above points with one or a series of plots
+produced by a single function. The function visualizes the changes in
+the coefficient of one variable (the posterior probabilities) in a
+two-way interaction term conditional on the value of the other included
+variable. The plot also includes simulated 95% confidential intervals of
+these coefficients.In the current version, the function works with
+ordinary linear regression models, generalized linear models (e.g.,
+logit, probit, ordered logit, etc.), and multilevel (mixed-effects)
+regressions, all with complete or multiply imputed data (in a list
+format).</p>
+<p>Comparing to established alternatives such as
+<code>effects::plot</code> and <code>sjplot::sjp.int</code>,
+<code>interplot</code> provides a more user-friendly way to quickly
+produce plots that are easy to interpret. Moreover, it works on
+multilevel models and outcomes from multiple imputations.
+<code>interplot</code> plots the changes in the <em>conditional
+coefficient</em> of one variable in the interaction, rather than changes
+in the dependent variable itself as in the aforementioned functions.
+This approach avoids displaying interaction effects across multiple
+panels or multiple lines in favor of a single plot containing all the
+relevant information. Moreover, by outputting <code>ggplot</code>
+objects, <code>interplot</code> allows users to easily further customize
+their graphs.</p>
+<p>This vignette purposes to illustrate how users can apply these
+functions to improve the presentation of the interactions in their
+models.</p>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
 <p>To install:</p>
 <ul>
-<li>the latest released version: <code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("interplot")</a></code>.</li>
-<li>the latest developing version: <code><a href="https://devtools.r-lib.org//reference/remote-reexports.html">devtools::install_github("sammo3182/interplot")</a></code>.</li>
+<li>the latest released version:
+<code>install.packages("interplot")</code>.</li>
+<li>the latest developing version:
+<code>devtools::install_github("sammo3182/interplot")</code>.</li>
 </ul>
 </div>
-<div id="basic-use" class="section level1">
-<h1 class="hasAnchor">
-<a href="#basic-use" class="anchor"></a>Basic Use</h1>
-<div id="run-a-model" class="section level2">
-<h2 class="hasAnchor">
-<a href="#run-a-model" class="anchor"></a>Run a Model</h2>
-<p>This example is based on the <code>mtcars</code> dataset, which is drawn from the 1974 volume of the US magazine <em>Motor Trend</em>. The dependent variable is mileage in miles per (US) gallon (<code>mpg</code>), and the independent variables are the number of engine cylinders (<code>cyl</code>) and automobile weight in thousands of pounds (<code>wt</code>).</p>
+<div class="section level2">
+<h2 id="basic-use">Basic Use<a class="anchor" aria-label="anchor" href="#basic-use"></a>
+</h2>
+<div class="section level3">
+<h3 id="run-a-model">Run a Model<a class="anchor" aria-label="anchor" href="#run-a-model"></a>
+</h3>
+<p>This example is based on the <code>mtcars</code> dataset, which is
+drawn from the 1974 volume of the US magazine <em>Motor Trend</em>. The
+dependent variable is mileage in miles per (US) gallon
+(<code>mpg</code>), and the independent variables are the number of
+engine cylinders (<code>cyl</code>) and automobile weight in thousands
+of pounds (<code>wt</code>).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span>  <span class="co">#load the data</span></code></pre></div>
-<p>Suppose we are interested in how automobile weight affects the relationship between of the number of engine cylinders on mileage and how the number of cylinders affects the relationship between the car’s weight and its mileage. Such conditional effects are modeled using a two-way multiplicative interaction term:</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span>  <span class="co">#load the data</span></span></code></pre></div>
+<p>Suppose we are interested in how automobile weight affects the
+relationship between of the number of engine cylinders on mileage and
+how the number of cylinders affects the relationship between the car’s
+weight and its mileage. Such conditional effects are modeled using a
+two-way multiplicative interaction term:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m_cyl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span> <span class="op">*</span> <span class="va">cyl</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">m_cyl</span><span class="op">)</span></code></pre></div>
-<pre><code>## 
-## Call:
-## lm(formula = mpg ~ wt * cyl, data = mtcars)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -4.2288 -1.3495 -0.5042  1.4647  5.2344 
-## 
-## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  54.3068     6.1275   8.863 1.29e-09 ***
-## wt           -8.6556     2.3201  -3.731 0.000861 ***
-## cyl          -3.8032     1.0050  -3.784 0.000747 ***
-## wt:cyl        0.8084     0.3273   2.470 0.019882 *  
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Residual standard error: 2.368 on 28 degrees of freedom
-## Multiple R-squared:  0.8606, Adjusted R-squared:  0.8457 
-## F-statistic: 57.62 on 3 and 28 DF,  p-value: 4.231e-12</code></pre>
-<p>The coefficient of the interactive term (<code>wt:cyl</code>) is positive and statistically significant at .05 level. This tells us that the coefficient of <code>wt</code> depends on the value of <code>cyl</code> and vice versa; these estimated coefficients are conditional. It does not indicate anything, however, about the magnitude or statistical significance of these conditional coefficients. A plot produced by <code>interplot</code> easily and clearly answers these latter questions.</p>
+<code class="sourceCode R"><span><span class="va">m_cyl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span> <span class="op">*</span> <span class="va">cyl</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m_cyl</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## Call:</span></span>
+<span><span class="co">## lm(formula = mpg ~ wt * cyl, data = mtcars)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Residuals:</span></span>
+<span><span class="co">##     Min      1Q  Median      3Q     Max </span></span>
+<span><span class="co">## -4.2288 -1.3495 -0.5042  1.4647  5.2344 </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Coefficients:</span></span>
+<span><span class="co">##             Estimate Std. Error t value Pr(&gt;|t|)    </span></span>
+<span><span class="co">## (Intercept)  54.3068     6.1275   8.863 1.29e-09 ***</span></span>
+<span><span class="co">## wt           -8.6556     2.3201  -3.731 0.000861 ***</span></span>
+<span><span class="co">## cyl          -3.8032     1.0050  -3.784 0.000747 ***</span></span>
+<span><span class="co">## wt:cyl        0.8084     0.3273   2.470 0.019882 *  </span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Residual standard error: 2.368 on 28 degrees of freedom</span></span>
+<span><span class="co">## Multiple R-squared:  0.8606, Adjusted R-squared:  0.8457 </span></span>
+<span><span class="co">## F-statistic: 57.62 on 3 and 28 DF,  p-value: 4.231e-12</span></span></code></pre>
+<p>The coefficient of the interactive term (<code>wt:cyl</code>) is
+positive and statistically significant at .05 level. This tells us that
+the coefficient of <code>wt</code> depends on the value of
+<code>cyl</code> and vice versa; these estimated coefficients are
+conditional. It does not indicate anything, however, about the magnitude
+or statistical significance of these conditional coefficients. A plot
+produced by <code>interplot</code> easily and clearly answers these
+latter questions.</p>
 </div>
-<div id="create-a-basic-graph-of-the-conditional-coefficients" class="section level2">
-<h2 class="hasAnchor">
-<a href="#create-a-basic-graph-of-the-conditional-coefficients" class="anchor"></a>Create a Basic Graph of the Conditional Coefficients</h2>
-<p>To plot conditional coefficients, a user needs to provide only three basic pieces of information: the object of a regression result (<code>m</code>), the variable whose coefficient is to be plotted (<code>var1</code>), and the variable on which the coefficient is conditional (<code>var2</code>). Taking the previous example, if we intend to know how the weight of a car can affect the coefficient for number of cylinders on the mileage, <code>var1</code> is <code>cyl</code>, and <code>var2</code> is <code>wt</code>.</p>
+<div class="section level3">
+<h3 id="create-a-basic-graph-of-the-conditional-coefficients">Create a Basic Graph of the Conditional Coefficients<a class="anchor" aria-label="anchor" href="#create-a-basic-graph-of-the-conditional-coefficients"></a>
+</h3>
+<p>To plot conditional coefficients, a user needs to provide only three
+basic pieces of information: the object of a regression result
+(<code>m</code>), the variable whose coefficient is to be plotted
+(<code>var1</code>), and the variable on which the coefficient is
+conditional (<code>var2</code>). Taking the previous example, if we
+intend to know how the weight of a car can affect the coefficient for
+number of cylinders on the mileage, <code>var1</code> is
+<code>cyl</code>, and <code>var2</code> is <code>wt</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">interplot</span><span class="op">)</span>
-
-<span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_cyl</span>, var1 <span class="op">=</span> <span class="st">"cyl"</span>, var2 <span class="op">=</span> <span class="st">"wt"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">interplot</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_cyl</span>, var1 <span class="op">=</span> <span class="st">"cyl"</span>, var2 <span class="op">=</span> <span class="st">"wt"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="interplot-vignette_files/figure-html/unnamed-chunk-3-1.png" width="80%"></p>
-<p>The plot clearly shows that with increasing automobile weight (along the x axis), the magnitude of the coefficient of the number of cylinders on the mileage also increases (along the y axis).</p>
-<p>Similarly, to show how the number of cylinders affects the coefficient of automobile weight on mileage, one only needs to switch <code>var1</code> and <code>var2</code>:</p>
+<p>The plot clearly shows that with increasing automobile weight (along
+the x axis), the magnitude of the coefficient of the number of cylinders
+on the mileage also increases (along the y axis).</p>
+<p>Similarly, to show how the number of cylinders affects the
+coefficient of automobile weight on mileage, one only needs to switch
+<code>var1</code> and <code>var2</code>:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_cyl</span>, var1 <span class="op">=</span> <span class="st">"wt"</span>, var2 <span class="op">=</span> <span class="st">"cyl"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_cyl</span>, var1 <span class="op">=</span> <span class="st">"wt"</span>, var2 <span class="op">=</span> <span class="st">"cyl"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="interplot-vignette_files/figure-html/unnamed-chunk-4-1.png" width="80%"></p>
-<p>Users can adjust the CI level by setting the <code>ci</code> option. The default value is 95% CIs. The following example resets the the CIs to 90%.</p>
+<p>Users can adjust the CI level by setting the <code>ci</code> option.
+The default value is 95% CIs. The following example resets the the CIs
+to 90%.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_cyl</span>, var1 <span class="op">=</span> <span class="st">"wt"</span>, var2 <span class="op">=</span> <span class="st">"cyl"</span>, ci <span class="op">=</span> <span class="fl">.9</span>, point <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_cyl</span>, var1 <span class="op">=</span> <span class="st">"wt"</span>, var2 <span class="op">=</span> <span class="st">"cyl"</span>, ci <span class="op">=</span> <span class="fl">.9</span>, point <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
 <p><img src="interplot-vignette_files/figure-html/unnamed-chunk-5-1.png" width="80%"></p>
-<p>The format of the plot also changes when <code>wt</code> is <code>var1</code> and <code>cyl</code> is <code>var2</code>. This is because <code>cyl</code> is not a continuous variable but a categorical one with just three values: 4, 6, and 8. <code>interplot</code> automatically detects the number of values taken on by <code>var2</code> and chooses the appropriate plot format. If there are fewer than 10 values, the function will produce a “dot-and-whisker” plot; otherwise, by default, it will generate a “line-and-ribbon” plot. Users may override this default by setting the argument <code>point</code> to <code>TRUE</code>.</p>
+<p>The format of the plot also changes when <code>wt</code> is
+<code>var1</code> and <code>cyl</code> is <code>var2</code>. This is
+because <code>cyl</code> is not a continuous variable but a categorical
+one with just three values: 4, 6, and 8. <code>interplot</code>
+automatically detects the number of values taken on by <code>var2</code>
+and chooses the appropriate plot format. If there are fewer than 10
+values, the function will produce a “dot-and-whisker” plot; otherwise,
+by default, it will generate a “line-and-ribbon” plot. Users may
+override this default by setting the argument <code>point</code> to
+<code>TRUE</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_cyl</span>, var1 <span class="op">=</span> <span class="st">"cyl"</span>, var2 <span class="op">=</span> <span class="st">"wt"</span>, point <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op">+</span>
-  <span class="co"># changing the angle of x labels for a clearer vision</span>
-  <span class="fu">theme</span><span class="op">(</span>axis.text.x  <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>angle<span class="op">=</span><span class="fl">90</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_cyl</span>, var1 <span class="op">=</span> <span class="st">"cyl"</span>, var2 <span class="op">=</span> <span class="st">"wt"</span>, point <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co"># changing the angle of x labels for a clearer vision</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x  <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle<span class="op">=</span><span class="fl">90</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="interplot-vignette_files/figure-html/unnamed-chunk-6-1.png" width="80%"></p>
 </div>
-<div id="change-the-appearance-of-the-plot" class="section level2">
-<h2 class="hasAnchor">
-<a href="#change-the-appearance-of-the-plot" class="anchor"></a>Change the Appearance of the Plot</h2>
-<p>Plots generated by <code>interplot</code> are, by design, very basic. They are, however, <code>ggplot</code> objects and so may be easily modified further.</p>
+<div class="section level3">
+<h3 id="change-the-appearance-of-the-plot">Change the Appearance of the Plot<a class="anchor" aria-label="anchor" href="#change-the-appearance-of-the-plot"></a>
+</h3>
+<p>Plots generated by <code>interplot</code> are, by design, very basic.
+They are, however, <code>ggplot</code> objects and so may be easily
+modified further.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_cyl</span>, var1 <span class="op">=</span> <span class="st">"cyl"</span>, var2 <span class="op">=</span> <span class="st">"wt"</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="co"># Add labels for X and Y axes</span>
-    <span class="fu">xlab</span><span class="op">(</span><span class="st">"Automobile Weight (thousands lbs)"</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">ylab</span><span class="op">(</span><span class="st">"Estimated Coefficient for\nNumber of Cylinders"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="co"># Change the background</span>
-    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="co"># Add the title</span>
-    <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"Estimated Coefficient of Engine Cylinders \non Mileage by Automobile Weight"</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">theme</span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>face<span class="op">=</span><span class="st">"bold"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="co"># Add a horizontal line at y = 0</span>
-    <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_cyl</span>, var1 <span class="op">=</span> <span class="st">"cyl"</span>, var2 <span class="op">=</span> <span class="st">"wt"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="co"># Add labels for X and Y axes</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Automobile Weight (thousands lbs)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"Estimated Coefficient for\nNumber of Cylinders"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co"># Change the background</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co"># Add the title</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Estimated Coefficient of Engine Cylinders \non Mileage by Automobile Weight"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>face<span class="op">=</span><span class="st">"bold"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co"># Add a horizontal line at y = 0</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_hline</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="interplot-vignette_files/figure-html/unnamed-chunk-7-1.png" width="80%"></p>
-<p>For the default settings of the whisker or ribbon, the users can also use arguments, such as <code>ercolor</code> and <code>esize</code> to modify. More arguments can be found in the <code><a href="../reference/interplot.html">?interplot</a></code> file.</p>
+<p>For the default settings of the whisker or ribbon, the users can also
+use arguments, such as <code>ercolor</code> and <code>esize</code> to
+modify. More arguments can be found in the <code><a href="../reference/interplot.html">?interplot</a></code>
+file.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_cyl</span>, var1 <span class="op">=</span> <span class="st">"wt"</span>, var2 <span class="op">=</span> <span class="st">"cyl"</span>, ercolor <span class="op">=</span> <span class="st">"blue"</span>, esize <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2</span>, color <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_cyl</span>, var1 <span class="op">=</span> <span class="st">"wt"</span>, var2 <span class="op">=</span> <span class="st">"cyl"</span>, ercolor <span class="op">=</span> <span class="st">"blue"</span>, esize <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2</span>, color <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="interplot-vignette_files/figure-html/unnamed-chunk-8-1.png" width="80%"></p>
 </div>
-<div id="plot-the-effect-of-a-variable-with-a-quadratic-term" class="section level2">
-<h2 class="hasAnchor">
-<a href="#plot-the-effect-of-a-variable-with-a-quadratic-term" class="anchor"></a>Plot the Effect of a Variable with a Quadratic Term</h2>
-<p>The simplest type of interaction is quadratic term, which can be regarded as a variable interact with itself. <code>interplot</code> can visualize this case when the variable names of <code>var1</code> and <code>var2</code> are the same.</p>
+<div class="section level3">
+<h3 id="plot-the-effect-of-a-variable-with-a-quadratic-term">Plot the Effect of a Variable with a Quadratic Term<a class="anchor" aria-label="anchor" href="#plot-the-effect-of-a-variable-with-a-quadratic-term"></a>
+</h3>
+<p>The simplest type of interaction is quadratic term, which can be
+regarded as a variable interact with itself. <code>interplot</code> can
+visualize this case when the variable names of <code>var1</code> and
+<code>var2</code> are the same.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m_wt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">wt</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span>
-
-<span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_wt</span>, var1 <span class="op">=</span> <span class="st">"wt"</span>, var2 <span class="op">=</span> <span class="st">"wt"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">m_wt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">wt</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_wt</span>, var1 <span class="op">=</span> <span class="st">"wt"</span>, var2 <span class="op">=</span> <span class="st">"wt"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="interplot-vignette_files/figure-html/unnamed-chunk-9-1.png" width="80%"></p>
 </div>
-<div id="plot-interactions-with-a-factor-term" class="section level2">
-<h2 class="hasAnchor">
-<a href="#plot-interactions-with-a-factor-term" class="anchor"></a>Plot Interactions with a Factor Term</h2>
-<p>When either the conditioned or the conditioning base term of an interaction is a factor, <code>interplot</code> creates a facet in which the conditional effect under each category of the factor is visualized in a separate panel.</p>
+<div class="section level3">
+<h3 id="plot-interactions-with-a-factor-term">Plot Interactions with a Factor Term<a class="anchor" aria-label="anchor" href="#plot-interactions-with-a-factor-term"></a>
+</h3>
+<p>When either the conditioned or the conditioning base term of an
+interaction is a factor, <code>interplot</code> creates a facet in which
+the conditional effect under each category of the factor is visualized
+in a separate panel.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mtcars</span><span class="op">$</span><span class="va">gear</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">gear</span><span class="op">)</span>
-<span class="va">m_gear</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">gear</span> <span class="op">*</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span>
-
-<span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_gear</span>, var1 <span class="op">=</span> <span class="st">"wt"</span>, var2 <span class="op">=</span> <span class="st">"gear"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">mtcars</span><span class="op">$</span><span class="va">gear</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">gear</span><span class="op">)</span></span>
+<span><span class="va">m_gear</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">gear</span> <span class="op">*</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_gear</span>, var1 <span class="op">=</span> <span class="st">"wt"</span>, var2 <span class="op">=</span> <span class="st">"gear"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="interplot-vignette_files/figure-html/unnamed-chunk-10-1.png" width="80%"></p>
-<p>To edit the facet labels, use the <code>facet_labs</code> argument to specify a character vector of the desired labels:</p>
+<p>To edit the facet labels, use the <code>facet_labs</code> argument to
+specify a character vector of the desired labels:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_gear</span>, var1 <span class="op">=</span> <span class="st">"wt"</span>, var2 <span class="op">=</span> <span class="st">"gear"</span>, facet_labs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"4-speed"</span>, <span class="st">"5-speed"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_gear</span>, var1 <span class="op">=</span> <span class="st">"wt"</span>, var2 <span class="op">=</span> <span class="st">"gear"</span>, facet_labs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"4-speed"</span>, <span class="st">"5-speed"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="interplot-vignette_files/figure-html/unnamed-chunk-11-1.png" width="80%"></p>
 </div>
-<div id="include-the-distribution-of-the-conditioning-variable" class="section level2">
-<h2 class="hasAnchor">
-<a href="#include-the-distribution-of-the-conditioning-variable" class="anchor"></a>Include the Distribution of the Conditioning Variable</h2>
-<p><span class="citation">Berry, Golder, and Milton (2012)</span> points out that, when a variable’s conditional effect reaches statistical significance over only part of the range of the conditioning variable, it can be helpful to the evaluation of the substantive significance of the conditional effect to know the distribution of the conditioning variable. For this purpose, <code>interplot</code> has the <code>hist</code> argument for users to choose to superimpose a histogram at the bottom of the conditional effect plot.</p>
+<div class="section level3">
+<h3 id="include-the-distribution-of-the-conditioning-variable">Include the Distribution of the Conditioning Variable<a class="anchor" aria-label="anchor" href="#include-the-distribution-of-the-conditioning-variable"></a>
+</h3>
+<p><span class="citation">Berry, Golder, and Milton (2012)</span> points
+out that, when a variable’s conditional effect reaches statistical
+significance over only part of the range of the conditioning variable,
+it can be helpful to the evaluation of the substantive significance of
+the conditional effect to know the distribution of the conditioning
+variable. For this purpose, <code>interplot</code> has the
+<code>hist</code> argument for users to choose to superimpose a
+histogram at the bottom of the conditional effect plot.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_cyl</span>, var1 <span class="op">=</span> <span class="st">"cyl"</span>, var2 <span class="op">=</span> <span class="st">"wt"</span>, hist <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_cyl</span>, var1 <span class="op">=</span> <span class="st">"cyl"</span>, var2 <span class="op">=</span> <span class="st">"wt"</span>, hist <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_hline</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="interplot-vignette_files/figure-html/unnamed-chunk-12-1.png" width="80%"></p>
-<p>Our implementation of this option was inspired by the excellent work of <span class="citation">Hainmueller, Mummolo, and Xu (2016)</span>. A tip is that when presenting the histogram, some default setting would not be directly modified by the build-in arguments or the <code>geom</code> functions. Instead, one can change these settings by the <code>aes</code> function—as illustrated by the following example.</p>
+<p>Our implementation of this option was inspired by the excellent work
+of <span class="citation">Hainmueller, Mummolo, and Xu (2016)</span>. A
+tip is that when presenting the histogram, some default setting would
+not be directly modified by the build-in arguments or the
+<code>geom</code> functions. Instead, one can change these settings by
+the <code>aes</code> function—as illustrated by the following
+example.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_cyl</span>, var1 <span class="op">=</span> <span class="st">"cyl"</span>, var2 <span class="op">=</span> <span class="st">"wt"</span>, hist <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"pink"</span><span class="op">)</span> <span class="op">+</span> <span class="fu">theme</span><span class="op">(</span>legend.position<span class="op">=</span><span class="st">"none"</span><span class="op">)</span> <span class="op">+</span>  <span class="co"># geom_line(color = "pink") + </span>
-  <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_cyl</span>, var1 <span class="op">=</span> <span class="st">"cyl"</span>, var2 <span class="op">=</span> <span class="st">"wt"</span>, hist <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"pink"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position<span class="op">=</span><span class="st">"none"</span><span class="op">)</span> <span class="op">+</span>  <span class="co"># geom_line(color = "pink") + </span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_hline</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="interplot-vignette_files/figure-html/unnamed-chunk-13-1.png" width="80%"></p>
 </div>
 </div>
-<div id="advanced-use-and-customization" class="section level1">
-<h1 class="hasAnchor">
-<a href="#advanced-use-and-customization" class="anchor"></a>Advanced Use and Customization</h1>
-<div id="statistical-test-of-the-conditional-effect" class="section level2">
-<h2 class="hasAnchor">
-<a href="#statistical-test-of-the-conditional-effect" class="anchor"></a>Statistical Test of the Conditional Effect</h2>
-<p><code>interplot</code> visualizes the conditional effect based on simulated marginal effects. The simulation provides a probabilistic distribution of moderation effect of the conditioning variable (<code>var2</code>) at every preset values (including the minimum and maximum values) of the conditioned variable (<code>var1</code>), denoted as E<sub>min</sub> and E<sub>max</sub>. This output allows the function to further examine the conditional effect statistically in two ways. One is to examine if the distribution of (E<sub>max</sub> - E<sub>min</sub>) covers zero. The other is to directly compare E<sub>min</sub> and E<sub>max</sub> through statistical tools for distributional comparisons. Users can choose either method by setting the argument <code>stats_cp</code> to “ci” or “ks.”</p>
-<ul>
-<li>“ci” provides the confidence interval of the difference of (E<sub>max</sub> - E<sub>min</sub>). An interval including 0 suggests no statistical difference before and after the conditional effect is applied, and vise versa.</li>
-<li>“ks” presents the result of a two-sample Kolmogorov-Smirnov test of the simulated distributions of E<sub>min</sub> and E<sub>max</sub>. The output includes a D statistics and a p-value of the null hypothesis that the two distributions come from the same distribution at the 0.05 level.</li>
-</ul>
+<div class="section level2">
+<h2 id="advanced-use-and-customization">Advanced Use and Customization<a class="anchor" aria-label="anchor" href="#advanced-use-and-customization"></a>
+</h2>
+<p><code>interplot</code> visualizes the conditional effect based on
+(posterior) simulated marginal effects. The simulation provides a
+probabilistic distribution of moderation effect of the conditioning
+variable (<code>var2</code>) at every preset values (including the
+minimum and maximum values) of the conditioned variable
+(<code>var1</code>), denoted as E<sub>min</sub> and E<sub>max</sub>.
+This output allows the function to further examine the conditional
+effect statistically. <code>interplot</code> can examine if the
+distribution of (E<sub>max</sub> - E<sub>min</sub>) covers zero.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> Users can
+choose either method by setting the argument <code>stats_cp</code> to
+“ci”. The default is “none.”</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">313</span><span class="op">)</span>
-
-<span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_cyl</span>, var1 <span class="op">=</span> <span class="st">"cyl"</span>, var2 <span class="op">=</span> <span class="st">"wt"</span>, stats_cp <span class="op">=</span> <span class="st">"ci"</span><span class="op">)</span></code></pre></div>
-<p><img src="interplot-vignette_files/figure-html/unnamed-chunk-14-1.png" width="80%"></p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">313</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_cyl</span>, var1 <span class="op">=</span> <span class="st">"cyl"</span>, var2 <span class="op">=</span> <span class="st">"wt"</span>, stats_cp <span class="op">=</span> <span class="st">"ci"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="interplot-vignette_files/figure-html/unnamed-chunk-14-1.png" width="2187.5"></p>
+<p>since the statistical results are presented as a <code>ggplot</code>
+caption, one cannot using <code>+ lab(caption = ...)</code> to specify
+it as for a regular <code>ggplot</code> object. Instead, users can
+modify the plot’s caption by specify the argument
+<code>txt_caption</code> of the <code>dwplot</code> function.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_cyl</span>, var1 <span class="op">=</span> <span class="st">"cyl"</span>, var2 <span class="op">=</span> <span class="st">"wt"</span>, stats_cp <span class="op">=</span> <span class="st">"ks"</span><span class="op">)</span></code></pre></div>
-<p><img src="interplot-vignette_files/figure-html/unnamed-chunk-14-2.png" width="80%"></p>
-<p>since the statistical results are presented as a <code>ggplot</code> caption, one cannot using <code>+ lab(caption = ...)</code> to specify it as for a regular <code>ggplot</code> object. Instead, users can modify the plot’s caption by specify the argument <code>txt_caption</code> of the <code>dwplot</code> function.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">313</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_cyl</span>, var1 <span class="op">=</span> <span class="st">"cyl"</span>, var2 <span class="op">=</span> <span class="st">"wt"</span>, stats_cp <span class="op">=</span> <span class="st">"ci"</span>, </span>
+<span>          txt_caption <span class="op">=</span> <span class="st">"\n Source: Motor Trend Car Road Tests 1973."</span><span class="op">)</span></span></code></pre></div>
+<p><img src="interplot-vignette_files/figure-html/unnamed-chunk-15-1.png" width="2187.5"></p>
+<div class="section level3">
+<h3 id="adjust-the-overconfidence-in-confidence-interval-estimations">Adjust the Overconfidence in Confidence Interval Estimations<a class="anchor" aria-label="anchor" href="#adjust-the-overconfidence-in-confidence-interval-estimations"></a>
+</h3>
+<p><span class="citation">Berry, DeMeritt, and Esarey (2016)</span>
+emphasized the importance to estimate the uncertainty in studying
+conditional effects. The most common way to do that is to follow the
+straightforward method of <span class="citation">Brambor, Clark, and
+Golder (2006)</span>. Nevertheless, <span class="citation">Esarey and
+Sumner (2017)</span> pointed out that this method might cause a
+“multiple comparison problem” and result over- or underconfidence of the
+confidential intervals. For the overconfidence cases, they recommended
+to adjust the CIs with a critical t-statistics following the
+Benjamini1995 procedure.</p>
+<p><code>interplot</code> incorporates this recommendation with an
+argument <code>adjCI</code>. If it is set <code>TRUE</code>, the
+function will calculate the critical t-statistics to limit the false
+discovery rate and adjust the estimation of confidence intervals. In the
+following example, the left panel presents the conditional effect plot
+with CIs estimated based on the <span class="citation">Brambor, Clark,
+and Golder (2006)</span> method, and the right panel presents results
+with adjusted CIs. Although the adjustment does not change the
+substantial conclusion, we can see the adjusted CIs cover more area both
+in the middle and at the extreme values of x.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">313</span><span class="op">)</span>
-
-<span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_cyl</span>, var1 <span class="op">=</span> <span class="st">"cyl"</span>, var2 <span class="op">=</span> <span class="st">"wt"</span>, stats_cp <span class="op">=</span> <span class="st">"ci"</span>, txt_caption <span class="op">=</span> <span class="st">"\n Source: Motor Trend Car Road Tests 1973."</span><span class="op">)</span></code></pre></div>
-<p><img src="interplot-vignette_files/figure-html/unnamed-chunk-15-1.png" width="80%"></p>
-</div>
-<div id="adjust-the-overconfidence-in-confidence-interval-estimations" class="section level2">
-<h2 class="hasAnchor">
-<a href="#adjust-the-overconfidence-in-confidence-interval-estimations" class="anchor"></a>Adjust the Overconfidence in Confidence Interval Estimations</h2>
-<p><span class="citation">Berry, DeMeritt, and Esarey (2016)</span> emphasized the importance to estimate the uncertainty in studying conditional effects. The most common way to do that is to follow the straightforward method of <span class="citation">Brambor, Clark, and Golder (2006)</span>. Nevertheless, <span class="citation">Esarey and Sumner (2017)</span> pointed out that this method might cause a “multiple comparison problem” and result over- or underconfidence of the confidential intervals. For the overconfidence cases, they recommended to adjust the CIs with a critical t-statistics following the Benjamini1995 procedure.</p>
-<p><code>interplot</code> incorporates this recommendation with an argument <code>adjCI</code>. If it is set <code>TRUE</code>, the function will calculate the critical t-statistics to limit the false discovery rate and adjust the estimation of confidence intervals. In the following example, the left panel presents the conditional effect plot with CIs estimated based on the <span class="citation">Brambor, Clark, and Golder (2006)</span> method, and the right panel presents results with adjusted CIs. Although the adjustment does not change the substantial conclusion, we can see the adjusted CIs cover more area both in the middle and at the extreme values of x.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">stdCI_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_wt</span>, var1 <span class="op">=</span> <span class="st">"wt"</span>, var2 <span class="op">=</span> <span class="st">"wt"</span>, adjCI <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
-<span class="fu">ggtitle</span><span class="op">(</span><span class="st">"Marginal Effects with Standard CIs"</span><span class="op">)</span>
-<span class="va">adjCI_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_wt</span>, var1 <span class="op">=</span> <span class="st">"wt"</span>, var2 <span class="op">=</span> <span class="st">"wt"</span>, adjCI <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span>
-<span class="fu">ggtitle</span><span class="op">(</span><span class="st">"Marginal Effects with Adjusted CIs"</span><span class="op">)</span>
-
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">gridExtra</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html">grid.arrange</a></span><span class="op">(</span><span class="va">stdCI_plot</span>, <span class="va">adjCI_plot</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">stdCI_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_wt</span>, var1 <span class="op">=</span> <span class="st">"wt"</span>, var2 <span class="op">=</span> <span class="st">"wt"</span>, adjCI <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Marginal Effects with Standard CIs"</span><span class="op">)</span></span>
+<span><span class="va">adjCI_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m_wt</span>, var1 <span class="op">=</span> <span class="st">"wt"</span>, var2 <span class="op">=</span> <span class="st">"wt"</span>, adjCI <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Marginal Effects with Adjusted CIs"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">gridExtra</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html" class="external-link">grid.arrange</a></span><span class="op">(</span><span class="va">stdCI_plot</span>, <span class="va">adjCI_plot</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="interplot-vignette_files/figure-html/unnamed-chunk-16-1.png" width="80%"></p>
 </div>
-<div id="plot-conditional-predicted-probability" class="section level2">
-<h2 class="hasAnchor">
-<a href="#plot-conditional-predicted-probability" class="anchor"></a>Plot Conditional Predicted Probability</h2>
-<p><span class="citation">Hanmer and Ozan Kalkan (2013)</span> point out (also in the associated <a href="https://ajps.org/2014/11/13/translating-statistical-results-into-meaningful-quantities-methods/">post</a> in the AJPS website) that it is important to translate statistical results into meaningful quantities. The task not only pushes researchers to interpret the results in a real-life manner—which may lead to substantively different conclusions—but also provides convenience for a far broader scope of readers (e.g., policy makers, governmental officials, stakeholders, etc.) to understand the implications of the study and their importance.</p>
-<p>To accomplish this task requires researchers to go beyond estimating the effect for the “average case,” but focuses more on the values or intervals that are illustratively important and meaningful. This could be a time-consuming job, though, especially when researchers work on models with limited dependent variables. <code>interplot</code> provides a convenient way to achieve the task. When researchers are dealing with general linear flat or multilevel models, they have the choice to set the argument <code>predPro</code> to <code>TRUE</code> and give the critical values they are interested in the argument <code>var2_vals</code>. Then, <code>interplot</code> will automatically estimated the conditional effects of predicted probabilities at these given values of the conditioned variable. The following example illustrates how it works.</p>
-<p>In this example, we are interested how the economic inequality affect the impact of income on the U.S. citizens’ belief in meritocracy, a critical ideology of the “American Dream.” We estimated this conditional effect based on an interaction model with three years of Pew surveys (2006, 2007, and 2009), in which the income is the conditioned variable and economic inequality (county-level Gini coefficients).<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> We first estimate the average conditional effect for the entire sample and then estimate the conditional predicted probabilities for citizens with the lowest and highest levels of income separately. As shown in the following plot, the average case in the left panel only shows a decreasing conditional effect, while the predicted probability plot in the right uncovers conditional effects in opposite directions for the high and low income individuals.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">pew1.w</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"pew1_w.csv"</span><span class="op">)</span>
-
-<span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span><span class="op">(</span>formula<span class="op">=</span><span class="va">meritocracy</span><span class="op">~</span><span class="va">ginicnty</span><span class="op">+</span><span class="va">income_i</span><span class="op">+</span><span class="va">ginicnty</span><span class="op">:</span><span class="va">income_i</span><span class="op">+</span><span class="va">income_cnty</span><span class="op">+</span><span class="va">black_cnty</span><span class="op">+</span>
-                <span class="va">perc_bush04</span><span class="op">+</span><span class="va">pop_cnty</span><span class="op">+</span><span class="va">educ_i</span><span class="op">+</span><span class="va">age_i</span><span class="op">+</span><span class="va">gender_i</span><span class="op">+</span><span class="va">unemp_i</span><span class="op">+</span><span class="va">union_i</span><span class="op">+</span><span class="va">partyid_i</span><span class="op">+</span>
-                <span class="va">ideo_i</span><span class="op">+</span><span class="va">attend_i</span><span class="op">+</span><span class="va">survid2006</span><span class="op">+</span><span class="va">survid2007</span><span class="op">+</span><span class="va">survid2009</span>,
-              data<span class="op">=</span><span class="va">pew1.w</span>,family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span><span class="op">(</span>link<span class="op">=</span><span class="st">"logit"</span><span class="op">)</span><span class="op">)</span>
-              
-<span class="va">plot_avg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span><span class="va">m</span>, var1 <span class="op">=</span> <span class="st">"ginicnty"</span>,var2 <span class="op">=</span> <span class="st">"income_i"</span>, predPro <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span> 
-<span class="fu">ggtitle</span><span class="op">(</span><span class="st">"Average Conditional Effects"</span><span class="op">)</span>
-
-<span class="va">plot_3val</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span><span class="va">m</span>, var1 <span class="op">=</span> <span class="st">"ginicnty"</span>,var2 <span class="op">=</span> <span class="st">"income_i"</span>, predPro <span class="op">=</span> <span class="cn">TRUE</span>, var2_vals <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">pew1.w</span><span class="op">$</span><span class="va">income_i</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">pew1.w</span><span class="op">$</span><span class="va">income_i</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-<span class="fu">ggtitle</span><span class="op">(</span><span class="st">"Conditional Predicted Probabilities for \nCitizens with Low and High Incomes"</span><span class="op">)</span> <span class="op">+</span>
-<span class="fu">scale_colour_discrete</span><span class="op">(</span>guide <span class="op">=</span> <span class="fu">guide_legend</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Income"</span><span class="op">)</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Low"</span>, <span class="st">"High"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
-<span class="fu">scale_fill_discrete</span><span class="op">(</span>guide <span class="op">=</span> <span class="fu">guide_legend</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Income"</span><span class="op">)</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Low"</span>, <span class="st">"High"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-<span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">.8</span><span class="op">)</span>, legend.justification <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">.5</span><span class="op">)</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html">grid.arrange</a></span><span class="op">(</span><span class="va">plot_avg</span>, <span class="va">plot_3val</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
+<div class="section level3">
+<h3 id="plot-conditional-predicted-probability">Plot Conditional Predicted Probability<a class="anchor" aria-label="anchor" href="#plot-conditional-predicted-probability"></a>
+</h3>
+<p><span class="citation">Hanmer and Ozan Kalkan (2013)</span> point out
+(also in the associated <a href="https://ajps.org/2014/11/13/translating-statistical-results-into-meaningful-quantities-methods/" class="external-link">post</a>
+in the AJPS website) that it is important to translate statistical
+results into meaningful quantities. The task not only pushes researchers
+to interpret the results in a real-life manner—which may lead to
+substantively different conclusions—but also provides convenience for a
+far broader scope of readers (e.g., policy makers, governmental
+officials, stakeholders, etc.) to understand the implications of the
+study and their importance.</p>
+<p>To accomplish this task requires researchers to go beyond estimating
+the effect for the “average case,” but focuses more on the values or
+intervals that are illustratively important and meaningful. This could
+be a time-consuming job, though, especially when researchers work on
+models with limited dependent variables. <code>interplot</code> provides
+a convenient way to achieve the task. When researchers are dealing with
+general linear flat or multilevel models, they have the choice to set
+the argument <code>predPro</code> to <code>TRUE</code> and give the
+critical values they are interested in the argument
+<code>var2_vals</code>. Then, <code>interplot</code> will automatically
+estimated the conditional effects of predicted probabilities at these
+given values of the conditioned variable. The following example
+illustrates how it works.</p>
+<p>In this example, we are interested how the economic inequality affect
+the impact of income on the U.S. citizens’ belief in meritocracy, a
+critical ideology of the “American Dream.” We estimated this conditional
+effect based on an interaction model with three years of Pew surveys
+(2006, 2007, and 2009), in which the income is the conditioned variable
+and economic inequality (county-level Gini coefficients).<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> We first estimate the
+average conditional effect for the entire sample and then estimate the
+conditional predicted probabilities for citizens with the lowest and
+highest levels of income separately. As shown in the following plot, the
+average case in the left panel only shows a decreasing conditional
+effect, while the predicted probability plot in the right uncovers
+conditional effects in opposite directions for the high and low income
+individuals.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">pew1.w</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"pew1_w.csv"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span>formula<span class="op">=</span><span class="va">meritocracy</span><span class="op">~</span><span class="va">ginicnty</span><span class="op">+</span><span class="va">income_i</span><span class="op">+</span><span class="va">ginicnty</span><span class="op">:</span><span class="va">income_i</span><span class="op">+</span><span class="va">income_cnty</span><span class="op">+</span><span class="va">black_cnty</span><span class="op">+</span></span>
+<span>                <span class="va">perc_bush04</span><span class="op">+</span><span class="va">pop_cnty</span><span class="op">+</span><span class="va">educ_i</span><span class="op">+</span><span class="va">age_i</span><span class="op">+</span><span class="va">gender_i</span><span class="op">+</span><span class="va">unemp_i</span><span class="op">+</span><span class="va">union_i</span><span class="op">+</span><span class="va">partyid_i</span><span class="op">+</span></span>
+<span>                <span class="va">ideo_i</span><span class="op">+</span><span class="va">attend_i</span><span class="op">+</span><span class="va">survid2006</span><span class="op">+</span><span class="va">survid2007</span><span class="op">+</span><span class="va">survid2009</span>,</span>
+<span>              data<span class="op">=</span><span class="va">pew1.w</span>,family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link<span class="op">=</span><span class="st">"logit"</span><span class="op">)</span><span class="op">)</span></span>
+<span>              </span>
+<span><span class="va">plot_avg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span><span class="va">m</span>, var1 <span class="op">=</span> <span class="st">"ginicnty"</span>,var2 <span class="op">=</span> <span class="st">"income_i"</span>, predPro <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span> </span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Average Conditional Effects"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">plot_3val</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span><span class="va">m</span>, var1 <span class="op">=</span> <span class="st">"ginicnty"</span>,var2 <span class="op">=</span> <span class="st">"income_i"</span>, predPro <span class="op">=</span> <span class="cn">TRUE</span>, var2_vals <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">pew1.w</span><span class="op">$</span><span class="va">income_i</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">pew1.w</span><span class="op">$</span><span class="va">income_i</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Conditional Predicted Probabilities for \nCitizens with Low and High Incomes"</span><span class="op">)</span> <span class="op">+</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_colour_discrete.html" class="external-link">scale_colour_discrete</a></span><span class="op">(</span>guide <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html" class="external-link">guide_legend</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Income"</span><span class="op">)</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Low"</span>, <span class="st">"High"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_colour_discrete.html" class="external-link">scale_fill_discrete</a></span><span class="op">(</span>guide <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html" class="external-link">guide_legend</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Income"</span><span class="op">)</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Low"</span>, <span class="st">"High"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">.8</span><span class="op">)</span>, legend.justification <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">.5</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html" class="external-link">grid.arrange</a></span><span class="op">(</span><span class="va">plot_avg</span>, <span class="va">plot_3val</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="interplot-vignette_files/figure-html/unnamed-chunk-17-1.png" width="80%"></p>
 </div>
-<div id="plot-conditional-effects-without-a-model" class="section level2">
-<h2 class="hasAnchor">
-<a href="#plot-conditional-effects-without-a-model" class="anchor"></a>Plot Conditional Effects Without a Model</h2>
-<p>In some cases, one may analyze some complicated or self-made regression functions which are not supported by the current version of <code>interplot</code>. For such models, as long as the user has a dataset loading the simulated results of the interaction effects, she can still use <code>interplot</code> to visualize it. The dataset needs four columns the scale of the conditioning variable (<code>fake</code>), the simulated interactive effect at each break of the conditioning variable (<code>coef1</code>), and the simulated lower bound and upper bound of the confidence interval (<code>lb</code>, and <code>ub</code>). The column names should be exactly the ones shown in the above parentheses. Here is an example with some arbitrary artificial data:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Create a fake dataset of conditional effects</span>
-<span class="va">fake</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>
-<span class="va">coef1</span> <span class="op">&lt;-</span> <span class="va">fake</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">.5</span><span class="op">:</span><span class="fl">2.5</span>, <span class="fl">100</span>, replace <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
-<span class="va">lb</span> <span class="op">&lt;-</span> <span class="va">coef1</span> <span class="op">-</span> <span class="fl">.5</span>
-<span class="va">ub</span> <span class="op">&lt;-</span> <span class="va">coef1</span> <span class="op">+</span> <span class="fl">.5</span>
-
-<span class="va">df_fake</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">fake</span>, <span class="va">coef1</span>, <span class="va">lb</span>, <span class="va">ub</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># Use interplot directly with the dataset</span>
-<span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span><span class="va">df_fake</span><span class="op">)</span></code></pre></div>
+<div class="section level3">
+<h3 id="plot-conditional-effects-without-a-model">Plot Conditional Effects Without a Model<a class="anchor" aria-label="anchor" href="#plot-conditional-effects-without-a-model"></a>
+</h3>
+<p>In some cases, one may analyze some complicated or self-made
+regression functions which are not supported by the current version of
+<code>interplot</code>. For such models, as long as the user has a
+dataset loading the simulated results of the interaction effects, she
+can still use <code>interplot</code> to visualize it. The dataset needs
+four columns the scale of the conditioning variable (<code>fake</code>),
+the simulated interactive effect at each break of the conditioning
+variable (<code>coef1</code>), and the simulated lower bound and upper
+bound of the confidence interval (<code>lb</code>, and <code>ub</code>).
+The column names should be exactly the ones shown in the above
+parentheses. Here is an example with some arbitrary artificial data:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create a fake dataset of conditional effects</span></span>
+<span><span class="va">fake</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">coef1</span> <span class="op">&lt;-</span> <span class="va">fake</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">.5</span><span class="op">:</span><span class="fl">2.5</span>, <span class="fl">100</span>, replace <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span><span class="va">lb</span> <span class="op">&lt;-</span> <span class="va">coef1</span> <span class="op">-</span> <span class="fl">.5</span></span>
+<span><span class="va">ub</span> <span class="op">&lt;-</span> <span class="va">coef1</span> <span class="op">+</span> <span class="fl">.5</span></span>
+<span></span>
+<span><span class="va">df_fake</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">fake</span>, <span class="va">coef1</span>, <span class="va">lb</span>, <span class="va">ub</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Use interplot directly with the dataset</span></span>
+<span><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span><span class="va">df_fake</span><span class="op">)</span></span></code></pre></div>
 <p><img src="interplot-vignette_files/figure-html/unnamed-chunk-18-1.png" width="80%"></p>
-<p>If one also has the data of the <code>var2</code>, she can also draw a histogram under it by the argument <code>var_dt</code>.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">var2_fake</span> <span class="op">&lt;-</span> <span class="va">fake</span>
-<span class="co"># Set `hist` to TRUE is required to superimpose a histogram.</span>
-<span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span><span class="va">df_fake</span>, hist <span class="op">=</span> <span class="cn">TRUE</span>, var2_dt <span class="op">=</span> <span class="va">var2_fake</span><span class="op">)</span></code></pre></div>
+<p>If one also has the data of the <code>var2</code>, she can also draw
+a histogram under it by the argument <code>var_dt</code>.</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">var2_fake</span> <span class="op">&lt;-</span> <span class="va">fake</span></span>
+<span><span class="co"># Set `hist` to TRUE is required to superimpose a histogram.</span></span>
+<span><span class="fu"><a href="../reference/interplot.html">interplot</a></span><span class="op">(</span><span class="va">df_fake</span>, hist <span class="op">=</span> <span class="cn">TRUE</span>, var2_dt <span class="op">=</span> <span class="va">var2_fake</span><span class="op">)</span></span></code></pre></div>
 <p><img src="interplot-vignette_files/figure-html/unnamed-chunk-19-1.png" width="80%"></p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">## The ribbon and histogram do not fit. This is just an illustration</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## The ribbon and histogram do not fit. This is just an illustration</span></span></code></pre></div>
 </div>
-<div id="conclusion" class="section level2">
-<h2 class="hasAnchor">
-<a href="#conclusion" class="anchor"></a>Conclusion</h2>
-<p>The <code>interplot</code> package provides a flexible and convenient way to visualize conditional coefficients of variables in multiplicative interaction terms. This vignette offers an overview of its use and features. We encourage users to consult the help files for more details.</p>
-<p>The development of the package is ongoing, and future research promises a compatible tool for more types of regressions and more functions. Please contact us with any questions, bug reports, and comments.</p>
+<div class="section level3">
+<h3 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>
+</h3>
+<p>The <code>interplot</code> package provides a flexible and convenient
+way to visualize conditional coefficients of variables in multiplicative
+interaction terms. This vignette offers an overview of its use and
+features. We encourage users to consult the help files for more
+details.</p>
+<p>The development of the package is ongoing, and future research
+promises a compatible tool for more types of regressions and more
+functions. Please contact us with any questions, bug reports, and
+comments.</p>
 </div>
-<div id="affiliation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#affiliation" class="anchor"></a>Affiliation</h2>
+<div class="section level3">
+<h3 id="affiliation">Affiliation<a class="anchor" aria-label="anchor" href="#affiliation"></a>
+</h3>
 <p>Frederick Solt</p>
 <p>Department of Political Science,</p>
 <p>University of Iowa,</p>
 <p>324 Schaeffer Hall,</p>
 <p>20 E Washington St, Iowa City, IA, 52242</p>
 <p>Email: <a href="mailto:frederick-solt@uiowa.edu" class="email">frederick-solt@uiowa.edu</a></p>
-<p>Website: <a href="https://fsolt.org" class="uri">https://fsolt.org</a></p>
+<p>Website: <a href="https://fsolt.org" class="external-link uri">https://fsolt.org</a></p>
 <p><br></p>
 <p>Yue Hu</p>
 <p>Department of Political Science,</p>
@@ -353,46 +554,78 @@
 <p>Mingzhai 114,</p>
 <p>Qinghua Yuan, Haidian District, Beijing 100084, China</p>
 <p>Email: <a href="mailto:yuehu@tsinghua.edu.cn" class="email">yuehu@tsinghua.edu.cn</a></p>
-<p>Website: <a href="https://sammo3182.github.io" class="uri">https://sammo3182.github.io</a></p>
+<p>Website: <a href="https://sammo3182.github.io" class="external-link uri">https://sammo3182.github.io</a></p>
 </div>
-<div id="reference" class="section level2 unnumbered">
-<h2 class="hasAnchor">
-<a href="#reference" class="anchor"></a>Reference</h2>
+<div class="section level3">
+<h3 class="unnumbered" id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>
+</h3>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Berry2016" class="csl-entry">
-Berry, William D, Jacqueline HR DeMeritt, and Justin Esarey. 2016. <span>“Bias and Overconfidence in Parametric Models of Interactive Processes.”</span> <em>American Journal of Political Science</em> 60 (2): 521–39.
+Berry, William D, Jacqueline HR DeMeritt, and Justin Esarey. 2016.
+<span>“Bias and Overconfidence in Parametric Models of Interactive
+Processes.”</span> <em>American Journal of Political Science</em> 60
+(2): 521–39.
 </div>
 <div id="ref-Berry2012" class="csl-entry">
-Berry, William D, Matt Golder, and Daniel Milton. 2012. <span>“Improving Tests of Theories Positing Interaction.”</span> <em>Journal of Politics</em> 74 (3): 653–71.
+Berry, William D, Matt Golder, and Daniel Milton. 2012. <span>“Improving
+Tests of Theories Positing Interaction.”</span> <em>Journal of
+Politics</em> 74 (3): 653–71.
 </div>
 <div id="ref-Brambor2006" class="csl-entry">
-Brambor, Thomas, William Roberts Clark, and Matt Golder. 2006. <span>“Understanding Interaction Models: Improving Empirical Analyses.”</span> <em>Political Analysis</em> 14 (1): 63–82.
+Brambor, Thomas, William Roberts Clark, and Matt Golder. 2006.
+<span>“Understanding Interaction Models: Improving Empirical
+Analyses.”</span> <em>Political Analysis</em> 14 (1): 63–82.
 </div>
 <div id="ref-Braumoeller2004" class="csl-entry">
-Braumoeller, Bear F. 2004. <span>“Hypothesis Testing and Multiplicative Interaction Terms.”</span> <em>International Organization</em> 58 (4): 807–20.
+Braumoeller, Bear F. 2004. <span>“Hypothesis Testing and Multiplicative
+Interaction Terms.”</span> <em>International Organization</em> 58 (4):
+807–20.
 </div>
 <div id="ref-Esarey2017" class="csl-entry">
-Esarey, Justin, and Jane Lawrence Sumner. 2017. <span>“Marginal Effects in Interaction Models: Determining and Controlling the False Positive Rate.”</span> <a href="http://jee3.web.rice.edu/interaction-overconfidence.pdf">http://jee3.web.rice.edu/interaction-overconfidence.pdf</a>.
+Esarey, Justin, and Jane Lawrence Sumner. 2017. <span>“Marginal Effects
+in Interaction Models: Determining and Controlling the False Positive
+Rate.”</span> <a href="http://jee3.web.rice.edu/interaction-overconfidence.pdf" class="external-link">http://jee3.web.rice.edu/interaction-overconfidence.pdf</a>.
 </div>
 <div id="ref-Hainmueller2016" class="csl-entry">
-Hainmueller, Jens, Jonathan Mummolo, and Yiqing Xu. 2016. <span>“How Much Should We Trust Estimates from Multiplicative Interaction Models? Simple Tools to Improve Empirical Practice.”</span> <a href="https://www.ssrn.com/abstract=2739221">https://www.ssrn.com/abstract=2739221</a>.
+Hainmueller, Jens, Jonathan Mummolo, and Yiqing Xu. 2016. <span>“How
+Much Should We Trust Estimates from Multiplicative Interaction Models?
+Simple Tools to Improve Empirical Practice.”</span> <a href="https://www.ssrn.com/abstract=2739221" class="external-link">https://www.ssrn.com/abstract=2739221</a>.
 </div>
 <div id="ref-Hanmer2013" class="csl-entry">
-Hanmer, Michael J., and Kerem Ozan Kalkan. 2013. <span>“Behind the Curve: Clarifying the Best Approach to Calculating Predicted Probabilities and Marginal Effects from Limited Dependent Variable Models.”</span> <em>American Journal of Political Science</em> 57 (1): 263–77. <a href="https://doi.org/10.1111/j.1540-5907.2012.00602.x">https://doi.org/10.1111/j.1540-5907.2012.00602.x</a>.
+Hanmer, Michael J., and Kerem Ozan Kalkan. 2013. <span>“Behind the
+Curve: Clarifying the Best Approach to Calculating Predicted
+Probabilities and Marginal Effects from Limited Dependent Variable
+Models.”</span> <em>American Journal of Political Science</em> 57 (1):
+263–77. <a href="https://doi.org/10.1111/j.1540-5907.2012.00602.x" class="external-link">https://doi.org/10.1111/j.1540-5907.2012.00602.x</a>.
 </div>
 <div id="ref-Solt2016" class="csl-entry">
-Solt, Frederick, Yue Hu, Kevan Hudson, Jungmin Song, and Dong Erico Yu. 2017. <span>“Economic Inequality and Belief in Meritocracy in the United States.”</span> <em>Research &amp; Politics</em> 3 (4): 1–7. <a href="https://doi.org/10.1177/2053168016672101">https://doi.org/10.1177/2053168016672101</a>.
+Solt, Frederick, Yue Hu, Kevan Hudson, Jungmin Song, and Dong Erico Yu.
+2017. <span>“Economic Inequality and Belief in Meritocracy in the United
+States.”</span> <em>Research &amp; Politics</em> 3 (4): 1–7. <a href="https://doi.org/10.1177/2053168016672101" class="external-link">https://doi.org/10.1177/2053168016672101</a>.
 </div>
 <div id="ref-WrightJr1976" class="csl-entry">
-Wright Jr, Gerald C. 1976. <span>“Linear Models for Evaluating Conditional Relationships.”</span> <em>American Journal of Political Science</em>, 349–73.
+Wright Jr, Gerald C. 1976. <span>“Linear Models for Evaluating
+Conditional Relationships.”</span> <em>American Journal of Political
+Science</em>, 349–73.
 </div>
 </div>
 </div>
 </div>
-<div class="footnotes">
+<div class="footnotes footnotes-end-of-document">
 <hr>
 <ol>
-<li id="fn1"><p>For the purpose of illustration, we omitted the county level variance in this example. One can see more comprehensive analyses in <span class="citation">Solt et al. (2017)</span>.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn1"><p> Be aware that this method assumes that either the
+linear model or the one with an interaction is true. It is uncertain how
+the test would perform if neither is the true model. An alternative way
+to test the significance of the conditional effect is to compare the
+models with and without interactions as the same through model
+comparison tests, such as Wald, likelihood ratio, or Hausman tests. They
+may give a significant result when neither models is a true model. These
+tests are also developed in a frequentist sense rather than based on the
+posterior simulated results.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>For the purpose of illustration, we omitted the county
+level variance in this example. One can see more comprehensive analyses
+in <span class="citation">Solt et al. (2017)</span>.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
   </div>
@@ -408,11 +641,13 @@ Wright Jr, Gerald C. 1976. <span>“Linear Models for Evaluating Conditional Rel
 
 
       <footer><div class="copyright">
-  <p>Developed by Frederick Solt, Yue Hu.</p>
+  <p></p>
+<p>Developed by Frederick Solt, Yue Hu.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
@@ -420,6 +655,8 @@ Wright Jr, Gerald C. 1976. <span>“Linear Models for Evaluating Conditional Rel
 
   
 
+
+  
 
   </body>
 </html>
