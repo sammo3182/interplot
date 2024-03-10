@@ -85,7 +85,7 @@ interplot.lmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, a
     ralpha = 0.5, rfill = "grey70", stats_cp = "none", txt_caption = NULL, facet_labs = NULL, ...) {
     
 
-  if(predPro == TRUE & class(m) == "lmmi") stop("Predicted probability is estimated only for general linear models.")
+  if(predPro == TRUE & inherits(m, "lmmi")) stop("Predicted probability is estimated only for general linear models.")
   
     m.list <- m
     m <- m.list[[1]]
@@ -576,7 +576,7 @@ interplot.glmmi <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, 
           names(df) <- sub("I\\.(.*)\\.2\\.", "I\\(\\1\\^2\\)", names(df))
         }
         
-        iv_medians <- summarize_all(df, funs(median(., na.rm = TRUE))) 
+        iv_medians <- summarize(df, across(everything(), \(x) median(x, na.rm = TRUE)))
         
         fake_data <- iv_medians[rep(1:nrow(iv_medians), each=steps*length(var2_vals)), ] 
         fake_data[[var1]] <- with(df, rep(seq(min(get(var1)), max(get(var1)), length.out=steps),

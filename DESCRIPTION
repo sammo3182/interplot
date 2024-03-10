@@ -19,7 +19,8 @@ Imports:
     stats,
     dplyr,
     purrr,
-    interactionTest
+    interactionTest,
+    merTools
 License: MIT + file LICENSE
 LazyData: true
 Suggests:
