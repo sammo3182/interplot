@@ -1,4 +1,4 @@
-# interplot 1.0.9999
+# interplot 1.0.0
 
 In this version, the structure of the primary function is rewritten.
 The function treats factor and numeric base terms with separate side functions leaving room for more distinguished actions on the models with the two types of terms.
@@ -7,11 +7,13 @@ The function treats factor and numeric base terms with separate side functions l
 
 - `stats_cp = "ci"` works for factor base-term models.
 - Allow to output confidence intervals of the difference between the minimum and maximum values of the conditioning variable when `plot = FALSE`.
-- `prePro` can be used on multilevel models
+- `predPro` can be used on multilevel models.
 
 ## Bug fix
 
-- Update `interplot.plot` for the latest version of `ggplot`
+- Fixed `stats_cp = "ci"` and `stats_cp = "ks"` for `lmerMod`/`glmerMod` objects. The `ks_diff` statistic was computed inside helper functions but not returned, causing undefined-variable errors when `stats_cp` was set to `"ci"` or `"ks"`. Now both `ci_diff` and `ks_diff` are properly propagated from `extract_coef_numM`/`extract_coef_facM` to `interplot.plot`. The same fix is applied to the `lm`/`glm` path for consistency.
+- Update `interplot.plot` for the latest version of `ggplot2`.
+- Cleaned up NAMESPACE imports and `globalVariables` declarations.
 
 
 # interplot 0.2.3

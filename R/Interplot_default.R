@@ -1,4 +1,4 @@
-if(getRversion() >= "2.15.1") utils::globalVariables(c(".", "X.weights.", "ks_diff", "ks.test"))
+if(getRversion() >= "2.15.1") utils::globalVariables(c(".", "X.weights."))
 
 #' Plot Conditional Coefficients in (Generalized) Linear Models with Interaction Terms
 #' 
@@ -47,15 +47,11 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c(".", "X.weights.", "ks_di
 #' @return The function returns a \code{ggplot} object.
 #' 
 #' @importFrom arm sim
-#' @importFrom stats quantile
-#' @importFrom stats qnorm
-#' @importFrom stats median
-#' @importFrom stats plogis
-#' @importFrom stats model.matrix
-#' @importFrom purrr map
+#' @importFrom stats quantile qnorm median plogis model.matrix ks.test
+#' @importFrom purrr map map2 list_c
 #' @importFrom interactionTest fdrInteraction
-#' @import  ggplot2
-#' @import  dplyr
+#' @import ggplot2
+#' @import dplyr
 #' 
 #' @source Benjamini, Yoav, and Yosef Hochberg. 1995. "Controlling the False
 #' Discovery Rate: A Practical and Powerful Approach to Multiple Testing".
@@ -154,6 +150,7 @@ interplot.default <- function(m,
   coef_df <- ls_results[[1]]
   ci_diff <- ls_results[[2]]
   steps <- ls_results[[3]]
+  ks_diff <- ls_results[[4]]
   
   # Plotting ####
   
@@ -268,7 +265,8 @@ extract_coef_num <- function(
   # Calculate the effects ####
   
   ci_diff <- vector(mode = "numeric")
-  
+  ks_diff <- NULL
+
   multiplier <- if (var1 == var2) 2 else 1
   
   if (predPro == TRUE) {
@@ -407,7 +405,7 @@ extract_coef_num <- function(
     }  
   }
 
-  return(list(coef, ci_diff, steps))
+  return(list(coef, ci_diff, steps, ks_diff))
 }
 
 extract_coef_fac <- function(
@@ -575,7 +573,7 @@ extract_coef_fac <- function(
   }
   
   names(ci_diff) <- var12
-  
-  return(list(coef_df, ci_diff, steps))
+
+  return(list(coef_df, ci_diff, steps, NULL))
 } 
 

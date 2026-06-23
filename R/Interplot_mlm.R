@@ -1,4 +1,4 @@
-if(getRversion() >= "2.15.1") utils::globalVariables(c(".", "X.weights.", "ks_diff", "ks.test"))
+if(getRversion() >= "2.15.1") utils::globalVariables(c(".", "X.weights.", "value"))
 
 #' Plot Conditional Coefficients in Mixed-Effects Models with Interaction Terms 
 #' 
@@ -42,14 +42,12 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c(".", "X.weights.", "ks_di
 #' 
 #' @return The function returns a \code{ggplot} object.
 #' 
-#' @importFrom  arm sim
-#' @importFrom stats quantile
-#' @importFrom stats median
-#' @importFrom stats plogis
-#' @importFrom stats model.matrix
-#' @importFrom purrr map
-#' @import  ggplot2
-#' @import  dplyr
+#' @importFrom arm sim
+#' @importFrom stats quantile median plogis model.matrix model.frame setNames ks.test
+#' @importFrom purrr map map2 list_c list_rbind
+#' @importFrom lme4 fixef ranef getME
+#' @import ggplot2
+#' @import dplyr
 #' 
 #' 
 #' @export
@@ -135,6 +133,7 @@ interplot.lmerMod <- function(m,
     coef_df <- ls_results[[1]]
     ci_diff <- ls_results[[2]]
     steps <- ls_results[[3]]
+    ks_diff <- ls_results[[4]]
     
     # Plotting ####
     
@@ -251,9 +250,10 @@ extract_coef_numM <- function(
   # Calculate the effects ####
   
   ci_diff <- vector(mode = "numeric")
-  
+  ks_diff <- NULL
+
   multiplier <- if (var1 == var2) 2 else 1
-  
+
   if (predPro == TRUE) {
     if (is.null(var2_vals))
       stop("The predicted probabilities cannot be estimated without defining 'var2_vals'.")
@@ -301,24 +301,21 @@ extract_coef_numM <- function(
     # Correct the standard errors
     if (adjCI == TRUE) {
       n <- nrow(model.frame(m))
-      p <- length(fixef(m)) 
-      q <- length(ranef(m)$groups)
-      resid_df <- n - p - q
-      
-      Sigma <- diag(getME(m, "theta")) 
-      satterth_df <- resid_df - sum(2*Sigma^2/Sigma^2)
+      p <- length(fixef(m))
+      theta <- getME(m, "theta")
+      satterth_df <- n - p - 2 * sum(theta != 0)
       warning("For `lme4` objects, the degree of freedom is calculated by the the Satterthwaite approximation.")
-      
+
       ## FDR correction
       coef$sd <- (coef$ub - coef$coef1) / qnorm(1 - (1 - ci) / 2)
       tAdj <-
-        interactionTest::fdrInteraction(coef$coef1, coef$sd, df = satterth_df, level = ci) # calculate critical t
+        interactionTest::fdrInteraction(coef$coef1, coef$sd, df = satterth_df, level = ci)
       coef$ub <- coef$coef1 + tAdj * coef$sd
       coef$lb <- coef$coef1 - tAdj * coef$sd
-    }  
+    }
   }
   
-  return(list(coef, ci_diff, steps))
+  return(list(coef, ci_diff, steps, ks_diff))
 }
 
 
@@ -429,21 +426,18 @@ extract_coef_facM <- function(
       # Correct the standard errors
       if (adjCI == TRUE) {
         n <- nrow(model.frame(m))
-        p <- length(fixef(m)) 
-        q <- length(ranef(m)$groups)
-        resid_df <- n - p - q
-        
-        Sigma <- diag(getME(m, "theta")) 
-        satterth_df <- resid_df - sum(2*Sigma^2/Sigma^2)
+        p <- length(fixef(m))
+        theta <- getME(m, "theta")
+        satterth_df <- n - p - 2 * sum(theta != 0)
         warning("For `lme4` objects, the degree of freedom is calculated by the the Satterthwaite approximation.")
-        
+
         ## FDR correction
         coef$sd <- (coef$ub - coef$coef1) / qnorm(1 - (1 - ci) / 2)
-        tAdj <- interactionTestfdrInteraction(coef$coef1, coef$sd, df = satterth_df, level = .95) # calculate critical t
+        tAdj <- interactionTest::fdrInteraction(coef$coef1, coef$sd, df = satterth_df, level = ci)
         coef$ub <- coef$coef1 + tAdj * coef$sd
         coef$lb <- coef$coef1 - tAdj * coef$sd
       }
-      
+
       # preparing for later plotting
       coef$value <- var1[j + 1]
       coef_df <- rbind(coef_df, coef)
@@ -479,13 +473,19 @@ extract_coef_facM <- function(
       
       # Correct the standard errors
       if (adjCI == TRUE) {
+        n <- nrow(model.frame(m))
+        p <- length(fixef(m))
+        theta <- getME(m, "theta")
+        satterth_df <- n - p - 2 * sum(theta != 0)
+        warning("For `lme4` objects, the degree of freedom is calculated by the the Satterthwaite approximation.")
+
         ## FDR correction
         coef$sd <- (coef$ub - coef$coef1) / qnorm(1 - (1 - ci) / 2)
-        tAdj <- fdrInteraction(coef$coef1, coef$sd, df = m$df, level = .95) # calculate critical t
+        tAdj <- interactionTest::fdrInteraction(coef$coef1, coef$sd, df = satterth_df, level = ci)
         coef$ub <- coef$coef1 + tAdj * coef$sd
         coef$lb <- coef$coef1 - tAdj * coef$sd
       }
-      
+
       coef$value <- var2[j + 1] #name of the level2 in var2
       coef_df <- rbind(coef_df, coef)
       
@@ -493,8 +493,8 @@ extract_coef_facM <- function(
   }
   
   names(ci_diff) <- var12
-  
-  return(list(coef_df, ci_diff, steps))
+
+  return(list(coef_df, ci_diff, steps, NULL))
 } 
 
 #' @export

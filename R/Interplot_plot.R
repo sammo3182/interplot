@@ -1,5 +1,7 @@
+if(getRversion() >= "2.15.1") utils::globalVariables(c("fake", "coef1", "value", "lb", "ub"))
+
 #' Plot Conditional Coefficients in Models with Interaction Terms
-#' 
+#'
 #' Graph based on the data frame of statistics about the conditional effect of an interaction.
 #' 
 #' @param m A model object including an interaction term, or, alternately, a data frame recording conditional coefficients. This data frame should includes four columns:
@@ -125,7 +127,7 @@ interplot.plot <- function(m,
                        ymax = ub),
             width = 0,
             color = ercolor,
-            size = esize
+            linewidth = esize
           ) + 
           scale_x_continuous(breaks = levels) + 
           ylab(NULL) + xlab(NULL)
@@ -260,7 +262,7 @@ interplot.plot <- function(m,
               colour = value
             ),
             width = 0,
-            size = esize
+            linewidth = esize
           ) + scale_x_continuous(breaks = levels) + 
           ylab(NULL) + xlab(NULL) + 
           geom_point(data = m,
@@ -278,7 +280,7 @@ interplot.plot <- function(m,
             ),
             width = 0,
             color = ercolor,
-            size = esize
+            linewidth = esize
           ) + 
           scale_x_continuous(breaks = levels) + 
           ylab(NULL) + xlab(NULL) + 

@@ -1,6 +1,6 @@
 Package: interplot
 Title: Plot the Effects of Variables in Interaction Terms
-Version: 0.2.3
+Version: 1.0.0
 Authors@R: c(
     person("Frederick", "Solt", email = "frederick-solt@uiowa.edu", role = c("aut")),
     person("Yue", "Hu", email = "yuehu@tsinghua.edu.cn", role = c("aut", "cre")),
@@ -11,7 +11,7 @@ Description: Plots the conditional coefficients ("marginal effects") of
 BugReports: https://github.com/sammo3182/interplot/issues
 Encoding: UTF-8
 Depends:
-    R (>= 3.1.1),
+    R (>= 4.1.0),
     ggplot2,
     abind,
     arm
@@ -19,6 +19,7 @@ Imports:
     stats,
     dplyr,
     purrr,
+    lme4,
     interactionTest
 License: MIT + file LICENSE
 LazyData: true
@@ -26,6 +27,7 @@ Suggests:
     knitr,
     rmarkdown,
     mitools,
-    gridExtra
+    gridExtra,
+    merTools
 VignetteBuilder: knitr
-RoxygenNote: 7.2.3
+RoxygenNote: 8.0.0

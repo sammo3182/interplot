@@ -5,28 +5,35 @@ knitr::opts_chunk$set(
   dpi = 300
 )
 
+
 ## -----------------------------------------------------------------------------
 data(mtcars)  #load the data
+
 
 ## -----------------------------------------------------------------------------
 m_cyl <- lm(mpg ~ wt * cyl, data = mtcars)
 summary(m_cyl)
+
 
 ## ----out.width="80%"----------------------------------------------------------
 library(interplot)
 
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt")
 
+
 ## ----out.width="80%"----------------------------------------------------------
 interplot(m = m_cyl, var1 = "wt", var2 = "cyl")
 
+
 ## ----out.width="80%"----------------------------------------------------------
 interplot(m = m_cyl, var1 = "wt", var2 = "cyl", ci = .9, point = T)
+
 
 ## ----out.width="80%"----------------------------------------------------------
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt", point = T) +
   # changing the angle of x labels for a clearer vision
   theme(axis.text.x  = element_text(angle=90))
+
 
 ## ----out.width="80%"----------------------------------------------------------
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt") + 
@@ -41,14 +48,17 @@ interplot(m = m_cyl, var1 = "cyl", var2 = "wt") +
   # Add a horizontal line at y = 0
     geom_hline(yintercept = 0, linetype = "dashed")
 
+
 ## ----out.width="80%"----------------------------------------------------------
 interplot(m = m_cyl, var1 = "wt", var2 = "cyl", ercolor = "blue", esize = 1.5) +
   geom_point(size = 2, color = "red")
+
 
 ## ----out.width="80%"----------------------------------------------------------
 m_wt <- lm(mpg ~ wt + I(wt^2), data = mtcars)
 
 interplot(m = m_wt, var1 = "wt", var2 = "wt")
+
 
 ## ----out.width="80%"----------------------------------------------------------
 mtcars$gear <- factor(mtcars$gear)
@@ -56,28 +66,34 @@ m_gear <- lm(mpg ~ gear * wt, data = mtcars)
 
 interplot(m = m_gear, var1 = "wt", var2 = "gear")
 
+
 ## ----out.width="80%"----------------------------------------------------------
 interplot(m = m_gear, var1 = "wt", var2 = "gear", facet_labs = c("4-speed", "5-speed"))
+
 
 ## ----out.width="80%"----------------------------------------------------------
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt", hist = TRUE) +
     geom_hline(yintercept = 0, linetype = "dashed")
+
 
 ## ----out.width="80%"----------------------------------------------------------
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt", hist = TRUE) +
   aes(color = "pink") + theme(legend.position="none") +  # geom_line(color = "pink") + 
   geom_hline(yintercept = 0, linetype = "dashed")
 
+
 ## -----------------------------------------------------------------------------
 set.seed(313)
 
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt", stats_cp = "ci")
+
 
 ## -----------------------------------------------------------------------------
 set.seed(313)
 
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt", stats_cp = "ci", 
           txt_caption = "\n Source: Motor Trend Car Road Tests 1973.")
+
 
 ## ----out.width="80%"----------------------------------------------------------
 stdCI_plot <- interplot(m = m_wt, var1 = "wt", var2 = "wt", adjCI = FALSE) +
@@ -87,6 +103,7 @@ ggtitle("Marginal Effects with Adjusted CIs")
 
 library(gridExtra)
 grid.arrange(stdCI_plot, adjCI_plot, ncol = 2)
+
 
 ## ----out.width="80%"----------------------------------------------------------
 pew1.w <- read.csv("pew1_w.csv")
@@ -107,6 +124,7 @@ theme(legend.position = c(0, .8), legend.justification = c(0, .5))
 
 grid.arrange(plot_avg, plot_3val, ncol = 2)
 
+
 ## ----out.width="80%"----------------------------------------------------------
 # Create a fake dataset of conditional effects
 fake <- rnorm(100, 0, 1)
@@ -118,6 +136,7 @@ df_fake <- data.frame(cbind(fake, coef1, lb, ub))
 
 # Use interplot directly with the dataset
 interplot(df_fake)
+
 
 ## ----out.width="80%"----------------------------------------------------------
 var2_fake <- fake
