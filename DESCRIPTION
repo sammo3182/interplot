@@ -1,6 +1,6 @@
 Package: interplot
 Title: Plot the Effects of Variables in Interaction Terms
-Version: 1.0.0
+Version: 1.2.0
 Authors@R: c(
     person("Frederick", "Solt", email = "frederick-solt@uiowa.edu", role = c("aut")),
     person("Yue", "Hu", email = "yuehu@tsinghua.edu.cn", role = c("aut", "cre")),
@@ -12,22 +12,25 @@ BugReports: https://github.com/sammo3182/interplot/issues
 Encoding: UTF-8
 Depends:
     R (>= 4.1.0),
-    ggplot2,
-    abind,
-    arm
+    ggplot2
 Imports:
     stats,
+    abind,
+    arm,
     dplyr,
     purrr,
     lme4,
     interactionTest
 License: MIT + file LICENSE
-LazyData: true
 Suggests:
     knitr,
     rmarkdown,
     mitools,
     gridExtra,
-    merTools
+    merTools,
+    brms,
+    splines,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
 RoxygenNote: 8.0.0
+Config/testthat/edition: 3

@@ -14,7 +14,10 @@ vignette: >
 knitr::opts_chunk$set(
   message = FALSE,
   warning = FALSE,
-  dpi = 300
+  fig.width = 6,
+  fig.height = 4,
+  out.width = "100%",
+  dpi = 120
 )
 ```
 
@@ -212,7 +215,7 @@ set.seed(313)
 interplot(m = m_cyl, var1 = "cyl", var2 = "wt", stats_cp = "ci")
 ```
 
-since the statistical results are presented as a `ggplot` caption, one cannot using `+ lab(caption = ...)` to specify it as for a regular `ggplot` object. 
+Note that since the statistical results are presented as a `ggplot` caption, one cannot using `+ lab(caption = ...)` to specify it as for a regular `ggplot` object. 
 Instead, users can modify the plot's caption by specify the argument `txt_caption` of the `dwplot` function.
 
 ```{R}
@@ -235,7 +238,7 @@ If it is set `TRUE`, the function will calculate the critical t-statistics to li
 In the following example, the left panel presents the conditional effect plot with CIs estimated based on the @Brambor2006 method, and the right panel presents results with adjusted CIs.
 Although the adjustment does not change the substantial conclusion, we can see the adjusted CIs cover more area both in the middle and at the extreme values of x. 
 
-```{r out.width="80%"}
+```{r fig.width=8, fig.height=3.5}
 stdCI_plot <- interplot(m = m_wt, var1 = "wt", var2 = "wt", adjCI = FALSE) +
 ggtitle("Marginal Effects with Standard CIs")
 adjCI_plot <- interplot(m = m_wt, var1 = "wt", var2 = "wt", adjCI = TRUE) +
@@ -274,7 +277,7 @@ plot_avg <- interplot(m, var1 = "ginicnty",var2 = "income_i", predPro = FALSE) +
 ggtitle("Average Conditional Effects")
 
 plot_3val <- interplot(m, var1 = "ginicnty",var2 = "income_i", predPro = TRUE, var2_vals = c(min(pew1.w$income_i), max(pew1.w$income_i))) +
-ggtitle("Conditional Predicted Probabilities for \nCitizens with Low and High Incomes") +
+ggtitle("Conditional Predicted Prob for \nLow and High Income Citizens") +
 scale_colour_discrete(guide = guide_legend(title = "Income"), labels = c("Low", "High")) + 
 scale_fill_discrete(guide = guide_legend(title = "Income"), labels = c("Low", "High")) +
 theme(legend.position = c(0, .8), legend.justification = c(0, .5))
@@ -282,6 +285,67 @@ theme(legend.position = c(0, .8), legend.justification = c(0, .5))
 grid.arrange(plot_avg, plot_3val, ncol = 2)
 ```
 
+## Plot Three-Way Interactions
+
+When a model contains a three-way interaction `var1 * var2 * var3`, the conditional effect of `var1` depends on *both* `var2` and `var3`. Supplying `var3` to `interplot` plots the effect of `var1` across `var2` at several values (or levels) of `var3`. Fixing `var3` at a value $c$ turns the three-way effect into the familiar two-way problem with a shifted intercept and slope, $(b_{1} + b_{13} c) + (b_{12} + b_{123} c)\, var2$, so the same simulation engine and statistics are reused.
+
+For a continuous `var3`, the default conditioning values are the mean and the mean plus or minus one standard deviation (Aiken and West 1991); supply `var3_vals` to override them. A factor `var3` uses all of its levels. Three-way interactions are supported for ordinary and generalized linear models, mixed-effects models (`lmer`/`glmer`), multiply-imputed model lists, and Bayesian (`brms`) models.
+
+```{r fig.width=7.5, fig.height=3}
+m_3way <- lm(mpg ~ wt * hp * cyl, data = mtcars)
+
+# One small-multiple panel per value of cyl (the default)
+interplot(m_3way, var1 = "wt", var2 = "hp", var3 = "cyl")
+```
+
+Set `facet = FALSE` to overlay the curves in a single panel, colored by `var3`:
+
+```{r message=FALSE}
+interplot(m_3way, var1 = "wt", var2 = "hp", var3 = "cyl", facet = FALSE)
+```
+
+## Plot Nonlinear Conditional Effects
+
+The standard multiplicative interaction model assumes that the marginal effect of `var1` is a *linear* function of the moderator `var2`. When that assumption is too restrictive, one can let `var1` interact with a transformation of `var2`---a polynomial term such as `I(var2^2)`, or a spline such as `splines::ns(var2)`. `interplot` detects these terms automatically and plots the conditional effect as the implied nonlinear function of `var2`, computed from the model's own design-matrix gradient so that the confidence band, `stats_cp`, and `adjCI` all continue to work. As with the two-way case, this is available for linear, generalized linear, mixed-effects, multiply-imputed, and Bayesian (`brms`) models.
+
+```{r message=FALSE}
+# Effect of wt allowed to vary quadratically with cyl
+m_nl <- lm(mpg ~ wt * (cyl + I(cyl^2)), data = mtcars)
+interplot(m_nl, var1 = "wt", var2 = "cyl")
+```
+
+A spline interaction is handled the same way; `interplot` rebuilds the spline basis at its original knots, so the conditional-effect curve can take any smooth shape the moderator implies:
+
+```{r message=FALSE}
+library(splines)
+m_spline <- lm(mpg ~ wt * ns(hp, 3), data = mtcars)
+interplot(m_spline, var1 = "wt", var2 = "hp")
+```
+
+To check whether the simpler linear-interaction assumption is adequate, `bin_layer()` overlays the binning estimator of Hainmueller, Mummolo, and Xu (2019): the conditional effect of `var1` estimated separately within terciles of `var2`, drawn as dot-and-whiskers at the bin medians. If those binned estimates depart from the `interplot` line, a nonlinear specification is warranted.
+
+```{r message=FALSE}
+m_lin <- lm(mpg ~ wt * cyl, data = mtcars)
+interplot(m_lin, var1 = "wt", var2 = "cyl") +
+  bin_layer(m_lin, var1 = "wt", var2 = "cyl")
+```
+
+## Identify Significance Regions with Johnson-Neyman Intervals
+
+A conditional effect is often statistically significant over only part of the moderator's range. The Johnson-Neyman (JN) technique locates the exact values of `var2` at which the effect of `var1` crosses the boundary of significance. `jn_interval()` computes those bounds analytically from the model's coefficients and variance-covariance matrix (it works with `lm`, `glm`, `lmer`, and `glmer` objects):
+
+```{r}
+m_cyl <- lm(mpg ~ wt * cyl, data = mtcars)
+jn <- jn_interval(m_cyl, var1 = "cyl", var2 = "wt")
+print(jn)
+```
+
+`jn_layer()` turns the result into composable `ggplot2` layers---vertical lines at the JN bounds and shading over the non-significant region---so it can be added to any `interplot` output with `+`:
+
+```{r message=FALSE}
+interplot(m_cyl, var1 = "cyl", var2 = "wt") +
+  jn_layer(jn)
+```
 
 ## Plot Conditional Effects Without a Model
 
@@ -346,6 +410,6 @@ Qinghua Yuan, Haidian District, Beijing 100084, China
 
 Email: <yuehu@tsinghua.edu.cn>
 
-Website: <https://sammo3182.github.io>
+Website: <https://www.drhuyue.site/>
 
 ## Reference

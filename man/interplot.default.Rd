@@ -14,7 +14,7 @@ Analysis 14.1 (2006): 63-82.
 
 Esarey, Justin, and Jane Lawrence Sumner. 2015. "Marginal Effects in
 Interaction Models: Determining and Controlling the False Positive Rate".
-URL: \url{http://jee3.web.rice.edu/interaction-overconfidence.pdf}.
+URL: \url{https://jee3.web.rice.edu/interaction-overconfidence.pdf}.
 }
 \usage{
 \method{interplot}{default}(
@@ -40,6 +40,9 @@ URL: \url{http://jee3.web.rice.edu/interaction-overconfidence.pdf}.
   stats_cp = "none",
   txt_caption = NULL,
   facet_labs = NULL,
+  var3 = NULL,
+  var3_vals = NULL,
+  facet = TRUE,
   ...
 )
 }
@@ -87,6 +90,12 @@ URL: \url{http://jee3.web.rice.edu/interaction-overconfidence.pdf}.
 \item{txt_caption}{A character string to add a note for the plot, a value will sending to \code{ggplot2::labs(caption = txt_caption))}.}
 
 \item{facet_labs}{An optional character vector of facet labels to be used when plotting an interaction with a factor variable.}
+
+\item{var3}{An optional name (as a string) of a third variable for a three-way interaction \code{var1 * var2 * var3}. When supplied, the conditional effect of \code{var1} across \code{var2} is shown at several values/levels of \code{var3}. The default \code{NULL} gives the standard two-way behavior. Requires continuous \code{var1} and \code{var2}.}
+
+\item{var3_vals}{An optional numeric vector giving the values of a continuous \code{var3} to condition on. The default is the mean and the mean plus or minus one standard deviation. Ignored when \code{var3} is a factor.}
+
+\item{facet}{A logical value, used only with \code{var3}. \code{TRUE} (default) draws one panel per value/level of \code{var3}; \code{FALSE} overlays the curves colored by \code{var3}.}
 
 \item{...}{Other ggplot aesthetics arguments for points in the dot-whisker plot or lines in the line-ribbon plots. Not currently used.}
 }

@@ -28,6 +28,7 @@
   txt_caption = NULL,
   ci_diff = NULL,
   ks_diff = NULL,
+  overlay = FALSE,
   ...
 )
 }
@@ -83,6 +84,8 @@
 \item{ci_diff}{A numerical vector with a pair of values indicating the confidence intervals of the difference between \code{var1} and \code{var2}.}
 
 \item{ks_diff}{A \code{ks.test} object of the effect of \code{var1} conditioned on \code{var2}.}
+
+\item{overlay}{A logical value. When \code{TRUE}, the conditional-effect curves are colored by the grouping column \code{value} in a single panel (used by three-way interaction overlays). The default is \code{FALSE}.}
 
 \item{...}{Other ggplot aesthetics arguments for points in the dot-whisker plot or lines in the line-ribbon plots. Not currently used.}
 }

@@ -23,7 +23,7 @@
 #' @param rfill A character value indicating the filling color of the ribbon.
 #' @param stats_cp A character value indicating what statistics to present as the plot note. Three options are available: "none", "ci", and "ks". The default is "none". See the Details for more information.
 #' @param txt_caption A character string to add a note for the plot, a value will sending to \code{ggplot2::labs(caption = txt_caption))}.
-#' @param ... Other ggplot aesthetics arguments for points in the dot-whisker plot or lines in the line-ribbon plots. Not currently used.
+#' @param ... Additional arguments passed to the specific \code{interplot} method. For \code{lm} and \code{glm} objects (see \code{\link{interplot.default}}) these include \code{var3}, \code{var3_vals}, and \code{facet} for three-way interactions. Other ggplot aesthetics arguments for points or lines may also be supplied.
 #' 
 #' @details \code{interplot} visualizes the changes in the coefficient of one term in a two-way interaction conditioned by the other term. In the current version, the function works with interactions in the following classes of models:
 #' \itemize{
@@ -37,6 +37,8 @@
 #'   \item Generalized linear mixed-effects models with imputed data (object class: \code{list}).
 #' }
 #' 
+#' For \code{lm} and \code{glm} objects, \code{interplot} additionally supports three-way interactions (supply a third variable via \code{var3}; see \code{\link{interplot.default}}) and nonlinear conditional effects, in which \code{var1} interacts with a polynomial (e.g. \code{I(var2^2)}) or spline (e.g. \code{splines::ns(var2)}) of the moderator. The companion function \code{\link{bin_layer}} adds the Hainmueller, Mummolo, and Xu (2019) binning diagnostic as a composable overlay.
+#'
 #' The examples below illustrate how methods invoked by this generic deal with different type of objects.
 #' 
 #' Because the output function is based on \code{\link[ggplot2]{ggplot}}, any additional arguments and layers supported by \code{ggplot2} can be added with the \code{+}. 
@@ -71,8 +73,19 @@
 #' ylab('Estimated Coefficient for Automobile Weight (thousands lbs)') +
 #' ggtitle('Estimated Coefficient of Automobile Weight \non Mileage by Engine Cylinders') +
 #' theme(plot.title = element_text(face='bold'))
-#' 
-#' @source Benjamini, Yoav, and Yosef Hochberg. 1995. "Controlling the False
+#'
+#' # Three-way interaction: effect of wt across hp, faceted by cyl
+#' m_3 <- lm(mpg ~ wt * hp * cyl, data = mtcars)
+#' interplot(m_3, var1 = 'wt', var2 = 'hp', var3 = 'cyl')
+#'
+#' # Nonlinear conditional effect: wt interacted with a quadratic in cyl
+#' m_q <- lm(mpg ~ wt * (cyl + I(cyl^2)), data = mtcars)
+#' interplot(m_q, var1 = 'wt', var2 = 'cyl')
+#'
+#' @source Aiken, Leona S., and Stephen G. West. 1991. "Multiple Regression:
+#' Testing and Interpreting Interactions". Newbury Park, CA: Sage.
+#'
+#' Benjamini, Yoav, and Yosef Hochberg. 1995. "Controlling the False
 #' Discovery Rate: A Practical and Powerful Approach to Multiple Testing".
 #' Journal of the Royal Statistical Society, Series B 57(1): 289--300.
 #'
@@ -83,29 +96,27 @@
 #' Esarey, Justin, and Jane Lawrence Sumner. 2015. "Marginal Effects in
 #' Interaction Models: Determining and Controlling the False Positive Rate".
 #' URL: \url{https://jee3.web.rice.edu/interaction-overconfidence.pdf}.
-#' 
+#'
+#' @importFrom stats na.omit
 #' @export
 
 
 interplot <- function(m, var1, var2, plot = TRUE, steps = NULL, ci = .95, adjCI = FALSE, hist = FALSE, var2_dt = NA, predPro = FALSE, var2_vals = NULL, point = FALSE, sims = 1000, xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5, rfill = "grey70", stats_cp = "none", txt_caption = NULL, ...) {
   
   
-    if (class(m)[1] == "list") {
-        if (class(m[[1]])[1] == "lmerMod") {
+    if (is.list(m) && !is.data.frame(m) && !inherits(m, "lm") && !inherits(m, "brmsfit")) {
+        if (inherits(m[[1]], "lmerMod")) {
             class(m) <- "mlmmi"
-        }
-        if (class(m[[1]])[1] == "glmerMod") {
+        } else if (inherits(m[[1]], "glmerMod")) {
             class(m) <- "gmlmmi"
-        }
-        if (class(m[[1]])[1] == "lm") {
+        } else if (inherits(m[[1]], "glm")) {
+            class(m) <- "glmmi"
+        } else if (inherits(m[[1]], "lm")) {
             class(m) <- "lmmi"
         }
-        if (class(m[[1]])[1] == "glm") {
-            class(m) <- "glmmi"
-        }
     }
-    
-    if (class(m)[1] == "data.frame") 
+
+    if (is.data.frame(m))
         class(m) <- "plot"
     
     

@@ -5,3 +5,8 @@
 
 lit/
 pew1_w.csv
+/doc/
+/Meta/
+/inst/doc/
+*.tar.gz
+..Rcheck/

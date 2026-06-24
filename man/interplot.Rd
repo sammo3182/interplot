@@ -4,6 +4,9 @@
 \alias{interplot}
 \title{Plot Conditional Coefficients of a Variable in an Interaction Term}
 \source{
+Aiken, Leona S., and Stephen G. West. 1991. "Multiple Regression:
+Testing and Interpreting Interactions". Newbury Park, CA: Sage.
+
 Benjamini, Yoav, and Yosef Hochberg. 1995. "Controlling the False
 Discovery Rate: A Practical and Powerful Approach to Multiple Testing".
 Journal of the Royal Statistical Society, Series B 57(1): 289--300.
@@ -85,7 +88,7 @@ interplot(
 
 \item{txt_caption}{A character string to add a note for the plot, a value will sending to \code{ggplot2::labs(caption = txt_caption))}.}
 
-\item{...}{Other ggplot aesthetics arguments for points in the dot-whisker plot or lines in the line-ribbon plots. Not currently used.}
+\item{...}{Additional arguments passed to the specific \code{interplot} method. For \code{lm} and \code{glm} objects (see \code{\link{interplot.default}}) these include \code{var3}, \code{var3_vals}, and \code{facet} for three-way interactions. Other ggplot aesthetics arguments for points or lines may also be supplied.}
 }
 \value{
 The function returns a \code{ggplot} object.
@@ -105,6 +108,8 @@ The function returns a \code{ggplot} object.
   \item Linear mixed-effects models with imputed data (object class: \code{list});
   \item Generalized linear mixed-effects models with imputed data (object class: \code{list}).
 }
+
+For \code{lm} and \code{glm} objects, \code{interplot} additionally supports three-way interactions (supply a third variable via \code{var3}; see \code{\link{interplot.default}}) and nonlinear conditional effects, in which \code{var1} interacts with a polynomial (e.g. \code{I(var2^2)}) or spline (e.g. \code{splines::ns(var2)}) of the moderator. The companion function \code{\link{bin_layer}} adds the Hainmueller, Mummolo, and Xu (2019) binning diagnostic as a composable overlay.
 
 The examples below illustrate how methods invoked by this generic deal with different type of objects.
 
@@ -137,5 +142,13 @@ xlab('Number of Cylinders') +
 ylab('Estimated Coefficient for Automobile Weight (thousands lbs)') +
 ggtitle('Estimated Coefficient of Automobile Weight \non Mileage by Engine Cylinders') +
 theme(plot.title = element_text(face='bold'))
+
+# Three-way interaction: effect of wt across hp, faceted by cyl
+m_3 <- lm(mpg ~ wt * hp * cyl, data = mtcars)
+interplot(m_3, var1 = 'wt', var2 = 'hp', var3 = 'cyl')
+
+# Nonlinear conditional effect: wt interacted with a quadratic in cyl
+m_q <- lm(mpg ~ wt * (cyl + I(cyl^2)), data = mtcars)
+interplot(m_q, var1 = 'wt', var2 = 'cyl')
 
 }

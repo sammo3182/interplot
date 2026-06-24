@@ -34,6 +34,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("fake", "coef1", "value",
 #' @param txt_caption A character string to add a note for the plot, a value will sending to \code{ggplot2::labs(caption = txt_caption))}.
 #' @param ci_diff A numerical vector with a pair of values indicating the confidence intervals of the difference between \code{var1} and \code{var2}.
 #' @param ks_diff A \code{ks.test} object of the effect of \code{var1} conditioned on \code{var2}.
+#' @param overlay A logical value. When \code{TRUE}, the conditional-effect curves are colored by the grouping column \code{value} in a single panel (used by three-way interaction overlays). The default is \code{FALSE}.
 #' 
 #' @details \code{interplot.plot} is a S3 method from the \code{interplot}. It generates plots of conditional coefficients.
 #' 
@@ -80,26 +81,52 @@ interplot.plot <- function(m,
            txt_caption = NULL,
            ci_diff = NULL,
            ks_diff = NULL,
+           overlay = FALSE,
            ...) {
-    
-  
-  
+
+  # `overlay` (three-way, facet = FALSE) reuses the colour = value / fill = value
+  # aesthetics built for predPro, but keeps the conditional-effect y-axis label.
+  grouped <- predPro == TRUE || overlay == TRUE
+
+  required_cols <- c("fake", "coef1", "ub", "lb")
+  missing_cols <- setdiff(required_cols, names(m))
+  if (length(missing_cols) > 0)
+    stop("Input data.frame must include columns: ",
+         paste(required_cols, collapse = ", "),
+         ". Missing: ", paste(missing_cols, collapse = ", "), ".")
+
   if (is.null(steps)) steps <- nrow(m)
-  
+
+  default_ylab <- if (predPro) {
+    "Predicted Probability (%)"
+  } else if (!is.null(var1)) {
+    paste("Conditional Effect of", var1)
+  } else {
+    "Conditional Coefficient"
+  }
+  # In predPro mode the x-axis sweeps var1 (coloured by var2); otherwise it is var2.
+  default_xlab <- if (predPro && !is.null(var1)) {
+    var1
+  } else if (!is.null(var2)) {
+    var2
+  } else {
+    "Conditioning Variable"
+  }
+
   levels <- sort(unique(m$fake))
-  ymin <- ymax <- vector() # to deal with the "no visible binding for global variable" issue
-  xdiff <- vector() # to deal with the "no visible binding for global variable" issue
-  test_cp <- vector() # to deal with the "no visible binding for global variable" issue
+  ymin <- ymax <- vector()
+  xdiff <- vector()
+  test_cp <- vector()
   
-  if (predPro == TRUE) {
+  if (grouped) {
     if (is.null(m$value))
       stop("The input data.frame does not include required information.")
   }
   
   if (hist == FALSE) {
-    if (steps < 5 | point == T) {
+    if (steps < 5 | point == TRUE) {
       if (is.na(ercolor)) ercolor <- "black"  # ensure whisker can be drawn
-      if (predPro == TRUE) {
+      if (grouped) {
         coef.plot <- ggplot(m, aes(
             x = fake,
             y = coef1,
@@ -117,7 +144,7 @@ interplot.plot <- function(m,
             position = position_dodge(width = .3),
             linewidth = esize
           ) + 
-          scale_x_continuous(breaks = levels) + ylab(NULL) + xlab(NULL)
+          scale_x_continuous(breaks = levels) + ylab(default_ylab) + xlab(default_xlab)
       } else{
         coef.plot <-
           ggplot(m, aes(x = fake, 
@@ -130,10 +157,10 @@ interplot.plot <- function(m,
             linewidth = esize
           ) + 
           scale_x_continuous(breaks = levels) + 
-          ylab(NULL) + xlab(NULL)
+          ylab(default_ylab) + xlab(default_xlab)
       }
     } else {
-      if (predPro == TRUE) {
+      if (grouped) {
         coef.plot <-
           ggplot(m, aes(
             x = fake,
@@ -146,7 +173,7 @@ interplot.plot <- function(m,
             ymax = ub,
             fill = value
           ), alpha = ralpha) + 
-          ylab(NULL) + xlab(NULL)
+          ylab(default_ylab) + xlab(default_xlab)
       } else {
         coef.plot <-
           ggplot(m, aes(x = fake, 
@@ -159,7 +186,7 @@ interplot.plot <- function(m,
             color = ercolor,
             fill = rfill
           ) + 
-          ylab(NULL) + xlab(NULL)
+          ylab(default_ylab) + xlab(default_xlab)
       }
     }
     
@@ -248,10 +275,10 @@ interplot.plot <- function(m,
           ),
           colour = "gray50",
           alpha = 0,
-          size = 0.5
-        )  #histgram
+          linewidth = 0.5
+        )
       
-      if (predPro == TRUE) {
+      if (grouped) {
         coef.plot <-
           coef.plot + geom_errorbar(
             data = m,
@@ -264,7 +291,7 @@ interplot.plot <- function(m,
             width = 0,
             linewidth = esize
           ) + scale_x_continuous(breaks = levels) + 
-          ylab(NULL) + xlab(NULL) + 
+          ylab(default_ylab) + xlab(default_xlab) + 
           geom_point(data = m,
                      aes(x = fake,
                          y = coef1,
@@ -283,7 +310,7 @@ interplot.plot <- function(m,
             linewidth = esize
           ) + 
           scale_x_continuous(breaks = levels) + 
-          ylab(NULL) + xlab(NULL) + 
+          ylab(default_ylab) + xlab(default_xlab) + 
           geom_point(data = m, 
                      aes(x = fake, 
                          y = coef1))
@@ -324,10 +351,10 @@ interplot.plot <- function(m,
           ),
           colour = "gray50",
           alpha = 0,
-          size = 0.5
+          linewidth = 0.5
         )
       
-      if (predPro == TRUE) {
+      if (grouped) {
         coef.plot <-
           coef.plot + 
           geom_line(data = m,
@@ -342,7 +369,7 @@ interplot.plot <- function(m,
                         fill = value
                       ), 
             alpha = ralpha
-          ) + ylab(NULL) + xlab(NULL)
+          ) + ylab(default_ylab) + xlab(default_xlab)
       } else{
         coef.plot <-
           coef.plot + 
@@ -360,7 +387,7 @@ interplot.plot <- function(m,
             color = ercolor,
             fill = rfill
           ) + 
-          ylab(NULL) + xlab(NULL)
+          ylab(default_ylab) + xlab(default_xlab)
       }
     }
     
@@ -368,7 +395,7 @@ interplot.plot <- function(m,
       if (is.list(ci_diff)) {
         test_cp <- "" # not paste ci_diff here but in `facet_grid` in `interplot_default`
       } else {
-        paste0("CI(Max - Min): [",
+        test_cp <- paste0("CI(Max - Min): [",
                round(ci_diff[1], digits = 3),
                ", ",
                round(ci_diff[2], digits = 3),
